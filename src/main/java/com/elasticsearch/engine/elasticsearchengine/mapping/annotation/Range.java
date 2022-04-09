@@ -43,12 +43,18 @@ public @interface Range {
     String tag() default L_G;
 
     //es7的时间及格式化
-    //String format() default "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-    //String timeZone() default "GMT+8";
+    String format() default "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
-    String format() default "yyyy-MM-dd'T'HH:mm:ss.SSS";
+    String timeZone() default "GMT+8";
 
-    String timeZone() default "+08:00";
+    /**
+     * es6的时间及格式化
+     *
+     * @return
+     */
+//    String format() default "yyyy-MM-dd'T'HH:mm:ss.SSS";
+//
+//    String timeZone() default "+08:00";
 
     //within、contains。intersects
     String relation() default "";

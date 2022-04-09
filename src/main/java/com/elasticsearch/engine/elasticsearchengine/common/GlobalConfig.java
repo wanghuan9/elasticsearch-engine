@@ -14,6 +14,11 @@ import java.util.Set;
 public class GlobalConfig {
 
     /**
+     * elasticSearch version
+     */
+    public static final Integer ELASTIC_SEARCH_VERSION = 7;
+
+    /**
      * 对没有添加注解的字段 默然按照trem/trems查询
      */
     public static final boolean IS_BUILD_DEFAULT = Boolean.TRUE;

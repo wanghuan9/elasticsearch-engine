@@ -1,16 +1,15 @@
 package com.elasticsearch.engine.elasticsearchengine;
 
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import com.elasticsearch.engine.elasticsearchengine.model.annotion.EnableEsHelper;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = ElasticsearchEngineConfiguration.class)
-class ElasticsearchEngineApplicationTests {
+@EnableEsHelper
+@SpringBootApplication
+public class ElasticsearchEngineApplicationTests {
 
-    @Test
-    void contextLoads() {
+    public static void main(String[] args) {
+        SpringApplication.run(ElasticsearchEngineApplicationTests.class, args);
     }
 
 }

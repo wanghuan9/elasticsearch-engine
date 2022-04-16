@@ -1,7 +1,6 @@
 package com.elasticsearch.engine.elasticsearchengine.common.proxy;
 
-import com.elasticsearch.engine.elasticsearchengine.common.queryhandler.EsExecuteHandler;
-import com.elasticsearch.engine.elasticsearchengine.model.exception.EsHelperQueryException;
+import com.elasticsearch.engine.elasticsearchengine.common.queryhandler.EsProxyExecuteHandler;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,34 +20,26 @@ public class EsQueryProxy<T> implements InvocationHandler {
 
     private boolean visitQueryBeanParent = true;
 
-    private EsExecuteHandler esExecuteHandler;
+    private EsProxyExecuteHandler esProxyExecuteHandler;
 
     private boolean enableLogOutEsQueryJson = false;
 
     public EsQueryProxy(Class<T> targetInterface, boolean visitQueryBeanParent, RestHighLevelClient client) {
         this.targetInterface = targetInterface;
         this.visitQueryBeanParent = visitQueryBeanParent;
-        this.esExecuteHandler = esExecuteHandler;
+        this.esProxyExecuteHandler = esProxyExecuteHandler;
     }
 
-    public EsQueryProxy(Class<T> targetInterface, boolean visitQueryBeanParent, EsExecuteHandler esExecuteHandler, boolean enableLogOutEsQueryJson) {
+    public EsQueryProxy(Class<T> targetInterface, boolean visitQueryBeanParent, EsProxyExecuteHandler esProxyExecuteHandler, boolean enableLogOutEsQueryJson) {
         this.targetInterface = targetInterface;
         this.visitQueryBeanParent = visitQueryBeanParent;
-        this.esExecuteHandler = esExecuteHandler;
+        this.esProxyExecuteHandler = esProxyExecuteHandler;
         this.enableLogOutEsQueryJson = enableLogOutEsQueryJson;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
-        if (args == null || args.length == 0 || args.length > 1) {
-            throw new EsHelperQueryException("ES-HELPER un-support multi-params or miss-param, params must be single");
-        }
-        Class<?> returnType = method.getReturnType();
-        if (args != null && args.length == 1) {
-            Object param = args[0];
-            return esExecuteHandler.execute(param, returnType);
-        }
-        return null;
+        return esProxyExecuteHandler.invoke(proxy, method, args);
     }
 
 }

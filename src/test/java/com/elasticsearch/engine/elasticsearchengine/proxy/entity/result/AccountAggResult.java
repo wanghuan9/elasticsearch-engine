@@ -1,4 +1,4 @@
-package com.elasticsearch.engine.elasticsearchengine.proxy.repository.entity.result;
+package com.elasticsearch.engine.elasticsearchengine.proxy.entity.result;
 
 import java.util.Map;
 

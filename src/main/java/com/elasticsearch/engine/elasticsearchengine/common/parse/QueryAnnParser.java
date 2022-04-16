@@ -428,12 +428,14 @@ public class QueryAnnParser {
             Object val = field.get(viewObj);
             String query = Strings.EMPTY;
             if (ReflectionUtils.isBaseType(fieldType)) {
-                query = WordUtils.uncapitalize(Term.class.getSimpleName());
-                Term annotation = DefaultQueryModel.class.getField(query).getAnnotation(Term.class);
+                query = Term.class.getSimpleName();
+                String queryField = WordUtils.uncapitalize(query);
+                Term annotation = DefaultQueryModel.class.getField(queryField).getAnnotation(Term.class);
                 queryDes.setExtAnnotation(annotation);
             } else if (checkCollectionValueType(field, val)) {
-                query = WordUtils.uncapitalize(Terms.class.getSimpleName());
-                Terms annotation = DefaultQueryModel.class.getField(query).getAnnotation(Terms.class);
+                query = Terms.class.getSimpleName();
+                String queryField = WordUtils.uncapitalize(query);
+                Terms annotation = DefaultQueryModel.class.getField(queryField).getAnnotation(Terms.class);
                 queryDes.setExtAnnotation(annotation);
             }
             if (StringUtils.isBlank(query)) {

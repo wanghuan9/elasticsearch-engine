@@ -3,6 +3,7 @@ package com.elasticsearch.engine.elasticsearchengine.common.proxy;
 import com.elasticsearch.engine.elasticsearchengine.hook.EsHookReedits;
 import com.elasticsearch.engine.elasticsearchengine.hook.UserHooks;
 import com.elasticsearch.engine.elasticsearchengine.model.annotion.EsHelperProxy;
+import com.elasticsearch.engine.elasticsearchengine.model.domain.BaseESRepository;
 import com.elasticsearch.engine.elasticsearchengine.model.exception.EsHelperConfigException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.annotation.AnnotatedElementUtils;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -78,10 +78,10 @@ public class EsHelperInterfaceScanner implements ApplicationContextAware, Resour
         // scan packages get all Class that annotation by @EsHelperProxy
         Set<Class<?>> beanClazzSet = this.findAllClazz();
         for (Class beanClazz : beanClazzSet) {
-            if (isNotNeedProxy(beanClazz)) {
+            if (isRepository(beanClazz)) {
                 continue;
             }
-            EsHelperProxy proxyAnn = AnnotationUtils.findAnnotation(beanClazz, EsHelperProxy.class);
+//            EsHelperProxy proxyAnn = AnnotationUtils.findAnnotation(beanClazz, EsHelperProxy.class);
             // BeanDefinition builder
             BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(beanClazz);
             GenericBeanDefinition definition = (GenericBeanDefinition) builder.getRawBeanDefinition();
@@ -90,8 +90,11 @@ public class EsHelperInterfaceScanner implements ApplicationContextAware, Resour
             definition.setLazyInit(true);
             //根据其set方法的解释：就是替代工厂方法（包含静态工厂）或者构造器创建对象，但是其后面的生命周期回调不影响。
             //也就是框架在创建对象的时候会校验这个instanceSupplier是否有值，有的话，调用这个字段获取对象。
+//            definition.setInstanceSupplier(() ->
+//                    new EsHelperProxyBeanFactory(beanClazz, proxyAnn.visitParent())
+//            );
             definition.setInstanceSupplier(() ->
-                    new EsHelperProxyBeanFactory(beanClazz, proxyAnn.visitParent())
+                    new EsHelperProxyBeanFactory(beanClazz)
             );
             definition.setAutowireMode(GenericBeanDefinition.AUTOWIRE_BY_TYPE);
             String simpleName = beanClazz.getSimpleName();
@@ -181,5 +184,18 @@ public class EsHelperInterfaceScanner implements ApplicationContextAware, Resour
      */
     private boolean isNotNeedProxy(Class beanClazz) {
         return null == AnnotatedElementUtils.findMergedAnnotation(beanClazz, EsHelperProxy.class);
+    }
+
+    /**
+     * 判断是继承了 BaseESRepository
+     *
+     * @param beanClazz
+     * @return
+     */
+    private boolean isRepository(Class beanClazz) {
+        if (beanClazz.getSimpleName().equals("BaseESRepository")) {
+            return Boolean.TRUE;
+        }
+        return !BaseESRepository.class.isAssignableFrom(beanClazz);
     }
 }

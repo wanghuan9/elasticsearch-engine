@@ -1,4 +1,4 @@
-package com.elasticsearch.engine.elasticsearchengine.proxy.repository.entity.condition;
+package com.elasticsearch.engine.elasticsearchengine.proxy.entity.condition;
 
 
 import com.elasticsearch.engine.elasticsearchengine.mapping.handler.EsConditionHandle;

@@ -1,6 +1,6 @@
 package com.elasticsearch.engine.elasticsearchengine.common.proxy;
 
-import com.elasticsearch.engine.elasticsearchengine.common.queryhandler.EsExecuteHandler;
+import com.elasticsearch.engine.elasticsearchengine.common.queryhandler.EsProxyExecuteHandler;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
@@ -23,11 +23,15 @@ public class EsHelperProxyBeanFactory<T> implements ApplicationContextAware, Ini
 
     private static final String ENABLE_LOG_OUT_PROPERTIES = "es.helper.queryLogOut.enable";
     private Class<T> targetInterfaceClazz;
-    private boolean visitQueryBeanParent;
+    private boolean visitQueryBeanParent = Boolean.TRUE;
     @Resource
-    private EsExecuteHandler esExecuteHandler;
+    private EsProxyExecuteHandler esProxyExecuteHandler;
     private ApplicationContext applicationContext;
     private boolean enableLogOut = false;
+
+    public EsHelperProxyBeanFactory(Class<T> targetInterfaceClazz) {
+        this.targetInterfaceClazz = targetInterfaceClazz;
+    }
 
     public EsHelperProxyBeanFactory(Class<T> targetInterfaceClazz, boolean visitQueryBeanParent) {
         this.targetInterfaceClazz = targetInterfaceClazz;
@@ -37,7 +41,7 @@ public class EsHelperProxyBeanFactory<T> implements ApplicationContextAware, Ini
     public EsHelperProxyBeanFactory(Class<T> targetInterfaceClazz, boolean visitQueryBeanParent, RestHighLevelClient client) {
         this.targetInterfaceClazz = targetInterfaceClazz;
         this.visitQueryBeanParent = visitQueryBeanParent;
-        this.esExecuteHandler = esExecuteHandler;
+        this.esProxyExecuteHandler = esProxyExecuteHandler;
     }
 
     @Override
@@ -50,7 +54,7 @@ public class EsHelperProxyBeanFactory<T> implements ApplicationContextAware, Ini
         return (T) Proxy.newProxyInstance(
                 targetInterfaceClazz.getClassLoader(),
                 new Class[]{targetInterfaceClazz},
-                new EsQueryProxy<T>(targetInterfaceClazz, visitQueryBeanParent, esExecuteHandler, enableLogOut)
+                new EsQueryProxy<T>(targetInterfaceClazz, visitQueryBeanParent, esProxyExecuteHandler, enableLogOut)
         );
     }
 

@@ -13,7 +13,7 @@ public class SupplierItemEntity extends BaseHit {
 
     private Integer status;
 
-    private String productName;
+//    private String productName;
 
     private BigDecimal warehousePrice;
 

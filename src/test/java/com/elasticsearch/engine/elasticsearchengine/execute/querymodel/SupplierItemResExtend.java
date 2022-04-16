@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-@EsQueryIndex(index = "supplier_item")
+@EsQueryIndex(index = "supplier_item_spare")
 @Data
 public class SupplierItemResExtend implements ResponseHook<List<AggEntityExtend>> {
 
@@ -38,6 +38,7 @@ public class SupplierItemResExtend implements ResponseHook<List<AggEntityExtend>
         if (Objects.isNull(resp.getAggregations())) {
             throw new EsHelperQueryException("aggs param is null, result aggs is null");
         }
+//        resp.getInternalResponse()
         Terms aggs = resp.getAggregations().get(EsConstant._AGG);
         for (Terms.Bucket agg : aggs.getBuckets()) {
             if (!agg.getKeyAsString().equals(EsConstant.STRING_ZERO)) {

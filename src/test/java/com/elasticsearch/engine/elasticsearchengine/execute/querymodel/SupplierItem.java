@@ -16,6 +16,7 @@ import java.util.List;
 @Data
 public class SupplierItem {
 
+    @Terms
     private List<String> itemNo;
 
     private List<String> itemNoList;

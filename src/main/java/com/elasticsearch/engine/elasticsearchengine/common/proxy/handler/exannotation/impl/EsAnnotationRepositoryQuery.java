@@ -35,7 +35,7 @@ public class EsAnnotationRepositoryQuery implements EsAnnotationQueryHandler {
 
     @Override
     public Boolean matching(EsAnnotationQueryEnum factory) {
-        return EsAnnotationQueryEnum.REPOSITORY_ENTITY.equals(factory);
+        return EsAnnotationQueryEnum.ANNOTATION_MODEL_QUERY.equals(factory);
     }
 
     @Override

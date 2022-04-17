@@ -33,7 +33,7 @@ public class EsEngineProxyParamQueryTest {
      */
     @Test
     public void queryOneResponse() {
-        SupplierItemEntity supplierItemEntity = supplierItemParamRepository.queryOne("20201226204656658857", null);
+        SupplierItemEntity supplierItemEntity = supplierItemParamRepository.queryOne("20201226204656658857", 1);
         log.info("res:{}", JsonParser.asJson(supplierItemEntity));
     }
 

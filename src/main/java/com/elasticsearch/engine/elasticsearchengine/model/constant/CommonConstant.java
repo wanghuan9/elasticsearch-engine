@@ -16,10 +16,6 @@ public interface CommonConstant {
     /**
      * 记录代理类的名称
      */
-    String INTERFACE_NAME = "interface";
+    String INTERFACE_METHOD_NAME = "method";
 
-    /**
-     * 记录代理方法的名称
-     */
-    String METHOD_NAME = "method";
 }

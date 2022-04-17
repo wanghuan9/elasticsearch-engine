@@ -111,7 +111,7 @@ public class QueryParamAnnParser {
         // 获取方法的所有参数
         Parameter[] parameters = method.getParameters();
         for (int i = 0; i < parameters.length; i++) {
-            mapField(queryDesList, parameters[0], args[0]);
+            mapField(queryDesList, parameters[i], args[i]);
         }
         return queryDesList;
     }
@@ -180,12 +180,12 @@ public class QueryParamAnnParser {
             return;
         }
         //支持基础类型/List/扩展类型
-        if (ReflectionUtils.isBaseType(paramType) || checkCollectionValueType(param, paramValue) || paramValue instanceof EsComplexParam) {
+        if (ReflectionUtils.isBaseType(paramType) || checkCollectionValueType(param, paramValue) || paramValue instanceof EsComplexParam || paramTypeExtends(paramValue)) {
             //TODO 代码优化
             //TODO 类型转换器扩展 支持
             //TODO 参数校验器扩展***
         } else {
-            throw new EsHelperQueryException("Es Annotation Query Param at an Error-Type Param, Just support Primitive-type or their Decorate-type is List or EsComplexParam ; error param is: " + param.getName());
+            throw new EsHelperQueryException("es annotation query parameter has wrong parameter, just support primitive type or their decorate type is list or EsComplexParam ; error param is: " + param.getName());
         }
     }
 
@@ -242,14 +242,14 @@ public class QueryParamAnnParser {
             return null;
         }
         //支持基础类型/List
-        if (ReflectionUtils.isBaseType(fieldType) || checkCollectionValueType(param, paramValue)) {
+        if (ReflectionUtils.isBaseType(fieldType) || checkCollectionValueType(param, paramValue) || paramTypeExtends(paramValue)) {
             //先临时加强对 Collection 和 String的校验 后续扩展参数校验器
             if (checkListAndString(paramValue)) {
                 return null;
             }
             queryDes.setValue(paramValue);
         } else {
-            throw new EsHelperQueryException("Es Default Query Param at an Error-Type Param, Just support Primitive-type or their Decorate-type is List ; error param is: " + param.getName());
+            throw new EsHelperQueryException("es annotation query field has error field, just support primitive type or their decorate type is List ; error param is: " + param.getName());
         }
         return queryDes;
     }

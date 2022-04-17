@@ -4,6 +4,7 @@ import com.elasticsearch.engine.elasticsearchengine.execute.querymodel.SupplierI
 import com.elasticsearch.engine.elasticsearchengine.execute.querymodel.SupplierItemResExtend;
 import com.elasticsearch.engine.elasticsearchengine.execute.resultmodel.AggEntityExtend;
 import com.elasticsearch.engine.elasticsearchengine.execute.resultmodel.SupplierItemEntity;
+import com.elasticsearch.engine.elasticsearchengine.model.annotion.EsQueryIndex;
 import com.elasticsearch.engine.elasticsearchengine.model.domain.BaseESRepository;
 import com.elasticsearch.engine.elasticsearchengine.model.domain.BaseResp;
 import com.elasticsearch.engine.elasticsearchengine.proxy.entity.params.SupplierItemProxyResExtend;
@@ -20,6 +21,7 @@ import java.util.List;
  * @author JohenTeng
  * @date 2021/12/9
  */
+@EsQueryIndex(index = "supplier_item_spare")
 public interface SupplierItemRepository extends BaseESRepository<SupplierItemEntity, String> {
 
     /**

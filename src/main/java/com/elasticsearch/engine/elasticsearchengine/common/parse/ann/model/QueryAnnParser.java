@@ -232,7 +232,7 @@ public class QueryAnnParser {
                 //TODO 类型转换器扩展 支持
                 //TODO 参数校验器扩展***
             } else {
-                throw new EsHelperQueryException("Es Annotation Query Field at an Error-Type Field, Just support Primitive-type or their Decorate-type is List or EsComplexParam or add @Nested ; error field is: " + field.getName());
+                throw new EsHelperQueryException("es annotation query field has error field, just support primitive type or their decorate type is List or EsComplexParam or add @Nested ; error field is: " + field.getName());
             }
         } catch (IllegalAccessException e) {
             throw new EsHelperQueryException("unable reach target field ", e);
@@ -294,7 +294,7 @@ public class QueryAnnParser {
                 }
                 queryDes.setValue(val);
             } else {
-                throw new EsHelperQueryException("Es Default Query Field at an Error-Type Field, Just support Primitive-type or their Decorate-type is List  or add @Nested; error field is: " + field.getName());
+                throw new EsHelperQueryException("es default query fields have wrong fields, Just support primitive type or their decorate type is List  or add @Nested; error field is: " + field.getName());
             }
             return queryDes;
         } catch (IllegalAccessException e) {

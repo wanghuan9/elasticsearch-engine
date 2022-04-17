@@ -4,6 +4,7 @@ package com.elasticsearch.engine.elasticsearchengine.common.utils;
 import com.google.common.collect.Lists;
 
 import java.lang.reflect.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -27,8 +28,26 @@ public class ReflectionUtils {
         return (type.isPrimitive() && !Objects.equals(type, void.class))
                 || type.equals(String.class) || type.equals(Boolean.class)
                 || type.equals(Integer.class) || type.equals(Long.class) || type.equals(Short.class)
-                || type.equals(Float.class) || type.equals(Double.class)
+                || type.equals(Float.class) || type.equals(Double.class) || type.equals(BigDecimal.class)
                 || type.equals(Byte.class) || type.equals(Character.class);
+    }
+
+    /**
+     * 判断args是否都为基本类型
+     *
+     * @param args
+     * @return
+     */
+    public static boolean allParamIsBaseType(Object[] args) {
+        if (args == null || args.length == 0) {
+            return false;
+        }
+        for (Object obj : args) {
+            if (!isBaseType(obj.getClass()) && !(obj instanceof List)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -80,7 +99,6 @@ public class ReflectionUtils {
             throw new RuntimeException("Reflect-setValue IllegalAccessException Error,cause:", e);
         }
     }
-
 
     public static Object getFieldValue(Field field, Object target) {
         if (!field.isAccessible()) {

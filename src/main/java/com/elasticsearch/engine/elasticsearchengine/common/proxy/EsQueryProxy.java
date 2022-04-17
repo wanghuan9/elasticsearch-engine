@@ -40,15 +40,14 @@ public class EsQueryProxy<T> implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
-        ThreadLocalUtil.set(CommonConstant.INTERFACE_NAME, targetInterface.getSimpleName());
-        ThreadLocalUtil.set(CommonConstant.METHOD_NAME, method.getName());
+        String methodName = targetInterface.getSimpleName() + "#" + method.getName() + " ";
+        ThreadLocalUtil.set(CommonConstant.INTERFACE_METHOD_NAME, methodName);
         try {
             return esProxyExecuteHandler.invoke(proxy, method, args);
         } catch (Exception e) {
             throw e;
         } finally {
-            ThreadLocalUtil.remove(CommonConstant.INTERFACE_NAME);
-            ThreadLocalUtil.remove(CommonConstant.METHOD_NAME);
+            ThreadLocalUtil.remove(CommonConstant.INTERFACE_METHOD_NAME);
         }
     }
 

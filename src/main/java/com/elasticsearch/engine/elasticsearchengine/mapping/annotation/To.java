@@ -14,7 +14,7 @@ import java.lang.annotation.*;
 @Query
 @Inherited
 @Documented
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface To {
 

@@ -4,7 +4,9 @@ import com.elasticsearch.engine.elasticsearchengine.common.proxy.enums.EsAnnotat
 import com.elasticsearch.engine.elasticsearchengine.common.proxy.handler.exannotation.AnnotationQueryCommon;
 import com.elasticsearch.engine.elasticsearchengine.common.proxy.handler.exannotation.EsAnnotationQueryHandler;
 import com.elasticsearch.engine.elasticsearchengine.common.queryhandler.ann.model.EsExecuteHandler;
+import com.elasticsearch.engine.elasticsearchengine.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.elasticsearchengine.hook.ResponseHook;
+import com.elasticsearch.engine.elasticsearchengine.model.constant.CommonConstant;
 import com.elasticsearch.engine.elasticsearchengine.model.domain.BaseESRepository;
 import com.elasticsearch.engine.elasticsearchengine.model.domain.BaseResp;
 import com.elasticsearch.engine.elasticsearchengine.model.exception.EsHelperExecuteException;
@@ -36,8 +38,9 @@ public class EsAnnotationModelQueryHandler implements EsAnnotationQueryHandler {
 
     @Override
     public Object handle(Object proxy, Method method, Object[] args) {
-        if (args == null || args.length == 0 || args.length > 1) {
-            throw new EsHelperQueryException("ES-HELPER un-support multi-params or miss-param, params must be single");
+        String prefix = ThreadLocalUtil.get(CommonConstant.INTERFACE_METHOD_NAME);
+        if (args.length > 1) {
+            throw new EsHelperQueryException(prefix + "ES-ENGINE un-support multi-params, params must be single");
         }
         //方法参数
         Object param = args[0];
@@ -73,7 +76,7 @@ public class EsAnnotationModelQueryHandler implements EsAnnotationQueryHandler {
         if (Objects.nonNull(responseHookResultType) && returnTypeType.getTypeName().equals(responseHookResultType.getTypeName())) {
             return esExecuteHandler.execute(param, returnType).getResult();
         }
-        throw new EsHelperExecuteException("方法返回值泛型匹配异常: 返回值必须是 Repository 的泛型类型或 ResponseHook 的泛型类型");
+        throw new EsHelperExecuteException(prefix + "方法返回值泛型匹配异常: 返回值必须是 Repository 的泛型类型或 ResponseHook 的泛型类型");
     }
 
 }

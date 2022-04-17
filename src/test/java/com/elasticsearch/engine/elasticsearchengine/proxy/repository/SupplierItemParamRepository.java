@@ -1,6 +1,7 @@
 package com.elasticsearch.engine.elasticsearchengine.proxy.repository;
 
 import com.elasticsearch.engine.elasticsearchengine.execute.resultmodel.SupplierItemEntity;
+import com.elasticsearch.engine.elasticsearchengine.mapping.annotation.Collapse;
 import com.elasticsearch.engine.elasticsearchengine.mapping.annotation.Term;
 import com.elasticsearch.engine.elasticsearchengine.mapping.annotation.Terms;
 import com.elasticsearch.engine.elasticsearchengine.model.annotion.EsQueryIndex;
@@ -26,7 +27,7 @@ public interface SupplierItemParamRepository extends BaseESRepository<SupplierIt
      * @param itemNo
      * @return
      */
-    SupplierItemEntity queryOne(@Term String itemNo, @Term Integer status);
+    SupplierItemEntity queryOne(@Term String itemNo, @Collapse Integer status);
 
     /**
      * List查询

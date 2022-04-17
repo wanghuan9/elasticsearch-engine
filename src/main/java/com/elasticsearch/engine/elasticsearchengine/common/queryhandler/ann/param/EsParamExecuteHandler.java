@@ -90,11 +90,10 @@ public class EsParamExecuteHandler {
         try {
             SearchResponse resp;
             SearchSourceBuilder source = esHolder.getSource();
-            String interfaceName = ThreadLocalUtil.get(CommonConstant.INTERFACE_NAME);
-            String methodName = ThreadLocalUtil.get(CommonConstant.METHOD_NAME);
+            String methodName = ThreadLocalUtil.get(CommonConstant.INTERFACE_METHOD_NAME);
             //设置超时时间
             source.timeout(new TimeValue(GlobalConfig.QUERY_TIME_OUT, TimeUnit.SECONDS));
-            log.info("{}#{} execute-es-query-json is\n{}", interfaceName, methodName, esHolder.getSource().toString());
+            log.info("{} execute-es-query-json is\n{}", methodName, esHolder.getSource().toString());
             try {
                 resp = restClient.search(esHolder.getRequest(), RequestOptions.DEFAULT);
             } catch (IOException e) {
@@ -102,14 +101,13 @@ public class EsParamExecuteHandler {
             }
             //后置处理扩展 加入自定义结果解析
             BaseResp<T> result = EsResponseParse.returnDefaultResult(resp, responseClazz);
-            log.info("{}#{} execute-es-result-json is\n{}", interfaceName, methodName, JsonParser.asJson(result));
+            log.info("{} execute-es-result-json is\n{}", methodName, JsonParser.asJson(result));
             ThreadLocalUtil.remove();
             return result;
         } catch (Exception e) {
             throw e;
         } finally {
-            ThreadLocalUtil.remove(CommonConstant.INTERFACE_NAME);
-            ThreadLocalUtil.remove(CommonConstant.METHOD_NAME);
+            ThreadLocalUtil.remove(CommonConstant.INTERFACE_METHOD_NAME);
         }
     }
 }

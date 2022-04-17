@@ -1,6 +1,8 @@
 package com.elasticsearch.engine.elasticsearchengine.common.proxy;
 
 import com.elasticsearch.engine.elasticsearchengine.common.queryhandler.EsProxyExecuteHandler;
+import com.elasticsearch.engine.elasticsearchengine.common.utils.ThreadLocalUtil;
+import com.elasticsearch.engine.elasticsearchengine.model.constant.CommonConstant;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +15,6 @@ import java.lang.reflect.Method;
  * date      2021/7/21
  */
 public class EsQueryProxy<T> implements InvocationHandler {
-
     private static final Logger log = LoggerFactory.getLogger(EsQueryProxy.class);
 
     private Class<T> targetInterface;
@@ -39,7 +40,16 @@ public class EsQueryProxy<T> implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
-        return esProxyExecuteHandler.invoke(proxy, method, args);
+        ThreadLocalUtil.set(CommonConstant.INTERFACE_NAME, targetInterface.getSimpleName());
+        ThreadLocalUtil.set(CommonConstant.METHOD_NAME, method.getName());
+        try {
+            return esProxyExecuteHandler.invoke(proxy, method, args);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            ThreadLocalUtil.remove(CommonConstant.INTERFACE_NAME);
+            ThreadLocalUtil.remove(CommonConstant.METHOD_NAME);
+        }
     }
 
 }

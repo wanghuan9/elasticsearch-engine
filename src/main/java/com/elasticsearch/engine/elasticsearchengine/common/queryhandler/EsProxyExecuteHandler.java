@@ -2,7 +2,6 @@ package com.elasticsearch.engine.elasticsearchengine.common.queryhandler;
 
 import com.elasticsearch.engine.elasticsearchengine.common.proxy.enums.EsQueryProxyExecuteEnum;
 import com.elasticsearch.engine.elasticsearchengine.common.proxy.handler.EsQueryProxyExecuteFactory;
-import com.elasticsearch.engine.elasticsearchengine.model.exception.EsHelperQueryException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -38,15 +37,7 @@ public class EsProxyExecuteHandler {
      * @return
      */
     public Object invoke(Object proxy, Method method, Object[] args) {
-        if (args == null || args.length == 0 || args.length > 1) {
-            throw new EsHelperQueryException("ES-HELPER un-support multi-params or miss-param, params must be single");
-        }
-        Class<?> returnType = method.getReturnType();
-        if (args != null && args.length == 1) {
-            Object param = args[0];
-            return esQueryProxyExecuteFactory.getBean(EsQueryProxyExecuteEnum.ANNOTATION_QUERY).handle(proxy, method, args);
-        }
-        return null;
+        return esQueryProxyExecuteFactory.getBean(EsQueryProxyExecuteEnum.ANNOTATION_QUERY).handle(proxy, method, args);
     }
 
 }

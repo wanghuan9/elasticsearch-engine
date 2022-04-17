@@ -1,8 +1,8 @@
-package com.elasticsearch.engine.elasticsearchengine.common.queryhandler;
+package com.elasticsearch.engine.elasticsearchengine.common.queryhandler.ann.model;
 
 import com.elasticsearch.engine.elasticsearchengine.common.GlobalConfig;
-import com.elasticsearch.engine.elasticsearchengine.common.parse.EsQueryEngine;
-import com.elasticsearch.engine.elasticsearchengine.common.parse.EsResponseParse;
+import com.elasticsearch.engine.elasticsearchengine.common.parse.ann.model.EsQueryEngine;
+import com.elasticsearch.engine.elasticsearchengine.common.parse.ann.model.EsResponseParse;
 import com.elasticsearch.engine.elasticsearchengine.common.utils.JsonParser;
 import com.elasticsearch.engine.elasticsearchengine.common.utils.ReflectionUtils;
 import com.elasticsearch.engine.elasticsearchengine.holder.AbstractEsRequestHolder;

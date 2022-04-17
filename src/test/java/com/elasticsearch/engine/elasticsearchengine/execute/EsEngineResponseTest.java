@@ -1,7 +1,7 @@
 package com.elasticsearch.engine.elasticsearchengine.execute;
 
 import com.elasticsearch.engine.elasticsearchengine.ElasticsearchEngineConfiguration;
-import com.elasticsearch.engine.elasticsearchengine.common.queryhandler.EsBaseExecuteHandle;
+import com.elasticsearch.engine.elasticsearchengine.common.queryhandler.ann.model.EsBaseExecuteHandle;
 import com.elasticsearch.engine.elasticsearchengine.common.utils.JsonParser;
 import com.elasticsearch.engine.elasticsearchengine.execute.querymodel.SupplierItem;
 import com.elasticsearch.engine.elasticsearchengine.execute.querymodel.SupplierItemResExtend;

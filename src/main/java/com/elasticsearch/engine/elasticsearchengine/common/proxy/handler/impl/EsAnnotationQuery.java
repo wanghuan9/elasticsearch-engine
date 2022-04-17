@@ -28,6 +28,6 @@ public class EsAnnotationQuery implements EsQueryProxyExecuteHandler {
     //代理类的泛型, 或者自定义泛型获取的公共方法
     @Override
     public Object handle(Object proxy, Method method, Object[] args) {
-        return esAnnotationQueryFactory.getBean(EsAnnotationQueryEnum.ANNOTATION_MODEL_QUERY).handle(proxy, method, args);
+        return esAnnotationQueryFactory.getBean(EsAnnotationQueryEnum.ANNOTATION_PARAM_QUERY).handle(proxy, method, args);
     }
 }

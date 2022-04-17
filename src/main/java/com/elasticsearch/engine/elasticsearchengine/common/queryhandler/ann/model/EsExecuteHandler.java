@@ -1,6 +1,6 @@
-package com.elasticsearch.engine.elasticsearchengine.common.queryhandler;
+package com.elasticsearch.engine.elasticsearchengine.common.queryhandler.ann.model;
 
-import com.elasticsearch.engine.elasticsearchengine.common.parse.QueryAnnParser;
+import com.elasticsearch.engine.elasticsearchengine.common.parse.ann.model.QueryAnnParser;
 import com.elasticsearch.engine.elasticsearchengine.common.utils.JsonParser;
 import com.elasticsearch.engine.elasticsearchengine.mapping.annotation.Aggs;
 import com.elasticsearch.engine.elasticsearchengine.model.constant.EsConstant;
@@ -10,11 +10,9 @@ import com.elasticsearch.engine.elasticsearchengine.model.exception.EsHelperQuer
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +27,6 @@ import java.util.Objects;
 @Slf4j
 @Component
 public class EsExecuteHandler extends EsBaseExecuteHandle {
-    @Resource
-    private RestHighLevelClient restClient;
 
 //    /**
 //     * 分页查询

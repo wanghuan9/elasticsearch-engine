@@ -27,7 +27,7 @@ import java.util.List;
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ElasticsearchEngineApplicationTests.class)
-public class EsEngineProxyQueryTest {
+public class EsEngineProxyModelQueryTest {
 
     @Resource
     private SupplierItemRepository supplierItemMapper;

@@ -1,10 +1,10 @@
 package com.elasticsearch.engine.elasticsearchengine;
 
-import com.elasticsearch.engine.elasticsearchengine.model.annotion.EnableEsHelper;
+import com.elasticsearch.engine.elasticsearchengine.model.annotion.EnableEsEngine;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@EnableEsHelper
+@EnableEsEngine
 @SpringBootApplication
 public class ElasticsearchEngineApplicationTests {
 

@@ -1,6 +1,7 @@
 package com.elasticsearch.engine.elasticsearchengine.model.annotion;
 
 import com.elasticsearch.engine.elasticsearchengine.ElasticsearchEngineConfiguration;
+import com.elasticsearch.engine.elasticsearchengine.config.ElasticsearchConfig;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
@@ -15,7 +16,7 @@ import java.lang.annotation.*;
 @Documented
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Import({ElasticsearchEngineConfiguration.class})
+@Import({ElasticsearchEngineConfiguration.class, ElasticsearchConfig.class})
 @ComponentScan(basePackages = "com.elasticsearch.engine.elasticsearchengine")
-public @interface EnableEsHelper {
+public @interface EnableEsEngine {
 }

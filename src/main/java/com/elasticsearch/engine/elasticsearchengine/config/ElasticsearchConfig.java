@@ -11,6 +11,7 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +29,6 @@ import java.util.Objects;
 @Configuration
 public class ElasticsearchConfig {
 
-
     @Resource
     private ElasticSearchProperties elasticSearchProperties;
 
@@ -43,6 +43,7 @@ public class ElasticsearchConfig {
     }
 
     @Bean(destroyMethod = "close")
+    @ConditionalOnBean(name = "enableEsEngineConfig")
     public RestHighLevelClient restHighLevelClient() {
         String hosts = elasticSearchProperties.getHosts();
         RestClientBuilder builder;
@@ -59,6 +60,7 @@ public class ElasticsearchConfig {
     }
 
     @Bean(destroyMethod = "close")
+    @ConditionalOnBean(name = "enableEngine")
     public RestClient getRestClient() {
         String hosts = elasticSearchProperties.getHosts();
         configCheck();

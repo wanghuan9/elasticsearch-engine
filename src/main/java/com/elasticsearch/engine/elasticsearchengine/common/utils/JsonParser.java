@@ -32,6 +32,7 @@ public abstract class JsonParser {
 
   public static final ObjectMapper mapper = new ObjectMapper();
   private static final ObjectMapper indentMapper = new ObjectMapper();
+  private static final ObjectMapper snakeCaseMapper = new ObjectMapper();
   private static final TypeFactory typeFactory = TypeFactory.defaultInstance();
 
   static {
@@ -67,6 +68,18 @@ public abstract class JsonParser {
     indentMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     indentMapper.setDateFormat(df);
 
+    //下划线转驼峰
+    snakeCaseMapper.registerModule(module);
+    snakeCaseMapper.configure(Feature.ALLOW_COMMENTS, true);
+    snakeCaseMapper.configure(Feature.ALLOW_SINGLE_QUOTES, true);
+    snakeCaseMapper.configure(Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+    snakeCaseMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    snakeCaseMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+    snakeCaseMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    snakeCaseMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    snakeCaseMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+    snakeCaseMapper.setDateFormat(df);
+
   }
 
   private JsonParser() {
@@ -74,27 +87,6 @@ public abstract class JsonParser {
 
   public static <T> T asObject(String source, Class<T> clazz) {
     try {
-      return mapper.readValue(source, clazz);
-    } catch (IOException e) {
-      throw new RuntimeException("json parse error", e);
-    }
-  }
-
-  public static <T> T asObject(String source, Class<T> clazz, PropertyNamingStrategy propertyNamingStrategy) {
-    PropertyNamingStrategy oldPropertyNamingStrategy = mapper.getPropertyNamingStrategy();
-    try {
-      mapper.setPropertyNamingStrategy(propertyNamingStrategy);
-      return mapper.readValue(source, clazz);
-    } catch (IOException e) {
-      throw new RuntimeException("json parse error", e);
-    } finally {
-      mapper.setPropertyNamingStrategy(oldPropertyNamingStrategy);
-    }
-  }
-
-  public static <T> T asObjectSnakeCase(String source, Class<T> clazz) {
-    try {
-      mapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
       return mapper.readValue(source, clazz);
     } catch (IOException e) {
       throw new RuntimeException("json parse error", e);
@@ -137,6 +129,14 @@ public abstract class JsonParser {
   public static <T> T asObject(InputStream source, Class<T> clazz) {
     try {
       return mapper.readValue(source, clazz);
+    } catch (IOException e) {
+      throw new RuntimeException("json parse error", e);
+    }
+  }
+
+  public static <T> T asObjectSnakeCase(String source, Class<T> clazz) {
+    try {
+      return snakeCaseMapper.readValue(source, clazz);
     } catch (IOException e) {
       throw new RuntimeException("json parse error", e);
     }

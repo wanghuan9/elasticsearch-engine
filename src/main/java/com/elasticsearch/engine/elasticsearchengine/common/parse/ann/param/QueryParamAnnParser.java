@@ -24,13 +24,7 @@ import org.apache.commons.lang3.text.WordUtils;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -180,7 +174,7 @@ public class QueryParamAnnParser {
             return;
         }
         //支持基础类型/List/扩展类型
-        if (ReflectionUtils.isBaseType(paramType) || checkCollectionValueType(param, paramValue) || paramValue instanceof EsComplexParam || paramTypeExtends(paramValue)) {
+        if (ReflectionUtils.isBaseTypeAndExtend(paramType) || ReflectionUtils.checkCollectionValueType(param, paramValue) || paramValue instanceof EsComplexParam) {
             //TODO 代码优化
             //TODO 类型转换器扩展 支持
             //TODO 参数校验器扩展***
@@ -242,7 +236,7 @@ public class QueryParamAnnParser {
             return null;
         }
         //支持基础类型/List
-        if (ReflectionUtils.isBaseType(fieldType) || checkCollectionValueType(param, paramValue) || paramTypeExtends(paramValue)) {
+        if (ReflectionUtils.isBaseTypeAndExtend(fieldType) || ReflectionUtils.checkCollectionValueType(param, paramValue)) {
             //先临时加强对 Collection 和 String的校验 后续扩展参数校验器
             if (checkListAndString(paramValue)) {
                 return null;
@@ -252,16 +246,6 @@ public class QueryParamAnnParser {
             throw new EsHelperQueryException("es annotation query field has error field, just support primitive type or their decorate type is List ; error param is: " + param.getName());
         }
         return queryDes;
-    }
-
-    /**
-     * 临时扩展类型
-     *
-     * @param val
-     * @return
-     */
-    private boolean paramTypeExtends(Object val) {
-        return val instanceof LocalDateTime || val instanceof LocalDate || val instanceof BigDecimal;
     }
 
     /**
@@ -293,29 +277,6 @@ public class QueryParamAnnParser {
         return false;
     }
 
-
-    /**
-     * 判断是否是List类型切List元素为基本类型
-     *
-     * @param param
-     * @param val
-     * @return
-     */
-    private boolean checkCollectionValueType(Parameter param, Object val) {
-        Predicate<Parameter> checkCollectionTypePredicate = f -> {
-            ParameterizedType genericType = (ParameterizedType) f.getParameterizedType();
-            Type[] actualType = genericType.getActualTypeArguments();
-            String fullClassPath = actualType[0].getTypeName();
-            Class<?> clazz;
-            try {
-                clazz = Class.forName(fullClassPath);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            return actualType.length == 1 && ReflectionUtils.isBaseType(clazz);
-        };
-        return (val instanceof List) && checkCollectionTypePredicate.test(param);
-    }
 
     /**
      * 解析参数的 注解
@@ -392,12 +353,12 @@ public class QueryParamAnnParser {
             queryDes.setField(column);
             Class<?> fieldType = param.getType();
             String query = Strings.EMPTY;
-            if (ReflectionUtils.isBaseType(fieldType)) {
+            if (ReflectionUtils.isBaseTypeAndExtend(fieldType)) {
                 query = Term.class.getSimpleName();
                 String queryField = WordUtils.uncapitalize(query);
                 Term annotation = DefaultQueryModel.class.getField(queryField).getAnnotation(Term.class);
                 queryDes.setExtAnnotation(annotation);
-            } else if (checkCollectionValueType(param, paramValue)) {
+            } else if (ReflectionUtils.checkCollectionValueType(param, paramValue)) {
                 query = Terms.class.getSimpleName();
                 String queryField = WordUtils.uncapitalize(query);
                 Terms annotation = DefaultQueryModel.class.getField(queryField).getAnnotation(Terms.class);

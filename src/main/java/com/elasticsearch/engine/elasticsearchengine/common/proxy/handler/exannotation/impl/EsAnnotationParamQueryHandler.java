@@ -42,6 +42,9 @@ public class EsAnnotationParamQueryHandler implements EsAnnotationQueryHandler {
         //获取到Repository泛型的Entity类
         Class<?> retEntityClass = AnnotationQueryCommon.getClazzImplClassGeneric(method.getDeclaringClass(), BaseESRepository.class);
         //Repository泛型 单个返回值
+        if (Objects.isNull(retEntityClass)) {
+            throw new EsHelperExecuteException(prefix + "泛型声明异常:Repository 缺少泛型声明");
+        }
         if (returnType.isAssignableFrom(retEntityClass)) {
             return esParamExecuteHandler.executeOne(method, args, returnType);
         }

@@ -6,16 +6,19 @@ package com.elasticsearch.engine.elasticsearchengine.model.constant;
  * @date 2021-09-29
  * @time 10:21
  */
-public interface CommonConstant {
+public class CommonConstant {
 
     /**
      * string里面的特殊字符
      */
-    String SPECIAL_CHAR = "\\p{C}";
-
+    public static final String SPECIAL_CHAR = "\\p{C}";
     /**
      * 记录代理类的名称
      */
-    String INTERFACE_METHOD_NAME = "method";
+    public static final String INTERFACE_METHOD_NAME = "method";
+    /**
+     * es默认连接
+     */
+    public static final String DEFAULT_ES_HOST = "127.0.0.1:9200";
 
 }

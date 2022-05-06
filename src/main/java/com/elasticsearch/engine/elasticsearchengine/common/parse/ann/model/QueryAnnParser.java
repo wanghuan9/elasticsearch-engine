@@ -25,9 +25,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -227,7 +224,7 @@ public class QueryAnnParser {
                 return;
             }
             //支持基础类型/List/扩展类型
-            if (ReflectionUtils.isBaseType(fieldType) || checkCollectionValueType(field, val) || val instanceof EsComplexParam || paramTypeExtends(val)) {
+            if (ReflectionUtils.isBaseTypeAndExtend(fieldType) || checkCollectionValueType(field, val) || val instanceof EsComplexParam) {
                 //TODO 代码优化
                 //TODO 类型转换器扩展 支持
                 //TODO 参数校验器扩展***
@@ -287,7 +284,7 @@ public class QueryAnnParser {
                 return null;
             }
             //支持基础类型/List
-            if (ReflectionUtils.isBaseType(fieldType) || checkCollectionValueType(field, val) || paramTypeExtends(val)) {
+            if (ReflectionUtils.isBaseTypeAndExtend(fieldType) || checkCollectionValueType(field, val)) {
                 //先临时加强对 Collection 和 String的校验 后续扩展参数校验器
                 if (checkListAndString(val)) {
                     return null;
@@ -300,16 +297,6 @@ public class QueryAnnParser {
         } catch (IllegalAccessException e) {
             throw new EsHelperQueryException("unable reach target field ", e);
         }
-    }
-
-    /**
-     * 临时扩展类型
-     *
-     * @param val
-     * @return
-     */
-    private boolean paramTypeExtends(Object val) {
-        return val instanceof LocalDateTime || val instanceof LocalDate || val instanceof BigDecimal;
     }
 
     /**

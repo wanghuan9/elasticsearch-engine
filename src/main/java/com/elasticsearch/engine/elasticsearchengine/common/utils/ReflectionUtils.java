@@ -5,10 +5,13 @@ import com.google.common.collect.Lists;
 
 import java.lang.reflect.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * project  elasticsearch-helper
@@ -19,6 +22,10 @@ import java.util.Objects;
  **/
 public class ReflectionUtils {
 
+    public static boolean isBaseTypeAndExtend(Class<?> type) {
+        return isBaseType(type) || isExtendsType(type);
+    }
+
     /**
      * judge the given type is Java-Base type or String, but not void.class
      *
@@ -28,7 +35,7 @@ public class ReflectionUtils {
         return (type.isPrimitive() && !Objects.equals(type, void.class))
                 || type.equals(String.class) || type.equals(Boolean.class)
                 || type.equals(Integer.class) || type.equals(Long.class) || type.equals(Short.class)
-                || type.equals(Float.class) || type.equals(Double.class) || type.equals(BigDecimal.class)
+                || type.equals(Float.class) || type.equals(Double.class)
                 || type.equals(Byte.class) || type.equals(Character.class);
     }
 
@@ -43,7 +50,7 @@ public class ReflectionUtils {
             return false;
         }
         for (Object obj : args) {
-            if (!isBaseType(obj.getClass()) && !(obj instanceof List)) {
+            if (!isBaseTypeAndExtend(obj.getClass()) && !(obj instanceof List)) {
                 return false;
             }
         }
@@ -146,6 +153,40 @@ public class ReflectionUtils {
             suCl = suCl.getSuperclass();
         }
         return clazzs;
+    }
+
+    /**
+     * 判断是否是List类型切List元素为基本类型
+     *
+     * @param param
+     * @param val
+     * @pubrn
+     */
+    public static boolean checkCollectionValueType(Parameter param, Object val) {
+        Predicate<Parameter> checkCollectionTypePredicate = f -> {
+            ParameterizedType genericType = (ParameterizedType) f.getParameterizedType();
+            Type[] actualType = genericType.getActualTypeArguments();
+            String fullClassPath = actualType[0].getTypeName();
+            Class<?> clazz;
+            try {
+                clazz = Class.forName(fullClassPath);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            return actualType.length == 1 && ReflectionUtils.isBaseType(clazz);
+        };
+        return (val instanceof List) && checkCollectionTypePredicate.test(param);
+    }
+
+    /**
+     * 基本参数支持的扩展类型
+     *
+     * @param type
+     * @return
+     */
+    public static boolean isExtendsType(Class<?> type) {
+        return type.equals(LocalDateTime.class) || type.equals(LocalDate.class) || type.equals(BigDecimal.class);
+
     }
 
 }

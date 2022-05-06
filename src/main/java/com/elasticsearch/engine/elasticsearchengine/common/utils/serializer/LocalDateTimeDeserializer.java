@@ -17,23 +17,9 @@ import java.util.regex.Pattern;
  */
 public class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final Pattern numericPattern = Pattern.compile("[0-9]*");
+    private static final Pattern timeLegalPattern = Pattern.compile("^((\\d{2}(([02468][048])|([13579][26]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])))))|(\\d{2}(([02468][1235679])|([13579][01345789]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))))(\\s((([0-1][0-9])|(2?[0-3]))\\:([0-5]?[0-9])((\\s)|(\\:([0-5]?[0-9])))))?$");
 
-    /**
-     * 判断输入的字符串是否满足时间格式 ： yyyy-MM-dd HH:mm:ss
-     *
-     * @param patternString 需要验证的字符串
-     * @return 合法返回 true ; 不合法返回false
-     */
-    public static boolean isTimeLegal(String patternString) {
-
-        Pattern a = Pattern.compile("^((\\d{2}(([02468][048])|([13579][26]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])))))|(\\d{2}(([02468][1235679])|([13579][01345789]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))))(\\s((([0-1][0-9])|(2?[0-3]))\\:([0-5]?[0-9])((\\s)|(\\:([0-5]?[0-9])))))?$");
-        Matcher b = a.matcher(patternString);
-        if (b.matches()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     @Override
     public LocalDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
@@ -53,12 +39,19 @@ public class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
      * @param str
      * @return
      */
-    public boolean isNumeric(String str) {
-        Pattern pattern = Pattern.compile("[0-9]*");
-        Matcher isNum = pattern.matcher(str);
-        if (!isNum.matches()) {
-            return false;
-        }
-        return true;
+    private boolean isNumeric(String str) {
+        Matcher isNum = numericPattern.matcher(str);
+        return isNum.matches();
+    }
+
+    /**
+     * 判断输入的字符串是否满足时间格式 ： yyyy-MM-dd HH:mm:ss
+     *
+     * @param patternString 需要验证的字符串
+     * @return 合法返回 true ; 不合法返回false
+     */
+    private boolean isTimeLegal(String patternString) {
+        Matcher b = timeLegalPattern.matcher(patternString);
+        return b.matches();
     }
 }

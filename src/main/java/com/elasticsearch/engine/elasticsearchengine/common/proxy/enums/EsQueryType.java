@@ -1,22 +1,26 @@
 package com.elasticsearch.engine.elasticsearchengine.common.proxy.enums;
 
+import lombok.Getter;
+
 import java.util.Arrays;
 import java.util.Optional;
 
 /**
  * @author wanghuan
- * @description: es注解查询类型枚举
+ * @description: ES查询执行器handler
  * @date 2022-04-15 18:16
  */
-public enum EsAnnotationQueryEnum {
-    ANNOTATION_MODEL_QUERY(1, "model注解"),
-    ANNOTATION_PARAM_QUERY(2, "方法参数注解"),
+@Getter
+public enum EsQueryType {
+    ANNOTATION(1, "注解查询"),
+    SQL(2, "sql查询"),
+    ES_NATIVE(3, "es原生语句查询"),
     ;
 
     private Integer key;
     private String value;
 
-    EsAnnotationQueryEnum(Integer key, String value) {
+    EsQueryType(Integer key, String value) {
         this.key = key;
         this.value = value;
     }
@@ -26,4 +30,5 @@ public enum EsAnnotationQueryEnum {
                 .filter(c -> c.getKey().equals(key)).findFirst();
         return exportEnum.orElse(null);
     }
+
 }

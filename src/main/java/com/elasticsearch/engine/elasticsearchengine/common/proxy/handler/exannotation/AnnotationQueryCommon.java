@@ -69,11 +69,9 @@ public class AnnotationQueryCommon {
      */
     public static Type getClazzImplClassGenericType(Class<?> clazz, Class<?> implClass) {
         EsHelperExecuteException esHelperExecuteException = new EsHelperExecuteException("泛型声明异常: " + clazz.getSimpleName() + " implements " + implClass.getSimpleName());
+        //获取class实现的接口
         Type[] interfaces = clazz.getGenericInterfaces();
-        if (interfaces == null && interfaces.length < 1) {
-            throw esHelperExecuteException;
-        }
-        Map<? extends Class<?>, ParameterizedType> collect = Arrays.asList(interfaces).stream().map(type -> {
+        Map<? extends Class<?>, ParameterizedType> collect = Arrays.stream(interfaces).map(type -> {
             if (!(type instanceof ParameterizedType)) {
                 throw new EsHelperExecuteException("泛型声明异常: " + clazz.getSimpleName() + " 缺少泛型声明");
             }
@@ -92,7 +90,7 @@ public class AnnotationQueryCommon {
         }
 
         Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-        if (actualTypeArguments == null && actualTypeArguments.length < 1) {
+        if (actualTypeArguments == null || actualTypeArguments.length < 1) {
             throw esHelperExecuteException;
         }
         //获取到Repository泛型的Entity类

@@ -2,7 +2,7 @@ package com.elasticsearch.engine.elasticsearchengine.common.proxy.handler;
 
 
 import com.elasticsearch.engine.elasticsearchengine.common.factory.FactoryList;
-import com.elasticsearch.engine.elasticsearchengine.common.proxy.enums.EsQueryProxyExecuteEnum;
+import com.elasticsearch.engine.elasticsearchengine.common.proxy.enums.EsQueryType;
 import com.elasticsearch.engine.elasticsearchengine.model.exception.EsHelperExecuteException;
 import org.springframework.stereotype.Component;
 
@@ -19,13 +19,13 @@ import java.util.List;
  * .process(cache);
  */
 @Component
-public class EsQueryProxyExecuteFactory implements FactoryList<EsQueryProxyExecuteHandler, EsQueryProxyExecuteEnum> {
+public class EsQueryProxyExecuteFactory implements FactoryList<EsQueryProxyExecuteHandler, EsQueryType> {
 
     @Resource
     private List<EsQueryProxyExecuteHandler> esQueryProxyHandles;
 
     @Override
-    public EsQueryProxyExecuteHandler getBean(EsQueryProxyExecuteEnum factory) {
+    public EsQueryProxyExecuteHandler getBean(EsQueryType factory) {
         for (EsQueryProxyExecuteHandler esQueryProxyHandle : esQueryProxyHandles) {
             if (esQueryProxyHandle.matching(factory)) {
                 return esQueryProxyHandle;

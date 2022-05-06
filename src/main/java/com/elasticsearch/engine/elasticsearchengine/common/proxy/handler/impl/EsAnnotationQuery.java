@@ -1,7 +1,7 @@
 package com.elasticsearch.engine.elasticsearchengine.common.proxy.handler.impl;
 
 import com.elasticsearch.engine.elasticsearchengine.common.proxy.enums.EsAnnotationQueryEnum;
-import com.elasticsearch.engine.elasticsearchengine.common.proxy.enums.EsQueryProxyExecuteEnum;
+import com.elasticsearch.engine.elasticsearchengine.common.proxy.enums.EsQueryType;
 import com.elasticsearch.engine.elasticsearchengine.common.proxy.handler.EsQueryProxyExecuteHandler;
 import com.elasticsearch.engine.elasticsearchengine.common.proxy.handler.exannotation.EsAnnotationQueryFactory;
 import com.elasticsearch.engine.elasticsearchengine.common.utils.ReflectionUtils;
@@ -27,8 +27,8 @@ public class EsAnnotationQuery implements EsQueryProxyExecuteHandler {
     private EsAnnotationQueryFactory esAnnotationQueryFactory;
 
     @Override
-    public Boolean matching(EsQueryProxyExecuteEnum factory) {
-        return EsQueryProxyExecuteEnum.ANNOTATION_QUERY.equals(factory);
+    public Boolean matching(EsQueryType factory) {
+        return EsQueryType.ANNOTATION.equals(factory);
     }
 
     //代理类的泛型, 或者自定义泛型获取的公共方法

@@ -1,7 +1,8 @@
 package com.elasticsearch.engine.elasticsearchengine.common.queryhandler;
 
-import com.elasticsearch.engine.elasticsearchengine.common.proxy.enums.EsQueryProxyExecuteEnum;
+import com.elasticsearch.engine.elasticsearchengine.common.proxy.enums.EsQueryType;
 import com.elasticsearch.engine.elasticsearchengine.common.proxy.handler.EsQueryProxyExecuteFactory;
+import com.elasticsearch.engine.elasticsearchengine.model.annotion.EsQuery;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -37,7 +38,13 @@ public class EsProxyExecuteHandler {
      * @return
      */
     public Object invoke(Object proxy, Method method, Object[] args) {
-        return esQueryProxyExecuteFactory.getBean(EsQueryProxyExecuteEnum.ANNOTATION_QUERY).handle(proxy, method, args);
+        EsQueryType annotationQuery = EsQueryType.ANNOTATION;
+        //有查询注解
+        if (method.isAnnotationPresent(EsQuery.class)) {
+            EsQuery annotation = method.getAnnotation(EsQuery.class);
+            annotationQuery = annotation.queryType();
+        }
+        return esQueryProxyExecuteFactory.getBean(annotationQuery).handle(proxy, method, args);
     }
 
 }

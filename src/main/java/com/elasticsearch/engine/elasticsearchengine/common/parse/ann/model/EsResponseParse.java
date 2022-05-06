@@ -4,6 +4,7 @@ import com.elasticsearch.engine.elasticsearchengine.common.GlobalConfig;
 import com.elasticsearch.engine.elasticsearchengine.common.utils.JsonParser;
 import com.elasticsearch.engine.elasticsearchengine.model.domain.BaseHit;
 import com.elasticsearch.engine.elasticsearchengine.model.domain.BaseResp;
+import com.elasticsearch.engine.elasticsearchengine.model.emenu.JsonNamingStrategy;
 import com.elasticsearch.engine.elasticsearchengine.model.exception.EsHelperQueryException;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.SearchHit;
@@ -56,8 +57,7 @@ public class EsResponseParse {
         SearchHit[] hitArr = hits.getHits();
         List<T> records = Arrays.stream(hitArr).map(item -> {
             String sourceAsString = item.getSourceAsString();
-            T t = JsonParser.asObject(sourceAsString, type, GlobalConfig.RES_PROPERTY_NAMING_STRATEGY);
-            t.setDocId(item.getId());
+            T t = jsonStrToObject(sourceAsString, type);
             return t;
         }).collect(Collectors.toList());
         res.setRecords(records);
@@ -79,7 +79,7 @@ public class EsResponseParse {
         SearchHit[] hitArr = hits.getHits();
         List<T> records = Arrays.stream(hitArr).map(item -> {
             String sourceAsString = item.getSourceAsString();
-            T t = JsonParser.asObject(sourceAsString, type, GlobalConfig.RES_PROPERTY_NAMING_STRATEGY);
+            T t = jsonStrToObject(sourceAsString, type);
             return t;
         }).collect(Collectors.toList());
         res.setRecords(records);
@@ -102,11 +102,26 @@ public class EsResponseParse {
         }
         if (hitArr.length == 1) {
             String jsonResStr = hitArr[0].getSourceAsString();
-            T t = JsonParser.asObject(jsonResStr, type, GlobalConfig.RES_PROPERTY_NAMING_STRATEGY);
+            T t = jsonStrToObject(jsonResStr, type);
             t.setDocId(hitArr[0].getId());
             return Optional.of(t);
         }
         return Optional.empty();
     }
 
+    /**
+     * json string to object
+     *
+     * @param jsonString
+     * @param type
+     * @param <T>
+     * @return
+     */
+    private static <T> T jsonStrToObject(String jsonString, Class<T> type) {
+        if (GlobalConfig.RES_PROPERTY_NAMING_STRATEGY.equals(JsonNamingStrategy.SNAKE_CASE)) {
+            return JsonParser.asObjectSnakeCase(jsonString, type);
+        } else {
+            return JsonParser.asObject(jsonString, type);
+        }
+    }
 }

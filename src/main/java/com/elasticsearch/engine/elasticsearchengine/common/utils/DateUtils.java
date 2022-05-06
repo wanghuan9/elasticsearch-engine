@@ -7,6 +7,7 @@ import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.TemporalUnit;
 import java.util.Date;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * User：David Young
@@ -16,6 +17,7 @@ public class DateUtils {
 
   private static final DateTimeFormatter DEFAULT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
   private static final DateTimeFormatter LOG_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+  private static final DateTimeFormatter LOCAL_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
   private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
   private static final DateTimeFormatter MINI_DATE_FORMATER = DateTimeFormatter.ofPattern("yyMMdd");
   private static final DateTimeFormatter YYYY_DATE_FORMATER = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -23,6 +25,13 @@ public class DateUtils {
   private static final DateTimeFormatter SENCOND_DATE_TIME_FORMATER = DateTimeFormatter.ofPattern("yyMMddHHmmss");
   private static final DateTimeFormatter LOCAL_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
 
+  //数字long类型
+  private static final Pattern NUM_PATTERN = Pattern.compile("[0-9]*");
+  // yyyy-MM-dd HH:mm:ss
+  private static final Pattern DEFAULT_PATTERN = Pattern.compile("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}");
+  //  private static final Pattern timeLegalPattern = Pattern.compile("^((\\d{2}(([02468][048])|([13579][26]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])))))|(\\d{2}(([02468][1235679])|([13579][01345789]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))))(\\s((([0-1][0-9])|(2?[0-3]))\\:([0-5]?[0-9])((\\s)|(\\:([0-5]?[0-9])))))?$");
+  //2020-12-27T00:20:54.000Z 
+  private static final Pattern LOCAL_PATTERN = Pattern.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}Z");
 
   /**
    * 本地日期时间转换为时间戳
@@ -84,6 +93,24 @@ public class DateUtils {
    */
   public static LocalDateTime parseToLocalDateTime(String dateTime) {
     return LocalDateTime.parse(dateTime, DEFAULT_FORMATTER);
+  }
+
+  /**
+   * 字符串转换为LocalDateTime 自动识别类型类型
+   *
+   * @param dateTime 日期时间
+   * @return LocalDateTime
+   */
+  public static LocalDateTime parseToLocalDateTimeAuto(String dateTime) {
+    if (NUM_PATTERN.matcher(dateTime).matches()) {
+      return dateTimeToLong(Long.parseLong(dateTime));
+    } else if (DEFAULT_PATTERN.matcher(dateTime).matches()) {
+      return LocalDateTime.parse(dateTime, DEFAULT_FORMATTER);
+    } else if (LOCAL_PATTERN.matcher(dateTime).matches()) {
+      return LocalDateTime.parse(dateTime, LOCAL_FORMATTER).plusHours(8);
+    } else {
+      throw new RuntimeException("LocalDateTime Format error");
+    }
   }
 
   /**

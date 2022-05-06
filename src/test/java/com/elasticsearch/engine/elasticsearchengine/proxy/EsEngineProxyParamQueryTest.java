@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -36,6 +37,17 @@ public class EsEngineProxyParamQueryTest {
         SupplierItemEntity supplierItemEntity = supplierItemParamRepository.queryOne("20201226204656658857", 1);
         log.info("res:{}", JsonParser.asJson(supplierItemEntity));
     }
+
+
+    /**
+     * 查询单个测试
+     */
+    @Test
+    public void queryOneResponse2() {
+        List<SupplierItemEntity> supplierItemEntities = supplierItemParamRepository.queryList(LocalDateTime.now());
+        log.info("res:{}", JsonParser.asJson(supplierItemEntities));
+    }
+
 
     /**
      * List查询测试

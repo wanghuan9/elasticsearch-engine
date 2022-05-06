@@ -189,7 +189,7 @@ public class EsBaseExecuteHandle {
                 esHolder = requestHook.handleRequest(esHolder, obj);
             }
         }
-        //前置处理扩展 加入自定义查询语句
+        //前置处理扩展 继承扩展处理
         List<RequestHook> requestHooks = checkRequestHook(param);
         if (!requestHooks.isEmpty()) {
             for (RequestHook requestHook : requestHooks) {

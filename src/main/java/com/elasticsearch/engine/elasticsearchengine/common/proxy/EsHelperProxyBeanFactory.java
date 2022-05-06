@@ -38,12 +38,6 @@ public class EsHelperProxyBeanFactory<T> implements ApplicationContextAware, Ini
         this.visitQueryBeanParent = visitQueryBeanParent;
     }
 
-    public EsHelperProxyBeanFactory(Class<T> targetInterfaceClazz, boolean visitQueryBeanParent, RestHighLevelClient client) {
-        this.targetInterfaceClazz = targetInterfaceClazz;
-        this.visitQueryBeanParent = visitQueryBeanParent;
-        this.esProxyExecuteHandler = esProxyExecuteHandler;
-    }
-
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;

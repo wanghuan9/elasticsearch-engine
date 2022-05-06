@@ -3,7 +3,6 @@ package com.elasticsearch.engine.elasticsearchengine.common.proxy;
 import com.elasticsearch.engine.elasticsearchengine.common.queryhandler.EsProxyExecuteHandler;
 import com.elasticsearch.engine.elasticsearchengine.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.elasticsearchengine.model.constant.CommonConstant;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,10 +24,9 @@ public class EsQueryProxy<T> implements InvocationHandler {
 
     private boolean enableLogOutEsQueryJson = false;
 
-    public EsQueryProxy(Class<T> targetInterface, boolean visitQueryBeanParent, RestHighLevelClient client) {
+    public EsQueryProxy(Class<T> targetInterface, boolean visitQueryBeanParent) {
         this.targetInterface = targetInterface;
         this.visitQueryBeanParent = visitQueryBeanParent;
-        this.esProxyExecuteHandler = esProxyExecuteHandler;
     }
 
     public EsQueryProxy(Class<T> targetInterface, boolean visitQueryBeanParent, EsProxyExecuteHandler esProxyExecuteHandler, boolean enableLogOutEsQueryJson) {

@@ -1,6 +1,6 @@
 package com.elasticsearch.engine.elasticsearchengine.common.proxy.handler.impl;
 
-import com.elasticsearch.engine.elasticsearchengine.common.proxy.enums.EsQueryProxyExecuteEnum;
+import com.elasticsearch.engine.elasticsearchengine.common.proxy.enums.EsQueryType;
 import com.elasticsearch.engine.elasticsearchengine.common.proxy.handler.EsQueryProxyExecuteHandler;
 import org.springframework.stereotype.Component;
 
@@ -14,8 +14,8 @@ import java.lang.reflect.Method;
 @Component
 public class EsNativeQuery implements EsQueryProxyExecuteHandler {
     @Override
-    public Boolean matching(EsQueryProxyExecuteEnum factory) {
-        return EsQueryProxyExecuteEnum.ES_NATIVE_QUERY.equals(factory);
+    public Boolean matching(EsQueryType factory) {
+        return EsQueryType.ES_NATIVE.equals(factory);
     }
 
     @Override

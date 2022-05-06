@@ -18,8 +18,12 @@ public @interface EsQueryIndex {
 
     /**
      * 查询索引
+     * 支持直接声明索引名机配置中心配置
+     * 例如:
      *
-     * @return
+     * @EsQueryIndex(index = "supplier_item_spare")
+     * @EsQueryIndex(index = "${es.index.name}")
+     * @EsQueryIndex(index = "${es.index.name:supplier_item_spare}")
      */
     String index();
 

@@ -3,6 +3,7 @@ package com.elasticsearch.engine.elasticsearchengine.common.queryhandler.ann.par
 import com.elasticsearch.engine.elasticsearchengine.common.GlobalConfig;
 import com.elasticsearch.engine.elasticsearchengine.common.parse.ann.model.EsResponseParse;
 import com.elasticsearch.engine.elasticsearchengine.common.parse.ann.param.EsParamQueryEngine;
+import com.elasticsearch.engine.elasticsearchengine.common.queryhandler.ann.model.AbstractEsBaseExecuteHandle;
 import com.elasticsearch.engine.elasticsearchengine.common.utils.JsonParser;
 import com.elasticsearch.engine.elasticsearchengine.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.elasticsearchengine.holder.AbstractEsRequestHolder;
@@ -31,10 +32,22 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Component
-public class EsParamExecuteHandler {
+public class EsParamExecuteHandler extends AbstractEsBaseExecuteHandle {
 
     @Resource
     private RestHighLevelClient restClient;
+
+    @Override
+    public void executePostProcessorBefore(Object param, AbstractEsRequestHolder esHolder) {
+        //前置处理es索引名动态配置
+        resetIndexName(esHolder);
+    }
+
+    @Override
+    public <T> void executePostProcessorAfter(Object param, SearchResponse resp, BaseResp<T> result) {
+
+    }
+
 
     /**
      * @param method        查询的方法
@@ -93,6 +106,8 @@ public class EsParamExecuteHandler {
             String methodName = ThreadLocalUtil.get(CommonConstant.INTERFACE_METHOD_NAME);
             //设置超时时间
             source.timeout(new TimeValue(GlobalConfig.QUERY_TIME_OUT, TimeUnit.SECONDS));
+            //前置扩展
+            executePostProcessorBefore(null, esHolder);
             log.info("{} execute-es-query-json is\n{}", methodName, esHolder.getSource().toString());
             try {
                 resp = restClient.search(esHolder.getRequest(), RequestOptions.DEFAULT);
@@ -101,6 +116,7 @@ public class EsParamExecuteHandler {
             }
             //后置处理扩展 加入自定义结果解析
             BaseResp<T> result = EsResponseParse.returnDefaultResult(resp, responseClazz);
+            executePostProcessorAfter(null, resp, result);
             log.info("{} execute-es-result-json is\n{}", methodName, JsonParser.asJson(result));
             ThreadLocalUtil.remove();
             return result;

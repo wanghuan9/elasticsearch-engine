@@ -17,13 +17,16 @@ import java.util.List;
 public interface SupplierItemSqlRepository extends BaseESRepository<SupplierItemEntity, String> {
 
 
-    @EsQuery("select * from supplier_item_spare where item_no = #{itemNo} and status = #{status}")
+    @EsQuery("SELECT * FROM supplier_item_spare WHERE item_no = #{itemNo} AND status = #{status}")
     SupplierItemEntity queryOne(String itemNo, Integer status);
 
-    @EsQuery("select * from supplier_item_spare where item_no in (#{status})")
+    @EsQuery("SELECT * FROM supplier_item_spare WHERE item_no IN (#{status})")
     List<SupplierItemEntity> queryList(List<String> status);
 
-    @EsQuery("select * from supplier_item_spare where createDt > #{createDt}")
+    @EsQuery("SELECT * FROM supplier_item_spare WHERE createDt > #{createDt}")
     SupplierItemEntity queryByCreateDt(LocalDateTime createDt);
+
+    @EsQuery("SELECT COUNT(1) FROM supplier_item_spare")
+    long count(LocalDateTime createDt);
 
 }

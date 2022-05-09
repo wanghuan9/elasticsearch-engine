@@ -55,33 +55,34 @@ public class BeanTools {
                 continue;
             }
             field.setAccessible(true);
-            if (nameTypeValueMap.getDataType() == DataType.date_type) {
-                field.set(t, DateUtils.parseToLocalDateTimeAuto(nameTypeValueMap.getValue()));
-            } else if (nameTypeValueMap.getDataType() == DataType.double_type) {
-                if (field.getType().isAssignableFrom(BigDecimal.class)) {
-                    field.set(t, BigDecimal.valueOf(Double.parseDouble(nameTypeValueMap.getValue())));
-                } else {
-                    field.set(t, Double.valueOf(nameTypeValueMap.getValue()));
-                }
-            } else if (nameTypeValueMap.getDataType() == DataType.byte_type) {
-                field.set(t, Byte.valueOf(nameTypeValueMap.getValue()));
-            } else if (nameTypeValueMap.getDataType() == DataType.boolean_type) {
-                field.set(t, Boolean.valueOf(nameTypeValueMap.getValue()));
-            } else if (nameTypeValueMap.getDataType() == DataType.integer_type) {
-                field.set(t, Integer.valueOf(nameTypeValueMap.getValue()));
-            } else if (nameTypeValueMap.getDataType() == DataType.float_type) {
-                field.set(t, Float.valueOf(nameTypeValueMap.getValue()));
-            } else if (nameTypeValueMap.getDataType() == DataType.long_type) {
-                field.set(t, Long.valueOf(nameTypeValueMap.getValue()));
-            } else if (nameTypeValueMap.getDataType() == DataType.keyword_type) {
-                field.set(t, String.valueOf(nameTypeValueMap.getValue()));
-            } else if (nameTypeValueMap.getDataType() == DataType.text_type) {
-                field.set(t, String.valueOf(nameTypeValueMap.getValue()));
-            } else if (nameTypeValueMap.getDataType() == DataType.short_type) {
-                field.set(t, Short.valueOf(nameTypeValueMap.getValue()));
-            } else {
-                throw new Exception("not support field type covert");
-            }
+            field.set(t, fieldTypeCovert(nameTypeValueMap.getDataType(), nameTypeValueMap.getValue(), field.getType()));
+//            if (nameTypeValueMap.getDataType() == DataType.date_type) {
+//                field.set(t, DateUtils.parseToLocalDateTimeAuto(nameTypeValueMap.getValue()));
+//            } else if (nameTypeValueMap.getDataType() == DataType.double_type) {
+//                if (field.getType().isAssignableFrom(BigDecimal.class)) {
+//                    field.set(t, BigDecimal.valueOf(Double.parseDouble(nameTypeValueMap.getValue())));
+//                } else {
+//                    field.set(t, Double.valueOf(nameTypeValueMap.getValue()));
+//                }
+//            } else if (nameTypeValueMap.getDataType() == DataType.byte_type) {
+//                field.set(t, Byte.valueOf(nameTypeValueMap.getValue()));
+//            } else if (nameTypeValueMap.getDataType() == DataType.boolean_type) {
+//                field.set(t, Boolean.valueOf(nameTypeValueMap.getValue()));
+//            } else if (nameTypeValueMap.getDataType() == DataType.integer_type) {
+//                field.set(t, Integer.valueOf(nameTypeValueMap.getValue()));
+//            } else if (nameTypeValueMap.getDataType() == DataType.float_type) {
+//                field.set(t, Float.valueOf(nameTypeValueMap.getValue()));
+//            } else if (nameTypeValueMap.getDataType() == DataType.long_type) {
+//                field.set(t, Long.valueOf(nameTypeValueMap.getValue()));
+//            } else if (nameTypeValueMap.getDataType() == DataType.keyword_type) {
+//                field.set(t, String.valueOf(nameTypeValueMap.getValue()));
+//            } else if (nameTypeValueMap.getDataType() == DataType.text_type) {
+//                field.set(t, String.valueOf(nameTypeValueMap.getValue()));
+//            } else if (nameTypeValueMap.getDataType() == DataType.short_type) {
+//                field.set(t, Short.valueOf(nameTypeValueMap.getValue()));
+//            } else {
+//                throw new Exception("not support field type covert");
+//            }
         }
         return t;
     }
@@ -124,6 +125,46 @@ public class BeanTools {
         });
         String[] result = new String[noValuePropertySet.size()];
         return noValuePropertySet.toArray(result);
+    }
+
+    /**
+     * es参数类型转化
+     *
+     * @param dataType
+     * @param value
+     * @param beanClass
+     * @param <T>
+     * @return
+     * @throws Exception
+     */
+    public static <T> Object fieldTypeCovert(DataType dataType, String value, Class<T> beanClass) throws Exception {
+        if (dataType == DataType.date_type) {
+            return DateUtils.parseToLocalDateTimeAuto(value);
+        } else if (dataType == DataType.double_type) {
+            if (beanClass.isAssignableFrom(BigDecimal.class)) {
+                return BigDecimal.valueOf(Double.parseDouble(value));
+            } else {
+                return Double.valueOf(value);
+            }
+        } else if (dataType == DataType.byte_type) {
+            return Byte.valueOf(value);
+        } else if (dataType == DataType.boolean_type) {
+            return Boolean.valueOf(value);
+        } else if (dataType == DataType.integer_type) {
+            return Integer.valueOf(value);
+        } else if (dataType == DataType.float_type) {
+            return Float.valueOf(value);
+        } else if (dataType == DataType.long_type) {
+            return Long.valueOf(value);
+        } else if (dataType == DataType.keyword_type) {
+            return String.valueOf(value);
+        } else if (dataType == DataType.text_type) {
+            return String.valueOf(value);
+        } else if (dataType == DataType.short_type) {
+            return Short.valueOf(value);
+        } else {
+            throw new Exception("not support field type covert");
+        }
     }
 
     public static class NameTypeValueMap {

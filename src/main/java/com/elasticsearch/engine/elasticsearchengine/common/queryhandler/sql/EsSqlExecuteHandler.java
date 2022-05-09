@@ -1,10 +1,7 @@
 package com.elasticsearch.engine.elasticsearchengine.common.queryhandler.sql;
 
 import com.elasticsearch.engine.elasticsearchengine.common.GlobalConfig;
-import com.elasticsearch.engine.elasticsearchengine.common.utils.BeanTools;
-import com.elasticsearch.engine.elasticsearchengine.common.utils.HttpClientTool;
-import com.elasticsearch.engine.elasticsearchengine.common.utils.JsonParser;
-import com.elasticsearch.engine.elasticsearchengine.common.utils.NameExchangeUtil;
+import com.elasticsearch.engine.elasticsearchengine.common.utils.*;
 import com.elasticsearch.engine.elasticsearchengine.config.ElasticSearchProperties;
 import com.elasticsearch.engine.elasticsearchengine.model.constant.CommonConstant;
 import com.elasticsearch.engine.elasticsearchengine.model.domain.SqlResponse;
@@ -153,6 +150,10 @@ public class EsSqlExecuteHandler {
     private <T> T generateObjBySQLReps(List<SqlResponse.ColumnsDTO> columns, List<String> rows, Class<T> clazz) throws Exception {
         if (rows.size() != columns.size()) {
             throw new Exception("sql column not match");
+        }
+        //count,sum 结果转换
+        if (rows.size() == 1 && ReflectionUtils.isBaseType(clazz)) {
+            return (T) BeanTools.fieldTypeCovert(DataType.getDataTypeByStr(columns.get(0).getType()), rows.get(0), clazz);
         }
         Map<String, BeanTools.NameTypeValueMap> valueMap = new HashMap();
         for (int i = 0; i < rows.size(); i++) {

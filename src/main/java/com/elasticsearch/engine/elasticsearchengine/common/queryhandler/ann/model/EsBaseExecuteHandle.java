@@ -3,11 +3,15 @@ package com.elasticsearch.engine.elasticsearchengine.common.queryhandler.ann.mod
 import com.elasticsearch.engine.elasticsearchengine.common.GlobalConfig;
 import com.elasticsearch.engine.elasticsearchengine.common.parse.ann.model.EsQueryEngine;
 import com.elasticsearch.engine.elasticsearchengine.common.parse.ann.model.EsResponseParse;
+import com.elasticsearch.engine.elasticsearchengine.common.parse.ann.model.QueryAnnParser;
 import com.elasticsearch.engine.elasticsearchengine.common.utils.JsonParser;
 import com.elasticsearch.engine.elasticsearchengine.holder.AbstractEsRequestHolder;
 import com.elasticsearch.engine.elasticsearchengine.hook.RequestHook;
 import com.elasticsearch.engine.elasticsearchengine.hook.ResponseHook;
+import com.elasticsearch.engine.elasticsearchengine.mapping.annotation.Aggs;
+import com.elasticsearch.engine.elasticsearchengine.model.constant.EsConstant;
 import com.elasticsearch.engine.elasticsearchengine.model.domain.BaseResp;
+import com.elasticsearch.engine.elasticsearchengine.model.domain.DefaultAggResp;
 import com.elasticsearch.engine.elasticsearchengine.model.exception.EsHelperQueryException;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchRequest;
@@ -16,12 +20,16 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.core.TimeValue;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -125,30 +133,6 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
         return EsResponseParse.returnDefaultResult(searchResponse, responseClazz);
     }
 
-    /**
-     * 代理查询并构建结果(自定义扩展查询-兼容invoke)
-     *
-     * @param param         需要解析的查询实体
-     * @param responseClazz 查询结果实体类型
-     * @param <T>           查询结果实体类型对应的泛型
-     * @return
-     */
-    public <T> BaseResp<T> execute(Object param, Class responseClazz) {
-        AbstractEsRequestHolder esHolder = EsQueryEngine.execute(param, Boolean.FALSE);
-        return baseExecute(param, responseClazz, esHolder);
-    }
-
-
-    /**
-     * 获取构建的查询条件
-     *
-     * @param param 需要解析的查询实体
-     * @return
-     */
-    public SearchSourceBuilder getSearchSourceBuilder(Object param) {
-        AbstractEsRequestHolder esHolder = EsQueryEngine.execute(param, Boolean.FALSE);
-        return esHolder.getSource();
-    }
 
     /**
      * 代理查询 不构建结果
@@ -198,5 +182,53 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
         BaseResp<T> result = EsResponseParse.returnDefaultResult(resp, responseClazz);
         executePostProcessorAfter(param, resp, result);
         return result;
+    }
+
+
+    /**
+     * 校验是否存在分组查询注解
+     * 构建默认分组查询结果
+     *
+     * @param param 需要解析的查询实体
+     * @return
+     */
+    public BaseResp<DefaultAggResp> executeAggs(Object param) {
+        if (!checkExistsAggAnnotation(param)) {
+            throw new EsHelperQueryException("param field Missing @Aggs annotation");
+        }
+        List<DefaultAggResp> records = new ArrayList<>();
+        SearchResponse searchResponse = execute(param);
+        if (Objects.isNull(searchResponse.getAggregations())) {
+            throw new EsHelperQueryException("aggs param value is null, result aggregations is empty");
+        }
+        Terms agg = searchResponse.getAggregations().get(EsConstant._AGG);
+        for (Terms.Bucket bucketOneAgg : agg.getBuckets()) {
+            DefaultAggResp defaultAgg = new DefaultAggResp();
+            defaultAgg.setKey(bucketOneAgg.getKeyAsString());
+            defaultAgg.setCount(bucketOneAgg.getDocCount());
+            records.add(defaultAgg);
+        }
+        log.info("execute-es-response-json is\n{}", JsonParser.asJson(searchResponse));
+        BaseResp<DefaultAggResp> resp = new BaseResp<>();
+        resp.setRecords(records);
+        resp.setTotalHit((long) records.size());
+        log.info("execute-es-result-json is\n{}", JsonParser.asJson(resp));
+        return resp;
+    }
+
+    /**
+     * 检查是否存在 @aggs注解
+     *
+     * @param param
+     * @return
+     */
+    protected Boolean checkExistsAggAnnotation(Object param) {
+        List<Field> fields = QueryAnnParser.getFields(param.getClass(), Boolean.TRUE);
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(Aggs.class)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

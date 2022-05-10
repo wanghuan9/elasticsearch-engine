@@ -1,0 +1,3 @@
+小版本:
+1)value
+2)@EsQueryIndex  加在 entity或者mapper

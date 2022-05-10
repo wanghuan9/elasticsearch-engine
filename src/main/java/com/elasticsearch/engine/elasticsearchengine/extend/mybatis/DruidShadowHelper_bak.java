@@ -15,15 +15,15 @@ import java.util.Map;
 /**
  * 基于Druid的SQL表名改写工具
  */
-public class DruidShadowHelper {
-    private static Logger logger = LoggerFactory.getLogger(DruidShadowHelper.class);
+public class DruidShadowHelper_bak {
+    private static Logger logger = LoggerFactory.getLogger(DruidShadowHelper_bak.class);
 
     private static boolean prettySql = false;
 
-    public DruidShadowHelper() {
+    public DruidShadowHelper_bak() {
     }
 
-    public DruidShadowHelper(boolean prettySql) {
+    public DruidShadowHelper_bak(boolean prettySql) {
         this.prettySql = prettySql;
     }
 

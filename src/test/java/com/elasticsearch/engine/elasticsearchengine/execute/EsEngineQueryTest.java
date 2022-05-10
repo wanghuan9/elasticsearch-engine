@@ -1,7 +1,7 @@
 package com.elasticsearch.engine.elasticsearchengine.execute;
 
 import com.elasticsearch.engine.elasticsearchengine.ElasticsearchEngineApplicationTests;
-import com.elasticsearch.engine.elasticsearchengine.common.queryhandler.ann.model.EsBaseExecuteHandle;
+import com.elasticsearch.engine.elasticsearchengine.common.queryhandler.ann.model.EsExecuteHandler;
 import com.elasticsearch.engine.elasticsearchengine.execute.querymodel.*;
 import com.elasticsearch.engine.elasticsearchengine.mapping.model.extend.PageParam;
 import com.elasticsearch.engine.elasticsearchengine.mapping.model.extend.RangeParam;
@@ -29,7 +29,7 @@ import java.util.List;
 public class EsEngineQueryTest {
 
     @Resource
-    private EsBaseExecuteHandle esBaseExecuteHandle;
+    private EsExecuteHandler esExecuteHandler;
 
     /**
      * 测试 Trem Trems Range
@@ -43,7 +43,7 @@ public class EsEngineQueryTest {
         supplierItem.setProductName("k41");
         supplierItem.setWarehousePrice(new BigDecimal("22.01"));
         supplierItem.setCreateDt(RangeParam.builder().left(LocalDateTime.now()).right(LocalDateTime.now().plusDays(1L)).build());
-        esBaseExecuteHandle.execute(supplierItem);
+        esExecuteHandler.execute(supplierItem);
     }
 
 
@@ -55,7 +55,7 @@ public class EsEngineQueryTest {
         SupplierItem supplierItem = new SupplierItem();
         supplierItem.setCreateDtStart(LocalDateTime.now());
         supplierItem.setEndCreateDt(LocalDateTime.now());
-        esBaseExecuteHandle.execute(supplierItem);
+        esExecuteHandler.execute(supplierItem);
     }
 
     /**
@@ -65,7 +65,7 @@ public class EsEngineQueryTest {
     public void wildCardTest() {
         SupplierItem supplierItem = new SupplierItem();
         supplierItem.setProductName("k41");
-        esBaseExecuteHandle.execute(supplierItem);
+        esExecuteHandler.execute(supplierItem);
     }
 
 
@@ -76,7 +76,7 @@ public class EsEngineQueryTest {
     public void prefixTest() {
         SupplierItem supplierItem = new SupplierItem();
         supplierItem.setSkuName("小米");
-        esBaseExecuteHandle.execute(supplierItem);
+        esExecuteHandler.execute(supplierItem);
     }
 
     /**
@@ -86,7 +86,7 @@ public class EsEngineQueryTest {
     public void pageTest() {
         SupplierItem supplierItem = new SupplierItem();
         supplierItem.setPageParam(PageParam.builderPage().currentPage(2).pageSize(3).build());
-        esBaseExecuteHandle.execute(supplierItem);
+        esExecuteHandler.execute(supplierItem);
     }
 
     /**
@@ -99,7 +99,7 @@ public class EsEngineQueryTest {
                 .order(PageParam.builderOrder().orderFiled("status").orderType(SortOrder.ASC))
                 .order(PageParam.builderOrder().orderFiled("create_dt").orderType(SortOrder.ASC))
                 .build());
-        esBaseExecuteHandle.execute(supplierItem);
+        esExecuteHandler.execute(supplierItem);
     }
 
     /**
@@ -110,7 +110,7 @@ public class EsEngineQueryTest {
         SupplierItemSort supplierItem = new SupplierItemSort();
         supplierItem.setProductName("k41");
         supplierItem.setStatus(SignParam.builder());
-        esBaseExecuteHandle.execute(supplierItem);
+        esExecuteHandler.execute(supplierItem);
     }
 
     /**
@@ -121,7 +121,7 @@ public class EsEngineQueryTest {
         SupplierItemSortOrder supplierItem = new SupplierItemSortOrder();
         supplierItem.setProductName("k41");
         supplierItem.setStatus(SignParam.builder());
-        esBaseExecuteHandle.execute(supplierItem);
+        esExecuteHandler.execute(supplierItem);
     }
 
     /**
@@ -131,7 +131,7 @@ public class EsEngineQueryTest {
     public void aggTest() {
         SupplierItemAggs supplierItem = new SupplierItemAggs();
         supplierItem.setStatus(Sign.DEFAULT_INTER);
-        esBaseExecuteHandle.execute(supplierItem);
+        esExecuteHandler.execute(supplierItem);
     }
 
     /**
@@ -142,7 +142,7 @@ public class EsEngineQueryTest {
         SupplierItem supplierItem = new SupplierItem();
         List<String> itemNoList = Lists.newArrayList("6547831", "6547832");
         supplierItem.setItemNoList(itemNoList);
-        esBaseExecuteHandle.execute(supplierItem);
+        esExecuteHandler.execute(supplierItem);
     }
 
     /**
@@ -154,7 +154,7 @@ public class EsEngineQueryTest {
         List<String> itemNoList = Lists.newArrayList("6547831", "6547832");
         supplierItem.setItemNo(itemNoList);
         supplierItem.setProductName("k41");
-        esBaseExecuteHandle.execute(supplierItem);
+        esExecuteHandler.execute(supplierItem);
     }
 
     /**
@@ -166,7 +166,7 @@ public class EsEngineQueryTest {
         List<String> itemNoList = Lists.newArrayList("6547831", "6547832");
         supplierItem.setStatus(1);
         supplierItem.setItemNoList(itemNoList);
-        esBaseExecuteHandle.execute(supplierItem, Object.class);
+        esExecuteHandler.execute(supplierItem, Object.class);
     }
 
     /**
@@ -181,7 +181,7 @@ public class EsEngineQueryTest {
         supplierItem.setItemNoList(itemNoList);
         supplierItemNestedExtend.setSupplierItemReqExtend(supplierItem);
         supplierItemNestedExtend.setProductName("123");
-        esBaseExecuteHandle.execute(supplierItemNestedExtend, Object.class);
+        esExecuteHandler.execute(supplierItemNestedExtend, Object.class);
     }
 
     /**
@@ -193,7 +193,7 @@ public class EsEngineQueryTest {
         supplierItem.setItemNo("1");
         supplierItem.setStatus(1);
         supplierItem.setProductName("k41");
-        esBaseExecuteHandle.execute(supplierItem);
+        esExecuteHandler.execute(supplierItem);
     }
 
     /**
@@ -204,7 +204,7 @@ public class EsEngineQueryTest {
         SupplierItemExist supplierItemExist = new SupplierItemExist();
         supplierItemExist.setStatus(Sign.DEFAULT_STRING);
         supplierItemExist.setProductName(Sign.DEFAULT_STRING);
-        esBaseExecuteHandle.execute(supplierItemExist);
+        esExecuteHandler.execute(supplierItemExist);
     }
 
     /**
@@ -217,6 +217,6 @@ public class EsEngineQueryTest {
         rangeGroup.setEndCreateDt(LocalDateTime.now().plusDays(1L));
         rangeGroup.setStartStatus(1);
         rangeGroup.setEndStatus(3);
-        esBaseExecuteHandle.execute(rangeGroup);
+        esExecuteHandler.execute(rangeGroup);
     }
 }

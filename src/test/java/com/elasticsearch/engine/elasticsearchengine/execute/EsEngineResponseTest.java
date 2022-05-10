@@ -1,7 +1,7 @@
 package com.elasticsearch.engine.elasticsearchengine.execute;
 
 import com.elasticsearch.engine.elasticsearchengine.ElasticsearchEngineConfiguration;
-import com.elasticsearch.engine.elasticsearchengine.common.queryhandler.ann.model.EsBaseExecuteHandle;
+import com.elasticsearch.engine.elasticsearchengine.common.queryhandler.ann.model.EsExecuteHandler;
 import com.elasticsearch.engine.elasticsearchengine.common.utils.JsonParser;
 import com.elasticsearch.engine.elasticsearchengine.execute.querymodel.SupplierItem;
 import com.elasticsearch.engine.elasticsearchengine.execute.querymodel.SupplierItemResExtend;
@@ -29,7 +29,7 @@ import java.util.List;
 public class EsEngineResponseTest {
 
     @Resource
-    private EsBaseExecuteHandle esBaseExecuteHandle;
+    private EsExecuteHandler esExecuteHandler;
 
     /**
      * 测试默认参数 Trem Trems Range
@@ -38,7 +38,7 @@ public class EsEngineResponseTest {
     public void findByProductNameAndStatusTest() {
         SupplierItem supplierItem = new SupplierItem();
         supplierItem.setStatus(RangeParam.builder().left(0).right(3).build());
-        BaseResp<SupplierItemEntity> baseHitBaseResp = esBaseExecuteHandle.execute(supplierItem, SupplierItemEntity.class);
+        BaseResp<SupplierItemEntity> baseHitBaseResp = esExecuteHandler.execute(supplierItem, SupplierItemEntity.class);
         log.info(JsonParser.asJson(baseHitBaseResp));
     }
 
@@ -50,7 +50,7 @@ public class EsEngineResponseTest {
         SupplierItem supplierItem = new SupplierItem();
         List<String> itemNoList = Lists.newArrayList("20201205102325871450", "20201216103025852694");
         supplierItem.setItemNoList(itemNoList);
-        BaseResp<SupplierItemEntity> baseHitBaseResp = esBaseExecuteHandle.execute(supplierItem, SupplierItemEntity.class);
+        BaseResp<SupplierItemEntity> baseHitBaseResp = esExecuteHandler.execute(supplierItem, SupplierItemEntity.class);
         log.info(JsonParser.asJson(baseHitBaseResp));
     }
 
@@ -61,7 +61,7 @@ public class EsEngineResponseTest {
     public void extendTest() {
         SupplierItemResExtend supplierItem = new SupplierItemResExtend();
         supplierItem.setStatus(Sign.DEFAULT_INTER);
-        BaseResp<List<AggEntityExtend>> resp = esBaseExecuteHandle.execute(supplierItem, List.class);
+        BaseResp<List<AggEntityExtend>> resp = esExecuteHandler.execute(supplierItem, List.class);
         List<AggEntityExtend> result = resp.getResult();
         log.info(JsonParser.asJson(result));
     }

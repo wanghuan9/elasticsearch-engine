@@ -1,3 +1,6 @@
 小版本:
 1)value
 2)@EsQueryIndex  加在 entity或者mapper
+
+
+sql 相同参数出现2次替换失败的问题

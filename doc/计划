@@ -2,5 +2,9 @@
 1)@size  @include
 2)@EsQueryIndex  加在 entity或者mapper
 
+3)@EsCondition 思考
+4)hook 外置话思考
+  写在 其他类, 写在一个类里面的方法(一个类中可以声明多个方法)
+5)查询语句日志 可配置
 
 sql 相同参数出现2次替换失败的问题

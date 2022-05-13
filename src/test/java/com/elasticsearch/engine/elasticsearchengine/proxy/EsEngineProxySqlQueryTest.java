@@ -16,8 +16,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author wanghuan
@@ -48,31 +46,32 @@ public class EsEngineProxySqlQueryTest {
         //@Query(value = "insert into studenttb(student_name,student_age) value(?1,?2)", nativeQuery = true)
         List<SupplierItemEntity> supplierItemEntities = esSqlExecuteHandler.queryBySQL(sql, SupplierItemEntity.class);
         System.out.println(JsonParser.asJson(supplierItemEntities));
-
-        ReentrantLock reentrantLock = new ReentrantLock();
-        Condition condition = reentrantLock.newCondition();
-        condition.signal();
     }
 
     @Test
     public void trs() {
         String sql = "select * from supplier_item_spare where item_no='20201226204656658857'";
         String sql2 = "select status from supplier_item_spare group by status";
-        String sql3 = "select distinct status from supplier_item_spare";
-        String sql4 = "select sum(status) from supplier_item_spare";
+        String sql3= "select sum(status) from supplier_item_spare";
+
+        /**
+         * 不支持的sql
+         */
+        String sqlError1 = "select distinct status from supplier_item_spare";
+        String sqlError2 = "SELECT * FROM supplier_item_spare i inner join supplier_item_spare d WHERE iitem_no = '20201226204656658857' and status=1";
 
         String s = esSqlExecuteHandler.querySqlTranslate(sql, SqlFormat.JSON);
         System.out.println(s);
-
         String s2 = esSqlExecuteHandler.querySqlTranslate(sql2, SqlFormat.JSON);
         System.out.println(s2);
-
         String s3 = esSqlExecuteHandler.querySqlTranslate(sql3, SqlFormat.JSON);
         System.out.println(s3);
 
 
-        String s4 = esSqlExecuteHandler.querySqlTranslate(sql4, SqlFormat.JSON);
+        String s4 = esSqlExecuteHandler.querySqlTranslate(sqlError1, SqlFormat.JSON);
         System.out.println(s4);
+        String s5 = esSqlExecuteHandler.querySqlTranslate(sqlError2, SqlFormat.JSON);
+        System.out.println(s5);
 
     }
 

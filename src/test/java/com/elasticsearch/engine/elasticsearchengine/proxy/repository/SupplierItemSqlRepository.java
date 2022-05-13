@@ -26,7 +26,7 @@ public interface SupplierItemSqlRepository extends BaseESRepository<SupplierItem
     @EsQuery("SELECT * FROM supplier_item_spare WHERE createDt > #{createDt}")
     SupplierItemEntity queryByCreateDt(LocalDateTime createDt);
 
-    @EsQuery("SELECT COUNT(1) FROM supplier_item_spare")
+    @EsQuery("SELECT COUNT(1) FROM  where supplier_item_spare")
     long count(LocalDateTime createDt);
 
 }

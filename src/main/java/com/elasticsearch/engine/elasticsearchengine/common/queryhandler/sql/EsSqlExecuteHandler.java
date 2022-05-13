@@ -8,6 +8,7 @@ import com.elasticsearch.engine.elasticsearchengine.model.domain.SqlResponse;
 import com.elasticsearch.engine.elasticsearchengine.model.emenu.DataType;
 import com.elasticsearch.engine.elasticsearchengine.model.emenu.EsVersionConstant;
 import com.elasticsearch.engine.elasticsearchengine.model.emenu.SqlFormat;
+import com.elasticsearch.engine.elasticsearchengine.model.exception.EsHelperQueryException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -123,8 +124,12 @@ public class EsSqlExecuteHandler {
     public <T> List<T> queryBySQL(String sql, Class<T> clazz) {
         String s = queryBySQL(sql, SqlFormat.JSON);
         SqlResponse sqlResponse = JsonParser.asObject(s, SqlResponse.class);
+        //正常响应时 status 为null
+        if (Objects.nonNull(sqlResponse.getStatus())) {
+            throw new EsHelperQueryException("SQL查询异常:  " + JsonParser.asJson(sqlResponse));
+        }
         List<T> result = new ArrayList<>();
-        if (sqlResponse != null && !CollectionUtils.isEmpty(sqlResponse.getRows())) {
+        if (!CollectionUtils.isEmpty(sqlResponse.getRows())) {
             for (List<String> row : sqlResponse.getRows()) {
                 try {
                     result.add(generateObjBySQLReps(sqlResponse.getColumns(), row, clazz));

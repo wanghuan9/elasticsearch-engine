@@ -10,6 +10,7 @@ import com.elasticsearch.engine.elasticsearchengine.model.annotion.EsQuery;
 import com.elasticsearch.engine.elasticsearchengine.model.constant.CommonConstant;
 import com.elasticsearch.engine.elasticsearchengine.model.domain.BaseESRepository;
 import com.elasticsearch.engine.elasticsearchengine.model.exception.EsHelperExecuteException;
+import com.elasticsearch.engine.elasticsearchengine.model.exception.EsHelperQueryException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -118,6 +119,10 @@ public class EsAnnotationSqlQueryHandler implements EsSqlQueryHandler {
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(content);
             content = matcher.replaceAll(e.getValue().toString());
+        }
+        //参数替换完之后如果还包含"#{" 说明有参数没有被替换
+        if(content.contains("#{")){
+            throw new EsHelperQueryException("方法中的参数和sql中的参数 不匹配");
         }
         return content;
     }

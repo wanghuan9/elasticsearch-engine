@@ -16,7 +16,7 @@
 
         SELECT  item_no, sku_name, status FROM items t INNER JOIN item_extend d 
         on t.id = d.id
-        WHERE t.item_no = #{itemNo} AND  d.item_no=#{itemNo}
+        WHERE t.item_no = #{itemNo} AND  d.item_no=#{itemNo} AND d.status = #{status}
         Group by d.id order by t.id
 
 

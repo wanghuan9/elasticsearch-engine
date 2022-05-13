@@ -13,5 +13,5 @@ import org.apache.ibatis.annotations.Mapper;
 public interface ItemsMapper {
 
     @EsQuery
-    ItemsEntity getByItemNo(String itemNo);
+    ItemsEntity getByItemNo(String itemNo,String status);
 }

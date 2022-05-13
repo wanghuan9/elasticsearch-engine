@@ -18,7 +18,7 @@ public interface SupplierItemSqlRepository extends BaseESRepository<SupplierItem
 
 
     @EsQuery("SELECT * FROM supplier_item_spare WHERE item_no = #{itemNo} AND status = #{status}")
-    SupplierItemEntity queryOne(String itemNo, Integer status);
+    SupplierItemEntity queryOne(String itemNo, Integer status2);
 
     @EsQuery("SELECT * FROM supplier_item_spare WHERE item_no IN (#{status})")
     List<SupplierItemEntity> queryList(List<String> status);
@@ -26,7 +26,7 @@ public interface SupplierItemSqlRepository extends BaseESRepository<SupplierItem
     @EsQuery("SELECT * FROM supplier_item_spare WHERE createDt > #{createDt}")
     SupplierItemEntity queryByCreateDt(LocalDateTime createDt);
 
-    @EsQuery("SELECT COUNT(1) FROM  where supplier_item_spare")
+    @EsQuery("SELECT COUNT(1) FROM supplier_item_spare")
     long count(LocalDateTime createDt);
 
 }

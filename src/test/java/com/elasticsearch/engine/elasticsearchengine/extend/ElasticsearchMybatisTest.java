@@ -27,7 +27,7 @@ public class ElasticsearchMybatisTest {
 
     @Test
     public void test() {
-        ItemsEntity byItemNo = itemsMapper.getByItemNo("20201226204656658857");
+        ItemsEntity byItemNo = itemsMapper.getByItemNo("20201226204656658857","1");
         System.out.println(JsonParser.asJson(byItemNo));
 
     }

@@ -58,9 +58,9 @@ public class EsAnnotationSqlQueryHandler implements EsSqlQueryHandler {
 
         List<?> list;
         if (List.class.isAssignableFrom(returnType) && Objects.nonNull(returnGenericType)) {
-            list = esSqlExecuteHandler.queryBySQL(sql, returnGenericType);
+            list = esSqlExecuteHandler.queryBySql(sql, returnGenericType);
         } else {
-            list = esSqlExecuteHandler.queryBySQL(sql, returnType);
+            list = esSqlExecuteHandler.queryBySql(sql, returnType);
         }
 
         if (List.class.isAssignableFrom(returnType)) {

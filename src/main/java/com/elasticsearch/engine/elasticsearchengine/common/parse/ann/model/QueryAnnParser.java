@@ -121,7 +121,7 @@ public class QueryAnnParser {
      */
     public List<EsQueryFieldBean> readNested(Object view, boolean visitParent, List<Object> requestHooks) {
         List<EsQueryFieldBean> queryDesList = Lists.newArrayList();
-        Map<Field, Object> fieldMap = new HashMap<>();
+        Map<Field, Object> fieldMap = new HashMap<>(16);
         Map<Field, Object> map = getNestedFields(fieldMap, view, visitParent, requestHooks);
         map.forEach((k, v) -> mapField(queryDesList, v, k));
         return queryDesList;
@@ -137,7 +137,7 @@ public class QueryAnnParser {
      */
     public Map<Field, Object> getNestedFields(Map<Field, Object> fieldMap, Object view, boolean visitParent, List<Object> requestHooks) {
         Class<?> clazz = view.getClass();
-        List<Field> fieldList = this.getFields(clazz, visitParent);
+        List<Field> fieldList = getFields(clazz, visitParent);
         for (Field field : fieldList) {
             //忽略的字段直接跳过
             if (field.isAnnotationPresent(Ignore.class)) {

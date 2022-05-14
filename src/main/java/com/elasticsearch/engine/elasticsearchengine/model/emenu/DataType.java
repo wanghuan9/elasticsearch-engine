@@ -1,5 +1,7 @@
 package com.elasticsearch.engine.elasticsearchengine.model.emenu;
 
+import java.util.Objects;
+
 /**
  * program: esdemo
  * description: es字段数据结构
@@ -7,29 +9,32 @@ package com.elasticsearch.engine.elasticsearchengine.model.emenu;
  * create: 2019-01-25 16:58
  **/
 public enum DataType {
+    /**
+     * 
+     */
     keyword_type, text_type, byte_type, short_type, integer_type, long_type, float_type, double_type, boolean_type, date_type, nested_type, geo_point_type;
 
 
     public static DataType getDataTypeByStr(String str) {
-        if (str.equals("keyword")) {
+        if (Objects.equals(str,"keyword")) {
             return keyword_type;
-        } else if (str.equals("text")) {
+        } else if (Objects.equals(str,"text")) {
             return text_type;
-        } else if (str.equals("byte")) {
+        } else if (Objects.equals(str,"byte")) {
             return byte_type;
-        } else if (str.equals("short")) {
+        } else if (Objects.equals(str,"short")) {
             return short_type;
-        } else if (str.equals("integer")) {
+        } else if (Objects.equals(str,"integer")) {
             return integer_type;
-        } else if (str.equals("long")) {
+        } else if (Objects.equals(str,"long")) {
             return long_type;
-        } else if (str.equals("float")) {
+        } else if (Objects.equals(str,"float")) {
             return float_type;
-        } else if (str.equals("double")) {
+        } else if (Objects.equals(str,"double")) {
             return double_type;
-        } else if (str.equals("boolean")) {
+        } else if (Objects.equals(str,"boolean")) {
             return boolean_type;
-        } else if (str.equals("date") || str.equals("datetime")) {
+        } else if (Objects.equals(str,"date") || Objects.equals(str,"datetime")) {
             return date_type;
         } else {
             return text_type;

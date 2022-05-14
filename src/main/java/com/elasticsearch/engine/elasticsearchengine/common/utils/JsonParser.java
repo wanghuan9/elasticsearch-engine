@@ -30,10 +30,10 @@ import static com.fasterxml.jackson.core.JsonParser.Feature;
  */
 public abstract class JsonParser {
 
-  public static final ObjectMapper mapper = new ObjectMapper();
-  private static final ObjectMapper indentMapper = new ObjectMapper();
-  private static final ObjectMapper snakeCaseMapper = new ObjectMapper();
-  private static final TypeFactory typeFactory = TypeFactory.defaultInstance();
+  public static final ObjectMapper MAPPER = new ObjectMapper();
+  private static final ObjectMapper INDENT_MAPPER = new ObjectMapper();
+  private static final ObjectMapper SNAKE_CASE_MAPPER = new ObjectMapper();
+  private static final TypeFactory TYPE_FACTORY = TypeFactory.defaultInstance();
 
   static {
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -48,37 +48,37 @@ public abstract class JsonParser {
     module.addDeserializer(LocalTime.class, new LocalTimeDeserializer());
     module.addDeserializer(LocalDate.class, new LocalDateDeserializer());
 
-    mapper.registerModule(module);
-    mapper.configure(Feature.ALLOW_COMMENTS, true);
-    mapper.configure(Feature.ALLOW_SINGLE_QUOTES, true);
-    mapper.configure(Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-    mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-    mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    mapper.setDateFormat(df);
+    MAPPER.registerModule(module);
+    MAPPER.configure(Feature.ALLOW_COMMENTS, true);
+    MAPPER.configure(Feature.ALLOW_SINGLE_QUOTES, true);
+    MAPPER.configure(Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+    MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+    MAPPER.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    MAPPER.setDateFormat(df);
 
-    indentMapper.registerModule(module);
-    indentMapper.configure(Feature.ALLOW_COMMENTS, true);
-    indentMapper.configure(Feature.ALLOW_SINGLE_QUOTES, true);
-    indentMapper.configure(Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-    indentMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    indentMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-    indentMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-    indentMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    indentMapper.setDateFormat(df);
+    INDENT_MAPPER.registerModule(module);
+    INDENT_MAPPER.configure(Feature.ALLOW_COMMENTS, true);
+    INDENT_MAPPER.configure(Feature.ALLOW_SINGLE_QUOTES, true);
+    INDENT_MAPPER.configure(Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+    INDENT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    INDENT_MAPPER.configure(SerializationFeature.INDENT_OUTPUT, true);
+    INDENT_MAPPER.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    INDENT_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    INDENT_MAPPER.setDateFormat(df);
 
     //下划线转驼峰
-    snakeCaseMapper.registerModule(module);
-    snakeCaseMapper.configure(Feature.ALLOW_COMMENTS, true);
-    snakeCaseMapper.configure(Feature.ALLOW_SINGLE_QUOTES, true);
-    snakeCaseMapper.configure(Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-    snakeCaseMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    snakeCaseMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-    snakeCaseMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-    snakeCaseMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    snakeCaseMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
-    snakeCaseMapper.setDateFormat(df);
+    SNAKE_CASE_MAPPER.registerModule(module);
+    SNAKE_CASE_MAPPER.configure(Feature.ALLOW_COMMENTS, true);
+    SNAKE_CASE_MAPPER.configure(Feature.ALLOW_SINGLE_QUOTES, true);
+    SNAKE_CASE_MAPPER.configure(Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+    SNAKE_CASE_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    SNAKE_CASE_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+    SNAKE_CASE_MAPPER.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    SNAKE_CASE_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    SNAKE_CASE_MAPPER.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+    SNAKE_CASE_MAPPER.setDateFormat(df);
 
   }
 
@@ -87,7 +87,7 @@ public abstract class JsonParser {
 
   public static <T> T asObject(String source, Class<T> clazz) {
     try {
-      return mapper.readValue(source, clazz);
+      return MAPPER.readValue(source, clazz);
     } catch (IOException e) {
       throw new RuntimeException("json parse error", e);
     }
@@ -95,7 +95,7 @@ public abstract class JsonParser {
 
   public static <T> T asObject(byte[] source, Class<T> clazz) {
     try {
-      return mapper.readValue(source, clazz);
+      return MAPPER.readValue(source, clazz);
     } catch (IOException e) {
       throw new RuntimeException("json parse error", e);
     }
@@ -103,7 +103,7 @@ public abstract class JsonParser {
 
   public static <T> T asObject(String source, JavaType type) {
     try {
-      return mapper.readValue(source, type);
+      return MAPPER.readValue(source, type);
     } catch (IOException e) {
       throw new RuntimeException("json parse error", e);
     }
@@ -111,7 +111,7 @@ public abstract class JsonParser {
 
   public static <T> T asObject(String source, TypeReference<T> type) {
     try {
-      return mapper.readValue(source, type);
+      return MAPPER.readValue(source, type);
     } catch (IOException e) {
       throw new RuntimeException("json parse error", e);
     }
@@ -120,7 +120,7 @@ public abstract class JsonParser {
 
   public static <T> T asObject(InputStream source, TypeReference<T> type) {
     try {
-      return mapper.readValue(source, type);
+      return MAPPER.readValue(source, type);
     } catch (IOException e) {
       throw new RuntimeException("json parse error", e);
     }
@@ -128,7 +128,7 @@ public abstract class JsonParser {
 
   public static <T> T asObject(InputStream source, Class<T> clazz) {
     try {
-      return mapper.readValue(source, clazz);
+      return MAPPER.readValue(source, clazz);
     } catch (IOException e) {
       throw new RuntimeException("json parse error", e);
     }
@@ -136,7 +136,7 @@ public abstract class JsonParser {
 
   public static <T> T asObjectSnakeCase(String source, Class<T> clazz) {
     try {
-      return snakeCaseMapper.readValue(source, clazz);
+      return SNAKE_CASE_MAPPER.readValue(source, clazz);
     } catch (IOException e) {
       throw new RuntimeException("json parse error", e);
     }
@@ -144,7 +144,7 @@ public abstract class JsonParser {
 
   public static JsonNode asJsonNode(String source) {
     try {
-      return mapper.readTree(source);
+      return MAPPER.readTree(source);
     } catch (IOException e) {
       throw new RuntimeException("json parse error", e);
     }
@@ -155,23 +155,25 @@ public abstract class JsonParser {
   }
 
   public static Map<String, Object> object2Map(Object object, String... ignoreProperties) {
-    if (object == null) return null;
+    if (object == null) {
+      return null;
+    }
     try {
       String jsonStr = asJson(object, ignoreProperties);
-      return mapper.readValue(jsonStr, Map.class);
+      return MAPPER.readValue(jsonStr, Map.class);
     } catch (Exception e) {
       throw new RuntimeException("json parse error", e);
     }
   }
 
   public static List asList(String json) {
-    return mapper.convertValue(asJsonNode(json), List.class);
+    return MAPPER.convertValue(asJsonNode(json), List.class);
   }
 
   public static <T> List<T> asList(String json, Class<T> tClass) {
     try {
-      JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, tClass);
-      return mapper.readValue(json, type);
+      JavaType type = MAPPER.getTypeFactory().constructCollectionType(List.class, tClass);
+      return MAPPER.readValue(json, type);
     } catch (Exception e) {
       throw new RuntimeException("json parse error", e);
     }
@@ -186,7 +188,7 @@ public abstract class JsonParser {
   }
 
   public static Map<String, Object> asMap(String json) {
-    return mapper.convertValue(asJsonNode(json), Map.class);
+    return MAPPER.convertValue(asJsonNode(json), Map.class);
   }
 
   public static Map<String, String> asMapStr(Object object, String... ignoreProperties) {
@@ -202,7 +204,7 @@ public abstract class JsonParser {
   }
 
   public static Map<String, Object> jsonNodeToMap(JsonNode jsonNode) {
-    return mapper.convertValue(jsonNode, Map.class);
+    return MAPPER.convertValue(jsonNode, Map.class);
   }
 
   public static <T> String asJson(T obj, String... ignoreProperties) {
@@ -216,7 +218,7 @@ public abstract class JsonParser {
 
   public static <T> String asJsonFormat(T obj) {
     try {
-      return indentMapper.writeValueAsString(obj);
+      return INDENT_MAPPER.writeValueAsString(obj);
     } catch (JsonProcessingException e) {
       e.printStackTrace();
       throw new RuntimeException("json parse error", e);
@@ -232,9 +234,9 @@ public abstract class JsonParser {
    */
   public static ObjectMapper filterMapper(String... ignoreProperties) {
     if (ignoreProperties.length == 0) {
-      return mapper.setFilterProvider(null);
+      return MAPPER.setFilterProvider(null);
     }
-    return mapper.setFilterProvider(ignorePropertiesFilter(ignoreProperties));
+    return MAPPER.setFilterProvider(ignorePropertiesFilter(ignoreProperties));
   }
 
   /**
@@ -246,9 +248,9 @@ public abstract class JsonParser {
    */
   public static ObjectMapper filterIndentMapper(String... ignoreProperties) {
     if (ignoreProperties.length == 0) {
-      return indentMapper.setFilterProvider(null);
+      return INDENT_MAPPER.setFilterProvider(null);
     }
-    return indentMapper.setFilterProvider(ignorePropertiesFilter(ignoreProperties));
+    return INDENT_MAPPER.setFilterProvider(ignorePropertiesFilter(ignoreProperties));
   }
 
   /**

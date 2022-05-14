@@ -3,7 +3,7 @@ package com.elasticsearch.engine.elasticsearchengine.mapping.handler;
 import com.elasticsearch.engine.elasticsearchengine.common.utils.ExtAnnBeanMapUtils;
 import com.elasticsearch.engine.elasticsearchengine.holder.AbstractEsRequestHolder;
 import com.elasticsearch.engine.elasticsearchengine.model.domain.EsQueryFieldBean;
-import com.elasticsearch.engine.elasticsearchengine.model.domain.QueryBean;
+import com.elasticsearch.engine.elasticsearchengine.model.domain.AbstractQueryBean;
 import com.elasticsearch.engine.elasticsearchengine.model.exception.EsHelperConfigException;
 import org.elasticsearch.index.query.QueryBuilder;
 
@@ -17,7 +17,7 @@ import java.util.Objects;
  * @date 2021-09-29
  * @time 10:33
  */
-public abstract class AbstractQueryHandler<T extends QueryBean> {
+public abstract class AbstractQueryHandler<T extends AbstractQueryBean> {
 
     /**
      * 查询注解解析拼接查询语句

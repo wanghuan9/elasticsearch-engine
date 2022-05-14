@@ -1,6 +1,6 @@
 package com.elasticsearch.engine.elasticsearchengine.mapping.model;
 
-import com.elasticsearch.engine.elasticsearchengine.model.domain.QueryBean;
+import com.elasticsearch.engine.elasticsearchengine.model.domain.AbstractQueryBean;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.RangeQueryBuilder;
@@ -11,7 +11,7 @@ import org.elasticsearch.index.query.RangeQueryBuilder;
  * @date 2022-01-26 11:28
  */
 @Data
-public class RangeQueryBean extends QueryBean<RangeQueryBuilder> {
+public class RangeQueryBean extends AbstractQueryBean<RangeQueryBuilder> {
 
     /**
      * {

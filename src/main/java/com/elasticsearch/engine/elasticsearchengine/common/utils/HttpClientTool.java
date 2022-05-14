@@ -46,8 +46,8 @@ public class HttpClientTool {
 
     private static CloseableHttpClient getHttpClient(HttpClientBuilder httpClientBuilder) {
         RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder.<ConnectionSocketFactory>create();
-        ConnectionSocketFactory plainSF = new PlainConnectionSocketFactory();
-        registryBuilder.register("http", plainSF);
+        ConnectionSocketFactory plainSf = new PlainConnectionSocketFactory();
+        registryBuilder.register("http", plainSf);
         //指定信任密钥存储对象和连接套接字工厂
         try {
             KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -59,8 +59,8 @@ public class HttpClientTool {
                 }
             };
             SSLContext sslContext = SSLContexts.custom().useTLS().loadTrustMaterial(trustStore, anyTrustStrategy).build();
-            LayeredConnectionSocketFactory sslSF = new SSLConnectionSocketFactory(sslContext, SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-            registryBuilder.register("https", sslSF);
+            LayeredConnectionSocketFactory sslSf = new SSLConnectionSocketFactory(sslContext, SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+            registryBuilder.register("https", sslSf);
         } catch (KeyStoreException e) {
             throw new RuntimeException(e);
         } catch (KeyManagementException e) {
@@ -75,7 +75,7 @@ public class HttpClientTool {
         return httpClientBuilder.setConnectionManager(connManager).build();
     }
 
-    private synchronized static HttpClient getESHttpClient() {
+    private synchronized static HttpClient getEsHttpClient() {
         if (mHttpClient == null) {
 //            HttpParams params = new BasicHttpParams();
 //            //设置基本参数
@@ -102,7 +102,7 @@ public class HttpClientTool {
         return mHttpClient;
     }
 
-    private synchronized static HttpClient getESHttpClient(String username, String password) {
+    private synchronized static HttpClient getEsHttpClient(String username, String password) {
         if (mHttpClient == null) {
             mHttpClient = getHttpClientWithBasicAuth(username, password);
         }
@@ -153,7 +153,7 @@ public class HttpClientTool {
     public static String execute(String url, String obj) throws Exception {
         HttpClient httpClient = null;
         HttpResponse response = null;
-        httpClient = HttpClientTool.getESHttpClient();
+        httpClient = HttpClientTool.getEsHttpClient();
         HttpUriRequest request = postMethod(url, obj);
         response = httpClient.execute(request);
         HttpEntity entity1 = response.getEntity();
@@ -172,7 +172,7 @@ public class HttpClientTool {
     public static String execute(String url, String obj, String username, String password) throws Exception {
         HttpClient httpClient = null;
         HttpResponse response = null;
-        httpClient = HttpClientTool.getESHttpClient(username, password);
+        httpClient = HttpClientTool.getEsHttpClient(username, password);
         HttpUriRequest request = postMethod(url, obj);
         response = httpClient.execute(request);
         HttpEntity entity1 = response.getEntity();

@@ -26,7 +26,7 @@ public class AggsQueryHandler extends AbstractQueryHandler<AggsQueryBean> {
         SearchSourceBuilder source = searchHelper.getSource();
         AggsQueryBean extBean = queryDes.getExtBean();
         TermsAggregationBuilder aggs = AggregationBuilders
-                .terms(EsConstant._AGG)
+                .terms(EsConstant.AGG)
                 .field(queryDes.getField())
                 .size(extBean.getSize());
         source.aggregation(aggs)
@@ -46,6 +46,7 @@ public class AggsQueryHandler extends AbstractQueryHandler<AggsQueryBean> {
             case Aggs.COUNT_DESC:
                 aggs.order(BucketOrder.count(false));
                 break;
+            default:
         }
         return null;
     }

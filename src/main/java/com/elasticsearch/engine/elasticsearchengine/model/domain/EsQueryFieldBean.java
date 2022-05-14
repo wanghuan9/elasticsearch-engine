@@ -14,7 +14,7 @@ import java.lang.annotation.Annotation;
  */
 @Slf4j
 @Data
-public class EsQueryFieldBean<T extends QueryBean> implements Serializable {
+public class EsQueryFieldBean<T extends AbstractQueryBean> implements Serializable {
 
 	/**
 	 * the field be queried

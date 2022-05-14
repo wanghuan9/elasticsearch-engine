@@ -1,6 +1,6 @@
 package com.elasticsearch.engine.elasticsearchengine.mapping.model;
 
-import com.elasticsearch.engine.elasticsearchengine.model.domain.QueryBean;
+import com.elasticsearch.engine.elasticsearchengine.model.domain.AbstractQueryBean;
 import lombok.Data;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortOrder;
@@ -11,7 +11,7 @@ import org.elasticsearch.search.sort.SortOrder;
  * @date 2022-01-26 11:28
  */
 @Data
-public class SortQueryBean extends QueryBean {
+public class SortQueryBean extends AbstractQueryBean {
 
     private SortOrder type;
 

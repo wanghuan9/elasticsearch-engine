@@ -1,6 +1,6 @@
 package com.elasticsearch.engine.elasticsearchengine.mapping.model;
 
-import com.elasticsearch.engine.elasticsearchengine.model.domain.QueryBean;
+import com.elasticsearch.engine.elasticsearchengine.model.domain.AbstractQueryBean;
 import org.elasticsearch.index.query.ExistsQueryBuilder;
 
 /**
@@ -8,7 +8,7 @@ import org.elasticsearch.index.query.ExistsQueryBuilder;
  * @description: ExistQueryBean
  * @date 2022-02-11 17:38
  */
-public class ExistQueryBean extends QueryBean<ExistsQueryBuilder> {
+public class ExistQueryBean extends AbstractQueryBean<ExistsQueryBuilder> {
 
     /**
      * use this extend-config-bean to config given @QueryBuilder

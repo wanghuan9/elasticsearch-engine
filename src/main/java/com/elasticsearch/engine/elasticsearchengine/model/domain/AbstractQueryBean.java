@@ -8,7 +8,7 @@ package com.elasticsearch.engine.elasticsearchengine.model.domain;
 
 import org.elasticsearch.index.query.QueryBuilder;
 
-public abstract class QueryBean<T extends QueryBuilder> {
+public abstract class AbstractQueryBean<T extends QueryBuilder> {
 
 
     /**

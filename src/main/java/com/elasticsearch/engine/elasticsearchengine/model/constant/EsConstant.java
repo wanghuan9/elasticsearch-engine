@@ -16,10 +16,10 @@ public interface EsConstant {
     /**
      * es 通用 查询分组别名
      */
-    String _AGG = "es_agg";
-    String _SUM = "es_sum";
-    String _variance = "es_variance";
-    String _SQUARE = "es_square";
+    String AGG = "es_agg";
+    String SUM = "es_sum";
+    String ES_VARIANCE = "es_variance";
+    String ES_SQUARE = "es_square";
 
     /**
      * 字符串0

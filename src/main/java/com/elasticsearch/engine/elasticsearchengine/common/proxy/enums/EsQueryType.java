@@ -12,6 +12,10 @@ import java.util.Optional;
  */
 @Getter
 public enum EsQueryType {
+
+    /**
+     * 
+     */
     ANNOTATION(1, "注解查询"),
     SQL(2, "sql查询"),
     ES_NATIVE(3, "es原生语句查询"),

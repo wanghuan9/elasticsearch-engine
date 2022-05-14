@@ -16,16 +16,16 @@ import java.util.regex.Pattern;
  * Date：2020/4/8
  */
 public class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
-    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private static final Pattern numericPattern = Pattern.compile("[0-9]*");
-    private static final Pattern timeLegalPattern = Pattern.compile("^((\\d{2}(([02468][048])|([13579][26]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])))))|(\\d{2}(([02468][1235679])|([13579][01345789]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))))(\\s((([0-1][0-9])|(2?[0-3]))\\:([0-5]?[0-9])((\\s)|(\\:([0-5]?[0-9])))))?$");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final Pattern NUMERIC_PATTERN = Pattern.compile("[0-9]*");
+    private static final Pattern TIME_LEGAL_PATTERN = Pattern.compile("^((\\d{2}(([02468][048])|([13579][26]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])))))|(\\d{2}(([02468][1235679])|([13579][01345789]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))))(\\s((([0-1][0-9])|(2?[0-3]))\\:([0-5]?[0-9])((\\s)|(\\:([0-5]?[0-9])))))?$");
 
 
     @Override
     public LocalDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         String value = jsonParser.getValueAsString();
         if (isTimeLegal(value)) {
-            return LocalDateTime.parse(value, dateTimeFormatter);
+            return LocalDateTime.parse(value, DATE_TIME_FORMATTER);
         } else if (isNumeric(value)) {
             return DateUtils.dateTimeToLong(Long.parseLong(value));
         } else {
@@ -40,7 +40,7 @@ public class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
      * @return
      */
     private boolean isNumeric(String str) {
-        Matcher isNum = numericPattern.matcher(str);
+        Matcher isNum = NUMERIC_PATTERN.matcher(str);
         return isNum.matches();
     }
 
@@ -51,7 +51,7 @@ public class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
      * @return 合法返回 true ; 不合法返回false
      */
     private boolean isTimeLegal(String patternString) {
-        Matcher b = timeLegalPattern.matcher(patternString);
+        Matcher b = TIME_LEGAL_PATTERN.matcher(patternString);
         return b.matches();
     }
 }

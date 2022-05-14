@@ -20,8 +20,9 @@ import java.util.*;
  **/
 public class BeanTools {
     public static Object mapToObject(Map map, Class<?> beanClass) throws Exception {
-        if (map == null)
+        if (map == null){
             return null;
+        }
 
         Object obj = beanClass.newInstance();
 
@@ -41,8 +42,9 @@ public class BeanTools {
     }
 
     public static <T> T typeMapToObject(Map<String, NameTypeValueMap> map, Class<T> beanClass) throws Exception {
-        if (map == null)
+        if (map == null){
             return null;
+        }
         T t = beanClass.newInstance();
         Field[] fields = t.getClass().getDeclaredFields();
         for (Field field : fields) {
@@ -56,49 +58,8 @@ public class BeanTools {
             }
             field.setAccessible(true);
             field.set(t, fieldTypeCovert(nameTypeValueMap.getDataType(), nameTypeValueMap.getValue(), field.getType()));
-//            if (nameTypeValueMap.getDataType() == DataType.date_type) {
-//                field.set(t, DateUtils.parseToLocalDateTimeAuto(nameTypeValueMap.getValue()));
-//            } else if (nameTypeValueMap.getDataType() == DataType.double_type) {
-//                if (field.getType().isAssignableFrom(BigDecimal.class)) {
-//                    field.set(t, BigDecimal.valueOf(Double.parseDouble(nameTypeValueMap.getValue())));
-//                } else {
-//                    field.set(t, Double.valueOf(nameTypeValueMap.getValue()));
-//                }
-//            } else if (nameTypeValueMap.getDataType() == DataType.byte_type) {
-//                field.set(t, Byte.valueOf(nameTypeValueMap.getValue()));
-//            } else if (nameTypeValueMap.getDataType() == DataType.boolean_type) {
-//                field.set(t, Boolean.valueOf(nameTypeValueMap.getValue()));
-//            } else if (nameTypeValueMap.getDataType() == DataType.integer_type) {
-//                field.set(t, Integer.valueOf(nameTypeValueMap.getValue()));
-//            } else if (nameTypeValueMap.getDataType() == DataType.float_type) {
-//                field.set(t, Float.valueOf(nameTypeValueMap.getValue()));
-//            } else if (nameTypeValueMap.getDataType() == DataType.long_type) {
-//                field.set(t, Long.valueOf(nameTypeValueMap.getValue()));
-//            } else if (nameTypeValueMap.getDataType() == DataType.keyword_type) {
-//                field.set(t, String.valueOf(nameTypeValueMap.getValue()));
-//            } else if (nameTypeValueMap.getDataType() == DataType.text_type) {
-//                field.set(t, String.valueOf(nameTypeValueMap.getValue()));
-//            } else if (nameTypeValueMap.getDataType() == DataType.short_type) {
-//                field.set(t, Short.valueOf(nameTypeValueMap.getValue()));
-//            } else {
-//                throw new Exception("not support field type covert");
-//            }
         }
         return t;
-    }
-
-    public static Map<String, Object> objectToMap(Object obj) throws Exception {
-        if (obj == null) {
-            return null;
-        }
-        Map<String, Object> map = new HashMap<>();
-        Field[] declaredFields = obj.getClass().getDeclaredFields();
-        for (Field field : declaredFields) {
-            field.setAccessible(true);
-            map.put(field.getName(), field.get(obj));
-        }
-
-        return map;
     }
 
     public static String[] getNoValuePropertyNames(Object source) {
@@ -115,11 +76,15 @@ public class BeanTools {
                 if (Iterable.class.isAssignableFrom(propertyValue.getClass())) {
                     Iterable iterable = (Iterable) propertyValue;
                     Iterator iterator = iterable.iterator();
-                    if (!iterator.hasNext()) noValuePropertySet.add(pd.getName());
+                    if (!iterator.hasNext()){
+                        noValuePropertySet.add(pd.getName());
+                    } 
                 }
                 if (Map.class.isAssignableFrom(propertyValue.getClass())) {
                     Map map = (Map) propertyValue;
-                    if (map.isEmpty()) noValuePropertySet.add(pd.getName());
+                    if (map.isEmpty()){
+                        noValuePropertySet.add(pd.getName());
+                    }
                 }
             }
         });

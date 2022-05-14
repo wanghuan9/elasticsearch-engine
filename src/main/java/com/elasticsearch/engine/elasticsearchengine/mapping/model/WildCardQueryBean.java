@@ -1,6 +1,6 @@
 package com.elasticsearch.engine.elasticsearchengine.mapping.model;
 
-import com.elasticsearch.engine.elasticsearchengine.model.domain.QueryBean;
+import com.elasticsearch.engine.elasticsearchengine.model.domain.AbstractQueryBean;
 import lombok.Data;
 import org.elasticsearch.index.query.WildcardQueryBuilder;
 
@@ -10,7 +10,7 @@ import org.elasticsearch.index.query.WildcardQueryBuilder;
  * @date 2022-01-26 11:28
  */
 @Data
-public class WildCardQueryBean extends QueryBean<WildcardQueryBuilder> {
+public class WildCardQueryBean extends AbstractQueryBean<WildcardQueryBuilder> {
 
     /**
      * 匹配类型

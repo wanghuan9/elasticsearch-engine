@@ -39,7 +39,7 @@ public class SupplierItemResExtend implements ResponseHook<List<AggEntityExtend>
             throw new EsHelperQueryException("aggs param is null, result aggs is null");
         }
 //        resp.getInternalResponse()
-        Terms aggs = resp.getAggregations().get(EsConstant._AGG);
+        Terms aggs = resp.getAggregations().get(EsConstant.AGG);
         for (Terms.Bucket agg : aggs.getBuckets()) {
             if (!agg.getKeyAsString().equals(EsConstant.STRING_ZERO)) {
                 AggEntityExtend result = new AggEntityExtend();

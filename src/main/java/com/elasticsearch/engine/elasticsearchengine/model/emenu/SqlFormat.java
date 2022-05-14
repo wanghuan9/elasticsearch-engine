@@ -7,6 +7,9 @@ package com.elasticsearch.engine.elasticsearchengine.model.emenu;
  * @create: 2019-10-10 13:02
  **/
 public enum SqlFormat {
+    /**
+     * 
+     */
     CSV("csv", "text/csv"),
     JSON("json", "application/json"),
     TSV("tsv", "text/tab-separated-values"),

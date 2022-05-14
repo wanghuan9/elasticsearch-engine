@@ -9,6 +9,10 @@ import java.util.Optional;
  * @date 2022-04-15 18:16
  */
 public enum EsSqlQueryEnum {
+
+    /**
+     * 
+     */
     ANNOTATION_QUERY(1, "注解查询"),
     XML_QUERY(2, "xml查询"),
     ;

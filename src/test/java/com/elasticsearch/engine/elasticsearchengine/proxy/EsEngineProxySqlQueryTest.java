@@ -40,11 +40,11 @@ public class EsEngineProxySqlQueryTest {
 
         String sql = "select * from supplier_item_spare where item_no='20201226204656658857'";
 
-        String s = esSqlExecuteHandler.queryBySQL(sql, SqlFormat.JSON);
+        String s = esSqlExecuteHandler.queryBySql(sql, SqlFormat.JSON);
         System.out.println(s);
 
         //@Query(value = "insert into studenttb(student_name,student_age) value(?1,?2)", nativeQuery = true)
-        List<SupplierItemEntity> supplierItemEntities = esSqlExecuteHandler.queryBySQL(sql, SupplierItemEntity.class);
+        List<SupplierItemEntity> supplierItemEntities = esSqlExecuteHandler.queryBySql(sql, SupplierItemEntity.class);
         System.out.println(JsonParser.asJson(supplierItemEntities));
     }
 

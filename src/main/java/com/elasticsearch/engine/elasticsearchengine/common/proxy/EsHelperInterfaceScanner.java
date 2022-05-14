@@ -33,6 +33,7 @@ import org.springframework.util.ClassUtils;
 import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -193,7 +194,7 @@ public class EsHelperInterfaceScanner implements ApplicationContextAware, Resour
      * @return
      */
     private boolean isRepository(Class beanClazz) {
-        if (beanClazz.getSimpleName().equals("BaseESRepository")) {
+        if (Objects.equals("BaseESRepository", beanClazz.getSimpleName())) {
             return Boolean.TRUE;
         }
         return !BaseESRepository.class.isAssignableFrom(beanClazz);

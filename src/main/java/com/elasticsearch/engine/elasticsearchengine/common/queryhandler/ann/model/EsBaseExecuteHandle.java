@@ -201,7 +201,7 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
         if (Objects.isNull(searchResponse.getAggregations())) {
             throw new EsHelperQueryException("aggs param value is null, result aggregations is empty");
         }
-        Terms agg = searchResponse.getAggregations().get(EsConstant._AGG);
+        Terms agg = searchResponse.getAggregations().get(EsConstant.AGG);
         for (Terms.Bucket bucketOneAgg : agg.getBuckets()) {
             DefaultAggResp defaultAgg = new DefaultAggResp();
             defaultAgg.setKey(bucketOneAgg.getKeyAsString());

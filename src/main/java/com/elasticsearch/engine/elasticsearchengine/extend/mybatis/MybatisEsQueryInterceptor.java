@@ -119,7 +119,7 @@ public class MybatisEsQueryInterceptor implements Interceptor {
         for (Method method : methods) {
             //判断当前方法上是否有注解
             if (method.isAnnotationPresent(EsQuery.class) && method.getName().equals(mName)) {
-                return doQueryES(method, boundSql, configuration);
+                return doQueryEs(method, boundSql, configuration);
             }
         }
         return null;
@@ -134,7 +134,7 @@ public class MybatisEsQueryInterceptor implements Interceptor {
      * @return
      * @throws Exception
      */
-    private List<?> doQueryES(Method method, BoundSql boundSql, Configuration configuration) throws Exception {
+    private List<?> doQueryEs(Method method, BoundSql boundSql, Configuration configuration) throws Exception {
         List<?> result;
         //方法返回值
         Class<?> returnType = method.getReturnType();
@@ -153,9 +153,9 @@ public class MybatisEsQueryInterceptor implements Interceptor {
         log.info("替换参数后sql: {}", s);
         //执行ES查询
         if (List.class.isAssignableFrom(returnType) && Objects.nonNull(returnGenericType)) {
-            result = esSqlExecuteHandler.queryBySQL(s, returnGenericType);
+            result = esSqlExecuteHandler.queryBySql(s, returnGenericType);
         } else {
-            result = esSqlExecuteHandler.queryBySQL(s, returnType);
+            result = esSqlExecuteHandler.queryBySql(s, returnType);
         }
 
         return result;

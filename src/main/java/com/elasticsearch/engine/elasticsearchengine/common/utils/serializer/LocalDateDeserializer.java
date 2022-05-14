@@ -13,11 +13,11 @@ import java.time.format.DateTimeFormatter;
  * Created on 2021/6/30.
  */
 public class LocalDateDeserializer extends JsonDeserializer<LocalDate> {
-  private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+  private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
   @Override
   public LocalDate deserialize(com.fasterxml.jackson.core.JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
     String value = jsonParser.getValueAsString();
-    return LocalDate.parse(value, formatter);
+    return LocalDate.parse(value, FORMATTER);
   }
 }

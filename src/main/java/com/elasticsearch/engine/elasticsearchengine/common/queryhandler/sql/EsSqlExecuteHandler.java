@@ -47,7 +47,7 @@ public class EsSqlExecuteHandler {
      * @return
      * @throws Exception
      */
-    public String queryBySQL(String sql, SqlFormat sqlFormat) {
+    public String queryBySql(String sql, SqlFormat sqlFormat) {
         String host = elasticSearchProperties.getHosts();
         if (StringUtils.isEmpty(host)) {
             host = CommonConstant.DEFAULT_ES_HOST;
@@ -121,8 +121,8 @@ public class EsSqlExecuteHandler {
      * @return
      * @throws Exception
      */
-    public <T> List<T> queryBySQL(String sql, Class<T> clazz) {
-        String s = queryBySQL(sql, SqlFormat.JSON);
+    public <T> List<T> queryBySql(String sql, Class<T> clazz) {
+        String s = queryBySql(sql, SqlFormat.JSON);
         SqlResponse sqlResponse = JsonParser.asObject(s, SqlResponse.class);
         //正常响应时 status 为null
         if (Objects.nonNull(sqlResponse.getStatus())) {
@@ -132,7 +132,7 @@ public class EsSqlExecuteHandler {
         if (!CollectionUtils.isEmpty(sqlResponse.getRows())) {
             for (List<String> row : sqlResponse.getRows()) {
                 try {
-                    result.add(generateObjBySQLReps(sqlResponse.getColumns(), row, clazz));
+                    result.add(generateObjBySqlReps(sqlResponse.getColumns(), row, clazz));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -152,7 +152,7 @@ public class EsSqlExecuteHandler {
      * @return
      * @throws Exception
      */
-    private <T> T generateObjBySQLReps(List<SqlResponse.ColumnsDTO> columns, List<String> rows, Class<T> clazz) throws Exception {
+    private <T> T generateObjBySqlReps(List<SqlResponse.ColumnsDTO> columns, List<String> rows, Class<T> clazz) throws Exception {
         if (rows.size() != columns.size()) {
             throw new Exception("sql column not match");
         }
@@ -160,7 +160,7 @@ public class EsSqlExecuteHandler {
         if (rows.size() == 1 && ReflectionUtils.isBaseType(clazz)) {
             return (T) BeanTools.fieldTypeCovert(DataType.getDataTypeByStr(columns.get(0).getType()), rows.get(0), clazz);
         }
-        Map<String, BeanTools.NameTypeValueMap> valueMap = new HashMap();
+        Map<String, BeanTools.NameTypeValueMap> valueMap = new HashMap(32);
         for (int i = 0; i < rows.size(); i++) {
             BeanTools.NameTypeValueMap m = new BeanTools.NameTypeValueMap();
             m.setDataType(DataType.getDataTypeByStr(columns.get(i).getType()));

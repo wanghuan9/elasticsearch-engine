@@ -14,10 +14,10 @@ import java.time.format.DateTimeFormatter;
  * Created on 2021/6/30.
  */
 public class LocalDateSerializer extends JsonSerializer<LocalDate> {
-  private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+  private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
   @Override
   public void serialize(LocalDate localDate, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-    jsonGenerator.writeString(localDate.format(formatter));
+    jsonGenerator.writeString(localDate.format(DATE_FORMATTER));
   }
 }

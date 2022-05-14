@@ -9,6 +9,10 @@ import java.util.Optional;
  * @date 2022-04-15 18:16
  */
 public enum EsAnnotationQueryEnum {
+
+    /**
+     * 
+     */
     ANNOTATION_MODEL_QUERY(1, "model注解"),
     ANNOTATION_PARAM_QUERY(2, "方法参数注解"),
     ;

@@ -69,7 +69,7 @@ public class QueryParamAnnParser {
         if (ann == null) {
             throw new EsHelperQueryException("undefine query-index @EsQueryIndex");
         }
-        String index = ann.index();
+        String index = ann.value();
         QueryModel model = ann.model();
         String[] includeFields = ann.include();
         String[] excludeFields = ann.exclude();

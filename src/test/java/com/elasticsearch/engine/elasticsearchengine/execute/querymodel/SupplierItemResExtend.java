@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-@EsQueryIndex(index = "supplier_item_spare")
+@EsQueryIndex(value = "supplier_item_spare")
 @Data
 public class SupplierItemResExtend implements ResponseHook<List<AggEntityExtend>> {
 

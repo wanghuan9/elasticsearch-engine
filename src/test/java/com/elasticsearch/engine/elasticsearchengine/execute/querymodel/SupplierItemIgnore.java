@@ -6,7 +6,7 @@ import lombok.Data;
 
 import java.util.List;
 
-@EsQueryIndex(index = "supplier_item_spare")
+@EsQueryIndex(value = "supplier_item_spare")
 @Data
 public class SupplierItemIgnore {
 

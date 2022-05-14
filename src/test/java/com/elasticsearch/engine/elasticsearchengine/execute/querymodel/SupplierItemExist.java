@@ -6,7 +6,7 @@ import com.elasticsearch.engine.elasticsearchengine.model.annotion.EsQueryIndex;
 import com.elasticsearch.engine.elasticsearchengine.model.emenu.EsConnector;
 import lombok.Data;
 
-@EsQueryIndex(index = "supplier_item")
+@EsQueryIndex(value = "supplier_item")
 @Data
 public class SupplierItemExist {
 

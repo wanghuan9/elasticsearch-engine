@@ -140,16 +140,16 @@ public class MybatisEsQueryInterceptor implements Interceptor {
         Class<?> returnType = method.getReturnType();
         //方法返回值的泛型
         Class<?> returnGenericType = AnnotationQueryCommon.getReturnGenericType(method);
-        //改写sql
-        Select select = SqlParserHelper.processSql(boundSql.getSql());
         log.info("原始sql: {}", boundSql.getSql());
+        //改写sql
+        Select select = SqlParserHelper.rewriteSql(method, boundSql.getSql());
         //通过反射修改sql语句
         Field field = boundSql.getClass().getDeclaredField("sql");
         field.setAccessible(true);
         field.set(boundSql, select.toString());
         log.info("改写后sql: {}", boundSql.getSql());
         //参数替换
-        String s = SqlParamParseHelper.showSql(configuration, boundSql);
+        String s = SqlParamParseHelper.paramParse(configuration, boundSql);
         log.info("替换参数后sql: {}", s);
         //执行ES查询
         if (List.class.isAssignableFrom(returnType) && Objects.nonNull(returnGenericType)) {

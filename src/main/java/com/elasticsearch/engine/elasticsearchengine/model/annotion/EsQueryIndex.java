@@ -25,7 +25,7 @@ public @interface EsQueryIndex {
      * @EsQueryIndex(index = "${es.index.name}")
      * @EsQueryIndex(index = "${es.index.name:supplier_item_spare}")
      */
-    String index();
+    String value();
 
     /**
      * 查询方式 默认bool

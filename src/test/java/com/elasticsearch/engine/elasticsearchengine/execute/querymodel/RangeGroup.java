@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * @description: range 分组测试
  * @date 2022-04-08 23:36
  */
-@EsQueryIndex(index = "supplier_item_spare")
+@EsQueryIndex(value = "supplier_item_spare")
 @Data
 public class RangeGroup {
 

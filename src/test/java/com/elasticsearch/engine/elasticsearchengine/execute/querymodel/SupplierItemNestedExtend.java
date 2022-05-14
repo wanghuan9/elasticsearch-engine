@@ -11,7 +11,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.TermsQueryBuilder;
 
 @Slf4j
-@EsQueryIndex(index = "supplier_item")
+@EsQueryIndex(value = "supplier_item")
 @Data
 public class SupplierItemNestedExtend implements RequestHook<SupplierItemNestedExtend> {
 

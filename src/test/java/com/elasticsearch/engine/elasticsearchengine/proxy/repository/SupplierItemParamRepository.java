@@ -22,7 +22,7 @@ import java.util.List;
  */
 //@EsQueryIndex(index = "supplier_item_spare")
 //@EsQueryIndex(index = "${es.index.name}")
-@EsQueryIndex(index = "${es.index.name:supplier_item_spare}")
+@EsQueryIndex(value = "${es.index.name:supplier_item_spare}")
 public interface SupplierItemParamRepository extends BaseESRepository<SupplierItemEntity, String> {
 
     /**

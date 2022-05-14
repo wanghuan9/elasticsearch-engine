@@ -1,5 +1,7 @@
 package com.elasticsearch.engine.elasticsearchengine.extend.mybatis;
 
+import com.elasticsearch.engine.elasticsearchengine.model.annotion.EsQueryIndex;
+import com.elasticsearch.engine.elasticsearchengine.model.exception.EsHelperQueryException;
 import com.google.common.collect.Lists;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.BinaryExpression;
@@ -12,8 +14,10 @@ import net.sf.jsqlparser.statement.select.GroupByElement;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.io.StringReader;
+import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -30,34 +34,40 @@ public class SqlParserHelper {
      * @return
      * @throws JSQLParserException
      */
-    public static Select processSql(String oldSql) throws JSQLParserException {
-        StringBuffer whereSql = new StringBuffer();
+    public static Select rewriteSql(Method method,String oldSql) throws JSQLParserException {
         // 获得原始sql语句
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         Select select = (Select) parserManager.parse(new StringReader(oldSql));
         PlainSelect plain = (PlainSelect) select.getSelectBody();
-
-        plain.setFromItem(new Table("123"));
+        //替换表名
+        setTableItem(method,plain);
+        //清除关联
         plain.setJoins(Lists.newArrayList());
+        //where 别名清除
         setWhereItem(plain.getWhere());
-        GroupByElement groupBy = plain.getGroupBy();
-        List<Expression> groupByExpressions = groupBy.getGroupByExpressions();
-        groupByExpressions.forEach(item -> {
-            if (item instanceof Column) {
-                Column groupColumn = (Column) item;
-                groupColumn.setTable(new Table());
-            }
-        });
+        //group by 别名清除
+        setGroupItem(plain.getGroupBy());
+        //having
+        setHavingItem(plain.getHaving());
+        //order by 别名清除
+        setOrderItem(plain.getOrderByElements());
 
-        List<OrderByElement> orderByElements = plain.getOrderByElements();
-        orderByElements.forEach(item -> {
-            Expression expression = item.getExpression();
-            if (expression instanceof Column) {
-                Column groupColumn = (Column) expression;
-                groupColumn.setTable(new Table());
-            }
-        });
         return select;
+    }
+
+    /**
+     * TODO 获取索引名的方法抽取通用方法
+     * 替换表名
+     * @param method
+     * @param plain
+     */
+    private static void setTableItem(Method method,PlainSelect plain) {
+        Class<?> clazz = method.getDeclaringClass();
+        EsQueryIndex ann = clazz.getAnnotation(EsQueryIndex.class);
+        if (ann == null) {
+            throw new EsHelperQueryException("undefine query-index @EsQueryIndex");
+        }
+        plain.setFromItem(new Table(ann.value()));
     }
 
     /**
@@ -67,6 +77,9 @@ public class SqlParserHelper {
      * @return
      */
     public static void setWhereItem(Expression where) {
+        if (where == null) {
+            return;
+        }
         if (where instanceof BinaryExpression) {
             BinaryExpression binaryExpression = (BinaryExpression) where;
             Expression rightExpression = binaryExpression.getRightExpression() instanceof Parenthesis ? ((Parenthesis) binaryExpression.getRightExpression()).getExpression() : binaryExpression.getRightExpression();
@@ -88,5 +101,49 @@ public class SqlParserHelper {
         }
     }
 
+    /**
+     * 设置替换groupBy里面的字段
+     * @param groupBy
+     */
+    private static void setGroupItem(GroupByElement groupBy) {
+        if (groupBy == null) {
+            return;
+        }
+        List<Expression> groupByExpressions = groupBy.getGroupByExpressions();
+        groupByExpressions.forEach(item -> {
+            if (item instanceof Column) {
+                Column groupColumn = (Column) item;
+                groupColumn.setTable(new Table());
+            }
+        });
+    }
+
+    /**
+     * 设置替换having里面的字段
+     * @param having
+     */
+    private static void setHavingItem(Expression having) {
+        if (having == null) {
+            return;
+        }
+        setWhereItem(having);
+    }
+
+    /**
+     * 设置替换orderBy里面的字段
+     * @param orderByElements
+     */
+    private static void setOrderItem(List<OrderByElement> orderByElements) {
+        if (CollectionUtils.isEmpty(orderByElements)) {
+            return;
+        }
+        orderByElements.forEach(item -> {
+            Expression expression = item.getExpression();
+            if (expression instanceof Column) {
+                Column groupColumn = (Column) expression;
+                groupColumn.setTable(new Table());
+            }
+        });
+    }
 
 }

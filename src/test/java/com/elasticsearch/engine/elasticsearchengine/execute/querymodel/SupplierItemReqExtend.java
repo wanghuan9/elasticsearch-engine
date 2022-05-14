@@ -13,7 +13,7 @@ import org.elasticsearch.index.query.TermsQueryBuilder;
 import java.util.List;
 
 @Slf4j
-@EsQueryIndex(index = "supplier_item")
+@EsQueryIndex(value = "supplier_item")
 @Data
 public class SupplierItemReqExtend implements RequestHook<SupplierItemReqExtend> {
 

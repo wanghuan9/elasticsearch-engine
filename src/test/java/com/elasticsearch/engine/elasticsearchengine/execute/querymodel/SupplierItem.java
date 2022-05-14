@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@EsQueryIndex(index = "supplier_item_spare")
+@EsQueryIndex(value = "supplier_item_spare")
 @Data
 public class SupplierItem {
 

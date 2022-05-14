@@ -17,8 +17,7 @@
         SELECT  item_no, sku_name, status FROM items t INNER JOIN item_extend d 
         on t.id = d.id
         WHERE t.item_no = #{itemNo} AND  d.item_no=#{itemNo} AND d.status = #{status}
-        Group by d.id order by t.id
-
+        Group by d.item_no order by t.status
 
 <!--        SELECT  item_no, sku_name, status FROM supplier_item_spare t INNER JOIN supplier_item_spare d-->
 <!--        on t.id = d.id-->

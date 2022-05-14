@@ -6,7 +6,7 @@ import com.elasticsearch.engine.elasticsearchengine.model.annotion.EsQueryIndex;
 import com.elasticsearch.engine.elasticsearchengine.model.emenu.EsConnector;
 import lombok.Data;
 
-@EsQueryIndex(index = "supplier_item_spare")
+@EsQueryIndex(value = "supplier_item_spare")
 @Data
 public class SupplierItemShould {
 

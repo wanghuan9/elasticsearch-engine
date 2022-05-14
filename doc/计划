@@ -1,5 +1,7 @@
 小版本:
-1)@size  @include
+1)@size  (默认1000)
+
+@include
 2)@EsQueryIndex  加在 entity或者mapper
 
 3)@EsCondition 思考

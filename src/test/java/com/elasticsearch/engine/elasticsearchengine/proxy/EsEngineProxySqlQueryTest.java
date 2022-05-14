@@ -50,28 +50,41 @@ public class EsEngineProxySqlQueryTest {
 
     @Test
     public void trs() {
-        String sql = "select * from supplier_item_spare where item_no='20201226204656658857'";
-        String sql2 = "select status from supplier_item_spare group by status";
-        String sql3= "select sum(status) from supplier_item_spare";
-
+        //常规
+        String sql1 = "select * from supplier_item_spare where item_no='20201226204656658857'";
+        //like
+        String sql2 = "select * from supplier_item_spare where product_name  like '%机%' ";
+        //group by
+        String sql3 = "select status from supplier_item_spare group by status";
+        //sum
+        String sql4 = "select sum(status) from supplier_item_spare";
+        //count
+        String sql5 = "select count(1) from supplier_item_spare";
+        //having
+        String sql6 = "select status,count(*) as count  from supplier_item_spare group by status having count>0";
+        
         /**
          * 不支持的sql
          */
         String sqlError1 = "select distinct status from supplier_item_spare";
         String sqlError2 = "SELECT * FROM supplier_item_spare i inner join supplier_item_spare d WHERE iitem_no = '20201226204656658857' and status=1";
 
-        String s = esSqlExecuteHandler.querySqlTranslate(sql, SqlFormat.JSON);
-        System.out.println(s);
+        String s1 = esSqlExecuteHandler.querySqlTranslate(sql1, SqlFormat.JSON);
+        System.out.println("sql1: " +s1);
         String s2 = esSqlExecuteHandler.querySqlTranslate(sql2, SqlFormat.JSON);
-        System.out.println(s2);
+        System.out.println("sql2: " +s2);
         String s3 = esSqlExecuteHandler.querySqlTranslate(sql3, SqlFormat.JSON);
-        System.out.println(s3);
+        System.out.println("sql3: " +s3);
+        String s4 = esSqlExecuteHandler.querySqlTranslate(sql4, SqlFormat.JSON);
+        System.out.println("sql4: " +s4);
+        String s5 = esSqlExecuteHandler.querySqlTranslate(sql5, SqlFormat.JSON);
+        System.out.println("sql5: " +s5);
 
 
-        String s4 = esSqlExecuteHandler.querySqlTranslate(sqlError1, SqlFormat.JSON);
-        System.out.println(s4);
-        String s5 = esSqlExecuteHandler.querySqlTranslate(sqlError2, SqlFormat.JSON);
-        System.out.println(s5);
+        String se1 = esSqlExecuteHandler.querySqlTranslate(sqlError1, SqlFormat.JSON);
+        System.out.println("sqlError1: " +se1);
+        String se2 = esSqlExecuteHandler.querySqlTranslate(sqlError2, SqlFormat.JSON);
+        System.out.println("sqlError2: " +se2);
 
     }
 

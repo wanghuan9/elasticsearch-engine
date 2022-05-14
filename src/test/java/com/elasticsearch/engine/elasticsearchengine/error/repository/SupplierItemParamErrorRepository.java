@@ -8,7 +8,7 @@ import com.elasticsearch.engine.elasticsearchengine.model.domain.BaseESRepositor
 /**
  * 异常场景测试  出入参不符合标准
  */
-@EsQueryIndex(index = "supplier_item_spare")
+@EsQueryIndex(value = "supplier_item_spare")
 public interface SupplierItemParamErrorRepository extends BaseESRepository<SupplierItemEntity, String> {
 
     /**

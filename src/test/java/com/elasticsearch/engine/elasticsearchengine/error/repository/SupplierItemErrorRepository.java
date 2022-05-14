@@ -7,7 +7,7 @@ import com.elasticsearch.engine.elasticsearchengine.model.annotion.EsQueryIndex;
 /**
  * 异常场景测试  未继承BaseESRepository
  */
-@EsQueryIndex(index = "supplier_item_spare")
+@EsQueryIndex(value = "supplier_item_spare")
 public interface SupplierItemErrorRepository {
 
     /**

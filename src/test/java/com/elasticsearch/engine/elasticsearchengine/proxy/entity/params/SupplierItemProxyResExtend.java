@@ -9,7 +9,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import java.util.List;
 
 @Slf4j
-@EsQueryIndex(index = "supplier_item_spare")
+@EsQueryIndex(value = "supplier_item_spare")
 @Data
 public class SupplierItemProxyResExtend implements ResponseHook<SearchResponse> {
 

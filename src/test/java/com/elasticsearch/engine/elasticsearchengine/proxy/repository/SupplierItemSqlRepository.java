@@ -13,7 +13,7 @@ import java.util.List;
  * @description: ROOD
  * @date 2022-04-25 21:24
  */
-@EsQueryIndex(index = "supplier_item_spare")
+@EsQueryIndex(value = "supplier_item_spare")
 public interface SupplierItemSqlRepository extends BaseESRepository<SupplierItemEntity, String> {
 
 

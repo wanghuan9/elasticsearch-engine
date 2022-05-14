@@ -48,7 +48,7 @@ public @interface Aggs {
     /**
      * ES分组查询不设置size,默认只返回10条数据
      */
-    int size() default 2000;
+    int size() default 1000;
 
     /**
      * 排序类型

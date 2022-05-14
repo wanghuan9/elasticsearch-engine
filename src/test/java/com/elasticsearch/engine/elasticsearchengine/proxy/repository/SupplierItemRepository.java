@@ -24,7 +24,7 @@ import java.util.List;
  * @author JohenTeng
  * @date 2021/12/9
  */
-@EsQueryIndex(index = "supplier_item_spare")
+@EsQueryIndex(value = "supplier_item_spare")
 public interface SupplierItemRepository extends BaseESRepository<SupplierItemEntity, String> {
 
     /**

@@ -9,7 +9,7 @@ import lombok.Data;
  * @description: ROOD
  * @date 2022-03-24 16:58
  */
-@EsQueryIndex(index = "supplier_item_spare")
+@EsQueryIndex(value = "supplier_item_spare")
 @Data
 public class SupplierItemAggs {
 

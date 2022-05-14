@@ -6,7 +6,7 @@ import com.elasticsearch.engine.elasticsearchengine.model.annotion.EsQueryIndex;
 import lombok.Data;
 import org.elasticsearch.search.sort.SortOrder;
 
-@EsQueryIndex(index = "supplier_item_spare")
+@EsQueryIndex(value = "supplier_item_spare")
 @Data
 public class SupplierItemSort {
 

@@ -27,7 +27,7 @@ public class SqlParamParseHelper {
      * @param boundSql
      * @return
      */
-    public static String showSql(Configuration configuration, BoundSql boundSql) {
+    public static String paramParse(Configuration configuration, BoundSql boundSql) {
         // 获取参数
         Object parameterObject = boundSql.getParameterObject();
         List<ParameterMapping> parameterMappings = boundSql

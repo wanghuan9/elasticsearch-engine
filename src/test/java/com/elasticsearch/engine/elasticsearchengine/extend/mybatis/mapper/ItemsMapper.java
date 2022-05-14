@@ -1,6 +1,7 @@
 package com.elasticsearch.engine.elasticsearchengine.extend.mybatis.mapper;
 
 import com.elasticsearch.engine.elasticsearchengine.model.annotion.EsQuery;
+import com.elasticsearch.engine.elasticsearchengine.model.annotion.EsQueryIndex;
 import com.elasticsearch.engine.elasticsearchengine.model.exception.ItemsEntity;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -9,6 +10,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @description: ROOD
  * @date 2022-05-07 23:37
  */
+@EsQueryIndex("supplier_item_spare")
 @Mapper
 public interface ItemsMapper {
 

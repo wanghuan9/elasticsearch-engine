@@ -33,7 +33,6 @@ import org.springframework.util.ClassUtils;
 import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -79,7 +78,7 @@ public class EsHelperInterfaceScanner implements ApplicationContextAware, Resour
         // scan packages get all Class that annotation by @EsHelperProxy
         Set<Class<?>> beanClazzSet = this.findAllClazz();
         for (Class beanClazz : beanClazzSet) {
-            if (isRepository(beanClazz)) {
+            if (!isRepository(beanClazz)) {
                 continue;
             }
 //            EsHelperProxy proxyAnn = AnnotationUtils.findAnnotation(beanClazz, EsHelperProxy.class);
@@ -194,9 +193,6 @@ public class EsHelperInterfaceScanner implements ApplicationContextAware, Resour
      * @return
      */
     private boolean isRepository(Class beanClazz) {
-        if (Objects.equals("BaseESRepository", beanClazz.getSimpleName())) {
-            return Boolean.TRUE;
-        }
-        return !BaseESRepository.class.isAssignableFrom(beanClazz);
+        return BaseESRepository.class.isAssignableFrom(beanClazz);
     }
 }

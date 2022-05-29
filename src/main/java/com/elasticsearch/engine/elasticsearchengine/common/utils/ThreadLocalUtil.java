@@ -7,12 +7,7 @@ import java.util.Map;
 
 public class ThreadLocalUtil {
 
-    private static final ThreadLocal<Map<String, Object>> THREAD_LOCAL = new ThreadLocal() {
-        @Override
-        protected Map<String, Object> initialValue() {
-            return new HashMap(4);
-        }
-    };
+    private static final ThreadLocal<Map<String, Object>> THREAD_LOCAL = ThreadLocal.withInitial(() -> new HashMap(4));
 
     public static Map<String, Object> getThreadLocal() {
         return THREAD_LOCAL.get();

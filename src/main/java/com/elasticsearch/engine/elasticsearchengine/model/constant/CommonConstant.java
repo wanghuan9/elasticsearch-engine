@@ -12,10 +12,17 @@ public class CommonConstant {
      * string里面的特殊字符
      */
     public static final String SPECIAL_CHAR = "\\p{C}";
+    
     /**
      * 记录代理类的名称
      */
     public static final String INTERFACE_METHOD_NAME = "method";
+    
+    /**
+     * 查询sql
+     */
+    public static final String QUERY_SQL = "sql";
+
     /**
      * es默认连接
      */

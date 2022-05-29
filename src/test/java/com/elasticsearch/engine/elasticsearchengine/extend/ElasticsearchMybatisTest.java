@@ -2,6 +2,8 @@ package com.elasticsearch.engine.elasticsearchengine.extend;
 
 import com.elasticsearch.engine.elasticsearchengine.ElasticsearchEngineApplicationTests;
 import com.elasticsearch.engine.elasticsearchengine.common.utils.JsonParser;
+import com.elasticsearch.engine.elasticsearchengine.extend.jpa.test.ItemEntity;
+import com.elasticsearch.engine.elasticsearchengine.extend.jpa.repository.ItemRepository;
 import com.elasticsearch.engine.elasticsearchengine.extend.mybatis.mapper.ItemsMapper;
 import com.elasticsearch.engine.elasticsearchengine.model.exception.ItemsEntity;
 import lombok.extern.slf4j.Slf4j;
@@ -24,10 +26,20 @@ public class ElasticsearchMybatisTest {
 
     @Resource
     private ItemsMapper itemsMapper;
+    
+    @Resource
+    private ItemRepository itemRepository;
 
     @Test
     public void test() {
         ItemsEntity byItemNo = itemsMapper.getByItemNo("20201226204656658857","1");
+        System.out.println(JsonParser.asJson(byItemNo));
+
+    }
+
+    @Test
+    public void test1() {
+        ItemEntity byItemNo = itemRepository.getByItemNo("20201226204656658857");
         System.out.println(JsonParser.asJson(byItemNo));
 
     }

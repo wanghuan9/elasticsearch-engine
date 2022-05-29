@@ -10,10 +10,7 @@ import net.sf.jsqlparser.expression.Parenthesis;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
-import net.sf.jsqlparser.statement.select.GroupByElement;
-import net.sf.jsqlparser.statement.select.OrderByElement;
-import net.sf.jsqlparser.statement.select.PlainSelect;
-import net.sf.jsqlparser.statement.select.Select;
+import net.sf.jsqlparser.statement.select.*;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.io.StringReader;
@@ -43,6 +40,8 @@ public class SqlParserHelper {
         setTableItem(method,plain);
         //清除关联
         plain.setJoins(Lists.newArrayList());
+        //from 别名清除
+        setSelectItem(plain.getSelectItems());
         //where 别名清除
         setWhereItem(plain.getWhere());
         //group by 别名清除
@@ -68,6 +67,29 @@ public class SqlParserHelper {
             throw new EsHelperQueryException("undefine query-index @EsQueryIndex");
         }
         plain.setFromItem(new Table(ann.value()));
+    }
+
+    /**
+     * select 改写
+     * @param selectItems
+     */
+    public static void setSelectItem(List<SelectItem> selectItems) {
+        if(CollectionUtils.isEmpty(selectItems)){
+            return;
+        }
+        selectItems.forEach(item->{ 
+            if (item instanceof SelectExpressionItem) {
+                SelectExpressionItem selectColumn = (SelectExpressionItem) item;
+                //清除t.
+                Expression expression = selectColumn.getExpression();
+                if (expression instanceof Column) {
+                    Column groupColumn = (Column) expression;
+                    groupColumn.setTable(new Table());
+                }
+                //清除as
+                selectColumn.setAlias(null);
+            }
+        });
     }
 
     /**

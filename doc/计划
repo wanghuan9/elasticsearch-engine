@@ -1,5 +1,5 @@
 小版本:
-1)@size  (默认1000)
+1)@size  (默认1000)   @sort( 没有sort,每次查询结果不一样)
 
 @include
 2)@EsQueryIndex  加在 entity或者mapper

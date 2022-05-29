@@ -34,13 +34,13 @@ public class EsSqlQuery implements EsQueryProxyExecuteHandler {
     @Override
     public Object handle(Object proxy, Method method, Object[] args) {
         String prefix = ThreadLocalUtil.get(CommonConstant.INTERFACE_METHOD_NAME);
-        if (args == null || args.length == 0) {
-            throw new EsHelperQueryException(prefix + "missing parameters");
+        if (args != null && args.length > 0) {
+            //参数类型校验
+            if (!ReflectionUtils.allParamIsBaseType(args)) {
+                throw new EsHelperQueryException(prefix + "方法参数异常: 查询参数不被支持,仅支持多个基本类型参数 或 者单个引用类型的参数并标记@EsQueryIndex注解");
+            }
         }
-        //并且参数都是基础类型
-        if (!ReflectionUtils.allParamIsBaseType(args)) {
-            throw new EsHelperQueryException(prefix + "方法参数异常: 查询参数不被支持,仅支持多个基本类型参数 或 者单个引用类型的参数并标记@EsQueryIndex注解");
-        }
+       
         return esSqlQueryFactory.getBean(EsSqlQueryEnum.ANNOTATION_QUERY).handle(proxy, method, args);
 
     }

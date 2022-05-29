@@ -109,7 +109,7 @@ public class EsEngineProxySqlQueryTest {
 
     @Test
     public void testSql5() {
-        Long count = supplierItemSqlRepository.count(LocalDateTime.now());
+        Long count = supplierItemSqlRepository.count();
         System.out.println(JsonParser.asJson(count));
     }
 

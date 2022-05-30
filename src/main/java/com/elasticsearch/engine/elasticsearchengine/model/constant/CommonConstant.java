@@ -17,11 +17,17 @@ public class CommonConstant {
      * 记录代理类的名称
      */
     public static final String INTERFACE_METHOD_NAME = "method";
-    
+
     /**
-     * 查询sql
+     * banner文件路径
      */
-    public static final String QUERY_SQL = "sql";
+    public final static String BANNER_PATH = "engine-banner.txt";
+
+    /**
+     * version文件路径
+     */
+    public final static String VERSION_PATH = "elasticseach-engine.properties";
+
 
     /**
      * es查询标记

@@ -1,13 +1,7 @@
 package com.elasticsearch.engine.elasticsearchengine.config;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import com.elasticsearch.engine.elasticsearchengine.common.utils.ClassPathResourceReaderUtils;
+import com.elasticsearch.engine.elasticsearchengine.model.constant.CommonConstant;
 
 /**
  * @author wanghuan
@@ -17,27 +11,15 @@ import java.util.stream.Collectors;
  */
 public class LoadFactory {
 
-    private static final URL BANNER_LOC = Thread.currentThread().getContextClassLoader().getResource("engine-banner.txt");
-    private static final URL PROP_LOC = Thread.currentThread().getContextClassLoader().getResource("elasticseach-engine.properties");
-
     public static String readBanner() {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(new File(BANNER_LOC.toURI())));
-            String banner = reader.lines().collect(Collectors.joining("\n"));
-            banner = String.format(banner, getProperty("elasticsearch-engine.version"));
+            //获取文件的URL
+            String banner = ClassPathResourceReaderUtils.getContent(CommonConstant.BANNER_PATH);
+            String version = ClassPathResourceReaderUtils.getContent(CommonConstant.VERSION_PATH);
+            banner = String.format(banner, version);
             return banner;
         } catch (Exception e) {
             return "";
         }
-    }
-
-    private static String getProperty(String fullKey) throws URISyntaxException, FileNotFoundException {
-        BufferedReader reader = new BufferedReader(new FileReader(new File(PROP_LOC.toURI())));
-        Optional<String> targetLine = reader.lines().filter(l -> l.startsWith(fullKey)).findAny();
-        if (targetLine.isPresent()) {
-            String[] split = targetLine.get().split("=");
-            return split[1];
-        }
-        return "";
     }
 }

@@ -1,4 +1,4 @@
-package com.elasticsearch.engine.elasticsearchengine.extend.jpa;
+package com.elasticsearch.engine.elasticsearchengine.extend.jooq;
 
 import com.elasticsearch.engine.elasticsearchengine.common.parse.sql.SqlParamParseHelper;
 import com.elasticsearch.engine.elasticsearchengine.common.proxy.handler.exannotation.AnnotationQueryCommon;
@@ -32,12 +32,12 @@ import java.util.Objects;
 @Slf4j
 @Component
 @Aspect
-public class JpaEsQueryAop {
+public class JooqEsQueryAop {
     @Resource
     private EsSqlExecuteHandler esSqlExecuteHandler;
 
     // 自己定义切点 拦截重试模方法
-    @Pointcut("@annotation(com.elasticsearch.engine.elasticsearchengine.model.annotion.JpaEsQuery)")
+    @Pointcut("@annotation(com.elasticsearch.engine.elasticsearchengine.model.annotion.JooqEsQuery)")
     public void esQueryCut() {
     }
 

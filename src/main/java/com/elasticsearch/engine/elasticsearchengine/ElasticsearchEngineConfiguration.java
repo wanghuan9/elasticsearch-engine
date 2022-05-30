@@ -3,6 +3,7 @@ package com.elasticsearch.engine.elasticsearchengine;
 import com.elasticsearch.engine.elasticsearchengine.common.parse.ann.model.QueryHandlerFactory;
 import com.elasticsearch.engine.elasticsearchengine.config.LoadFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import java.util.stream.Collectors;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
  * @date 2022-01-26 11:28
  */
 @Slf4j
+@Configuration
 public class ElasticsearchEngineConfiguration {
 
     @PostConstruct

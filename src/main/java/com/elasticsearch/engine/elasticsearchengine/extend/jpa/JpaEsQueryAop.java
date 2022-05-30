@@ -46,12 +46,14 @@ public class JpaEsQueryAop {
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Method method = signature.getMethod();
         Object[] args = pjp.getArgs();
-        Object result = null;
+        Object result;
         try {
             ThreadLocalUtil.set(CommonConstant.IS_ES_QUERY,Boolean.TRUE);
             result = pjp.proceed(args);
         } catch (EsHelperJpaExecuteException e) {
             result = esQuery(method, e.getMessage(), args);
+        }finally {
+            ThreadLocalUtil.remove(CommonConstant.IS_ES_QUERY);
         }
         return result;
     }

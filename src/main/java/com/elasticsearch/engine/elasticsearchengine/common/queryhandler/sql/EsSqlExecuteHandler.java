@@ -1,6 +1,6 @@
 package com.elasticsearch.engine.elasticsearchengine.common.queryhandler.sql;
 
-import com.elasticsearch.engine.elasticsearchengine.common.GlobalConfig;
+import com.elasticsearch.engine.elasticsearchengine.GlobalConfig;
 import com.elasticsearch.engine.elasticsearchengine.common.utils.*;
 import com.elasticsearch.engine.elasticsearchengine.config.ElasticSearchProperties;
 import com.elasticsearch.engine.elasticsearchengine.model.constant.CommonConstant;

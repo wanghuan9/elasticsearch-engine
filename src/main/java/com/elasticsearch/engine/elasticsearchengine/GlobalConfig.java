@@ -1,4 +1,4 @@
-package com.elasticsearch.engine.elasticsearchengine.common;
+package com.elasticsearch.engine.elasticsearchengine;
 
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;

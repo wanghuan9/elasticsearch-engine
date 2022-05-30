@@ -1,6 +1,6 @@
 package com.elasticsearch.engine.elasticsearchengine.common.parse.ann.model;
 
-import com.elasticsearch.engine.elasticsearchengine.common.GlobalConfig;
+import com.elasticsearch.engine.elasticsearchengine.GlobalConfig;
 import com.elasticsearch.engine.elasticsearchengine.common.utils.JsonParser;
 import com.elasticsearch.engine.elasticsearchengine.model.domain.BaseHit;
 import com.elasticsearch.engine.elasticsearchengine.model.domain.BaseResp;

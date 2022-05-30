@@ -1,7 +1,7 @@
 package com.elasticsearch.engine.elasticsearchengine.common.parse.ann.model;
 
 
-import com.elasticsearch.engine.elasticsearchengine.common.GlobalConfig;
+import com.elasticsearch.engine.elasticsearchengine.GlobalConfig;
 import com.elasticsearch.engine.elasticsearchengine.common.utils.ReflectionUtils;
 import com.elasticsearch.engine.elasticsearchengine.hook.RequestHook;
 import com.elasticsearch.engine.elasticsearchengine.mapping.annotation.Term;

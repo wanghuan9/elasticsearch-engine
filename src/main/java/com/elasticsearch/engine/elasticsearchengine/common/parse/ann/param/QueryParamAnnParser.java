@@ -1,7 +1,7 @@
 package com.elasticsearch.engine.elasticsearchengine.common.parse.ann.param;
 
 
-import com.elasticsearch.engine.elasticsearchengine.common.GlobalConfig;
+import com.elasticsearch.engine.elasticsearchengine.GlobalConfig;
 import com.elasticsearch.engine.elasticsearchengine.common.utils.ReflectionUtils;
 import com.elasticsearch.engine.elasticsearchengine.mapping.annotation.Term;
 import com.elasticsearch.engine.elasticsearchengine.mapping.annotation.Terms;

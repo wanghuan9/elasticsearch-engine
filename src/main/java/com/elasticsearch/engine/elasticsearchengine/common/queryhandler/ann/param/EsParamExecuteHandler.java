@@ -1,6 +1,6 @@
 package com.elasticsearch.engine.elasticsearchengine.common.queryhandler.ann.param;
 
-import com.elasticsearch.engine.elasticsearchengine.common.GlobalConfig;
+import com.elasticsearch.engine.elasticsearchengine.GlobalConfig;
 import com.elasticsearch.engine.elasticsearchengine.common.parse.ann.model.EsResponseParse;
 import com.elasticsearch.engine.elasticsearchengine.common.parse.ann.param.EsParamQueryEngine;
 import com.elasticsearch.engine.elasticsearchengine.common.queryhandler.ann.model.AbstractEsBaseExecuteHandle;

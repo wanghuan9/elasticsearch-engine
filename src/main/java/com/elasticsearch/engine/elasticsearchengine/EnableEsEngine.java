@@ -1,6 +1,5 @@
-package com.elasticsearch.engine.elasticsearchengine.model.annotion;
+package com.elasticsearch.engine.elasticsearchengine;
 
-import com.elasticsearch.engine.elasticsearchengine.ElasticsearchEngineConfiguration;
 import com.elasticsearch.engine.elasticsearchengine.config.ElasticsearchConfig;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;

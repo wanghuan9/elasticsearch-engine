@@ -74,7 +74,8 @@ public class JooqEsQueryAop {
         log.info("改写后sql: {}", select);
         //参数替换
         // 解析sql参数
-        String paramSql = SqlParamParseHelper.getMethodArgsSql(select.toString(), method, args, SqlParamParse.JAP_SQL_PARAM);
+        String selectSql = select.toString().replaceAll("`", "");
+        String paramSql = SqlParamParseHelper.getMethodArgsSql(selectSql, method, args, SqlParamParse.JAP_SQL_PARAM);
         log.info("替换参数后sql: {}", paramSql);
         //执行ES查询
         return doQueryEs(paramSql, method);

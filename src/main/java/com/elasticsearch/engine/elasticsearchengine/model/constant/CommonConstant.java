@@ -24,6 +24,11 @@ public class CommonConstant {
     public static final String QUERY_SQL = "sql";
 
     /**
+     * es查询标记
+     */
+    public static final String IS_ES_QUERY = "is_es_query";
+
+    /**
      * es默认连接
      */
     public static final String DEFAULT_ES_HOST = "127.0.0.1:9200";

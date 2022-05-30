@@ -3,7 +3,9 @@ package com.elasticsearch.engine.elasticsearchengine.extend.jpa;
 import com.elasticsearch.engine.elasticsearchengine.common.parse.sql.SqlParamParseHelper;
 import com.elasticsearch.engine.elasticsearchengine.common.proxy.handler.exannotation.AnnotationQueryCommon;
 import com.elasticsearch.engine.elasticsearchengine.common.queryhandler.sql.EsSqlExecuteHandler;
+import com.elasticsearch.engine.elasticsearchengine.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.elasticsearchengine.extend.mybatis.SqlParserHelper;
+import com.elasticsearch.engine.elasticsearchengine.model.constant.CommonConstant;
 import com.elasticsearch.engine.elasticsearchengine.model.emenu.SqlParamParse;
 import com.elasticsearch.engine.elasticsearchengine.model.exception.EsHelperJpaExecuteException;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +35,7 @@ import java.util.Objects;
 public class LogAop {
     @Resource
     private EsSqlExecuteHandler esSqlExecuteHandler;
-    
+
     // 自己定义切点 拦截重试模方法
     @Pointcut("@annotation(com.elasticsearch.engine.elasticsearchengine.model.annotion.EsQuery)")
     public void esQueryCut() {
@@ -44,25 +46,27 @@ public class LogAop {
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Method method = signature.getMethod();
         Object[] args = pjp.getArgs();
+        Object result = null;
         try {
-            pjp.proceed(args);
+            ThreadLocalUtil.set(CommonConstant.IS_ES_QUERY,Boolean.TRUE);
+            result = pjp.proceed(args);
         } catch (EsHelperJpaExecuteException e) {
-           return esQuery(method,e,args);
-        } 
+            result = esQuery(method, e.getMessage(), args);
+        }
         //后处理
-        return null;
+        return result;
     }
 
     /**
      * es查询
+     *
      * @param method
-     * @param e
+     * @param sql
      * @param args
      * @return
      * @throws JSQLParserException
      */
-    private Object esQuery(Method method,EsHelperJpaExecuteException e,Object[] args) throws JSQLParserException {
-        String sql = e.getMessage();
+    private Object esQuery(Method method, String sql, Object[] args) throws JSQLParserException {
         log.info("原始sql: {}", sql);
         //改写sql
         Select select = SqlParserHelper.rewriteSql(method, sql);
@@ -72,11 +76,12 @@ public class LogAop {
         String paramSql = SqlParamParseHelper.getMethodArgsSql(select.toString(), method, args, SqlParamParse.JAP_SQL_PARAM);
         log.info("替换参数后sql: {}", paramSql);
         //执行ES查询
-       return doQueryEs(paramSql,method);
+        return doQueryEs(paramSql, method);
     }
 
     /**
      * 执行es查询
+     *
      * @param sql
      * @param method
      * @return

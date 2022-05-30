@@ -32,7 +32,7 @@ import java.util.Objects;
 @Slf4j
 @Component
 @Aspect
-public class LogAop {
+public class JpaEsQueryAop {
     @Resource
     private EsSqlExecuteHandler esSqlExecuteHandler;
 
@@ -53,7 +53,6 @@ public class LogAop {
         } catch (EsHelperJpaExecuteException e) {
             result = esQuery(method, e.getMessage(), args);
         }
-        //后处理
         return result;
     }
 

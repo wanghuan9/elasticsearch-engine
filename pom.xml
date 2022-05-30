@@ -24,6 +24,8 @@
         <lombok.version>1.18.22</lombok.version>
         <mybatis.version>3.4.6</mybatis.version>
         <jsqlparser.version>4.0</jsqlparser.version>
+        <hibernate.version>5.2.12.Final</hibernate.version>
+        <jooq.version>3.14.8</jooq.version>
     </properties>
     <dependencies>
         <dependency>
@@ -63,14 +65,19 @@
             <version>${apache.collections4.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${google.guava.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>${org.reflections.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${google.guava.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+            <version>${spring.boot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
@@ -78,55 +85,32 @@
             <version>${elasticsearch.client.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!--<dependency>
+        <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
             <version>${mybatis.version}</version>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>com.github.jsqlparser</groupId>
             <artifactId>jsqlparser</artifactId>
             <version>${jsqlparser.version}</version>
         </dependency>
-
         <!-- druid sqlParser -->
-        <dependency>
+    <!--    <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
             <version>1.1.10</version>
             <optional>true</optional>
-        </dependency>
-
-        <!--mybatis起步依赖-->
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>2.1.4</version>
-        </dependency>
-
-        <!--mysql驱动-->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
-            <version>5.1.47</version>
-        </dependency>
-        <!--spring data jpa-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <version>${spring.boot.version}</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>5.2.12.Final</version>
+            <version>${hibernate.version}</version>
         </dependency>
-        
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-            <version>${spring.boot.version}</version>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq</artifactId>
+            <version>${jooq.version}</version>
         </dependency>
     </dependencies>
 

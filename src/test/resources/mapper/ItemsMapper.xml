@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.elasticsearch.engine.elasticsearchengine.extend.mybatis.mapper.ItemsMapper">
+<mapper namespace="extend.mybatis.mapper.ItemsMapper">
 
     <sql id="Base_Column_List">
         item_no, sku_name, status

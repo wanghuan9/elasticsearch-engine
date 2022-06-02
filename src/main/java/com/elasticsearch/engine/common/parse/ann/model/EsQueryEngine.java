@@ -10,6 +10,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,10 +30,10 @@ public class EsQueryEngine {
      * @param queryViewObj
      * @param visitParent  return
      */
-    public static AbstractEsRequestHolder execute(Object queryViewObj, boolean visitParent) {
+    public static AbstractEsRequestHolder execute(Method method, Object queryViewObj, boolean visitParent) {
         QueryAnnParser translator = QueryAnnParser.instance();
         //解析类注解 index信息及包含的字段
-        EsQueryIndexBean indexQueryBean = translator.getIndex(queryViewObj);
+        EsQueryIndexBean indexQueryBean = translator.getIndex(method,queryViewObj);
         //解析具体的注解 字段,字段值,注解,查询类型
         ParamParserResultModel read = translator.read(queryViewObj, visitParent);
         //构建查询信息

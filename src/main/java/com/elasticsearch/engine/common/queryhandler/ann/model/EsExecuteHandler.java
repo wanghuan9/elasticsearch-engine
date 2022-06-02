@@ -10,6 +10,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -53,17 +54,71 @@ public class EsExecuteHandler extends EsBaseExecuteHandle {
 //        return Page.toPage(param, res::getTotalHit, () -> convertFunction.apply(res.getRecords())).toResponse();
 //    }
 
+
     /**
      * List查询并构建结果
      *
+     * @param method 被代理的方法
      * @param param         需要解析的查询实体
      * @param responseClazz 查询结果实体类型
      * @param <T>           查询结果实体类型对应的泛型
      * @return
      */
-    public <T> List<T> executeList(Object param, Class<T> responseClazz) {
+    public <T> List<T> executeList(Method method, Object param, Class<T> responseClazz) {
         BaseResp<T> result = execute(param, responseClazz);
         return result.getRecords();
+    }
+
+    /**
+     * 单个查询并构建结果
+     * 若查询结果>1 会抛异常
+     *
+     * @param method 被代理的方法
+     * @param param         需要解析的查询实体
+     * @param responseClazz 查询结果实体类型
+     * @param <T>           查询结果实体类型对应的泛型
+     * @return
+     */
+    public <T> T executeOne(Method method, Object param, Class<T> responseClazz) {
+        BaseResp<T> result = execute(method, param, responseClazz);
+        if (CollectionUtils.isEmpty(result.getRecords())) {
+            return null;
+        }
+        if (result.getRecords().size() > 1) {
+            throw new EsHelperQueryException("except one result, but find more");
+        }
+        return result.getRecords().stream().findFirst().get();
+    }
+
+    /**
+     * 代理查询并构建结果(自定义扩展查询-兼容invoke)
+     * 
+     * @param method 被代理的方法
+     * @param param         需要解析的查询实体
+     * @param responseClazz 查询结果实体类型
+     * @param <T>           查询结果实体类型对应的泛型
+     * @return
+     */
+    public <T> BaseResp<T> execute(Method method, Object param, Class responseClazz) {
+        AbstractEsRequestHolder esHolder = EsQueryEngine.execute(method, param, GlobalConfig.visitQueryBeanParent);
+        return baseExecute(param, responseClazz, esHolder);
+    }
+
+    /**
+     * 固定结果类型查询
+     * @param method 被代理的方法
+     * @param param 需要解析的查询实体
+     * @return
+     */
+    public BaseResp executeDefaultResp(Method method,Object param) {
+        //方法返回值
+        Class<?> returnType = method.getReturnType();
+        String simpleName = "a";
+        switch (simpleName){
+            case "a":
+                return executeAggs(param);
+        }
+        throw new EsHelperQueryException("");
     }
 
     /**
@@ -76,14 +131,20 @@ public class EsExecuteHandler extends EsBaseExecuteHandle {
      * @return
      */
     public <T> T executeOne(Object param, Class<T> responseClazz) {
-        BaseResp<T> result = execute(param, responseClazz);
-        if (CollectionUtils.isEmpty(result.getRecords())) {
-            return null;
-        }
-        if (result.getRecords().size() > 1) {
-            throw new EsHelperQueryException("except one result, but find more");
-        }
-        return result.getRecords().stream().findFirst().get();
+        return executeOne(null, param, responseClazz);
+    }
+
+
+    /**
+     * List查询并构建结果
+     *
+     * @param param         需要解析的查询实体
+     * @param responseClazz 查询结果实体类型
+     * @param <T>           查询结果实体类型对应的泛型
+     * @return
+     */
+    public <T> List<T> executeList(Object param, Class<T> responseClazz) {
+        return executeList(null, param, responseClazz);
     }
 
     /**
@@ -95,8 +156,7 @@ public class EsExecuteHandler extends EsBaseExecuteHandle {
      * @return
      */
     public <T> BaseResp<T> execute(Object param, Class responseClazz) {
-        AbstractEsRequestHolder esHolder = EsQueryEngine.execute(param, GlobalConfig.visitQueryBeanParent);
-        return baseExecute(param, responseClazz, esHolder);
+        return execute(null, param, responseClazz);
     }
 
 
@@ -107,7 +167,7 @@ public class EsExecuteHandler extends EsBaseExecuteHandle {
      * @return
      */
     public SearchSourceBuilder getSearchSourceBuilder(Object param) {
-        AbstractEsRequestHolder esHolder = EsQueryEngine.execute(param, GlobalConfig.visitQueryBeanParent);
+        AbstractEsRequestHolder esHolder = EsQueryEngine.execute(null, param, GlobalConfig.visitQueryBeanParent);
         return esHolder.getSource();
     }
 

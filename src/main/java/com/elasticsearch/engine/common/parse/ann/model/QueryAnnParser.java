@@ -83,11 +83,19 @@ public class QueryAnnParser {
      * @param view
      * @return
      */
-    public EsQueryIndexBean getIndex(Object view) {
+    public EsQueryIndexBean getIndex(Method method, Object view) {
+        //先从查询model所在的类获取, 再从method所在的类上获取
         Class<?> clazz = view.getClass();
         EsQueryIndex ann = clazz.getAnnotation(EsQueryIndex.class);
         if (ann == null) {
-            throw new EsHelperQueryException("undefine query-index @EsQueryIndex");
+            if (method == null) {
+                throw new EsHelperQueryException("undefine query-index @EsQueryIndex");
+            }
+            clazz = method.getDeclaringClass();
+            ann = clazz.getAnnotation(EsQueryIndex.class);
+            if (ann == null) {
+                throw new EsHelperQueryException("undefine query-index @EsQueryIndex");
+            }
         }
         String index = ann.value();
         QueryModel model = ann.model();

@@ -8,7 +8,7 @@ import lombok.Data;
  * @date 2022-01-28 15:55
  */
 @Data
-public class DefaultAggResp {
+public class DefaultAggResp implements DefaultResp{
 
     private String key;
 

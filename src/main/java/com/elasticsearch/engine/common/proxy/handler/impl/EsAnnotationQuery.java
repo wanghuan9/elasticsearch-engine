@@ -1,12 +1,11 @@
 package com.elasticsearch.engine.common.proxy.handler.impl;
 
-import com.elasticsearch.engine.common.proxy.handler.exannotation.EsAnnotationQueryFactory;
-import com.elasticsearch.engine.common.utils.ReflectionUtils;
-import com.elasticsearch.engine.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.common.proxy.enums.EsAnnotationQueryEnum;
 import com.elasticsearch.engine.common.proxy.enums.EsQueryType;
 import com.elasticsearch.engine.common.proxy.handler.EsQueryProxyExecuteHandler;
-import com.elasticsearch.engine.model.annotion.EsQueryIndex;
+import com.elasticsearch.engine.common.proxy.handler.exannotation.EsAnnotationQueryFactory;
+import com.elasticsearch.engine.common.utils.ReflectionUtils;
+import com.elasticsearch.engine.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.model.constant.CommonConstant;
 import com.elasticsearch.engine.model.exception.EsHelperQueryException;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -40,8 +39,8 @@ public class EsAnnotationQuery implements EsQueryProxyExecuteHandler {
         }
         EsAnnotationQueryEnum queryEnum;
         Class<?> clazz = args[0].getClass();
-        //只有一个参数 && 并且参数不是基础类型 && 有@EsQueryIndex注解
-        if (args.length == NumberUtils.INTEGER_ONE && !ReflectionUtils.isBaseType(clazz) && clazz.isAnnotationPresent(EsQueryIndex.class)) {
+        //只有一个参数 && 并且参数不是基础类型
+        if (args.length == NumberUtils.INTEGER_ONE && !ReflectionUtils.isBaseType(clazz)) {
             queryEnum = EsAnnotationQueryEnum.ANNOTATION_MODEL_QUERY;
         } else if (args.length > NumberUtils.INTEGER_ZERO && ReflectionUtils.allParamIsBaseType(args)) {
             //有一个或多个参数 && 都是基础类型

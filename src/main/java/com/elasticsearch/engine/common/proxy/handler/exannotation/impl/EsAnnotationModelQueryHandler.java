@@ -9,6 +9,7 @@ import com.elasticsearch.engine.hook.ResponseHook;
 import com.elasticsearch.engine.model.constant.CommonConstant;
 import com.elasticsearch.engine.model.domain.BaseESRepository;
 import com.elasticsearch.engine.model.domain.BaseResp;
+import com.elasticsearch.engine.model.domain.DefaultResp;
 import com.elasticsearch.engine.model.exception.EsHelperExecuteException;
 import com.elasticsearch.engine.model.exception.EsHelperQueryException;
 import org.springframework.stereotype.Component;
@@ -58,25 +59,29 @@ public class EsAnnotationModelQueryHandler implements EsAnnotationQueryHandler {
         }
         //Repository泛型 单个返回值
         if (returnType.isAssignableFrom(retEntityClass)) {
-            return esExecuteHandler.executeOne(param, returnType);
+            return esExecuteHandler.executeOne(method, param, returnType);
         }
         //Repository泛型 List返回值
         if (List.class.isAssignableFrom(returnType)
                 && Objects.nonNull(returnGenericType)
                 && returnGenericType.isAssignableFrom(retEntityClass)) {
-            return esExecuteHandler.executeList(param, returnGenericType);
+            return esExecuteHandler.executeList(method, param, returnGenericType);
         }
         //Repository泛型 BaseResp返回值
         if (BaseResp.class.isAssignableFrom(returnType)
                 && Objects.nonNull(returnGenericType)
                 && returnGenericType.isAssignableFrom(retEntityClass)) {
-            return esExecuteHandler.execute(param, returnGenericType);
+            return esExecuteHandler.execute(method, param, returnGenericType);
+        }
+        //默认固定的实体响应
+        if (returnType.isAssignableFrom(DefaultResp.class)) {
+            return esExecuteHandler.executeDefaultResp(method, param);
         }
         //自定义ResponseHook返回值
         if (Objects.nonNull(responseHookResultType) && returnTypeType.getTypeName().equals(responseHookResultType.getTypeName())) {
-            return esExecuteHandler.execute(param, returnType).getResult();
+            return esExecuteHandler.execute(method, param, returnType).getResult();
         }
-        throw new EsHelperExecuteException(prefix + "方法返回值泛型匹配异常: 返回值必须是 Repository 的泛型类型或 ResponseHook 的泛型类型");
+        throw new EsHelperExecuteException(prefix + "方法返回值泛型匹配异常: 返回值必须是 Repository 的泛型类型或 ResponseHook 的泛型类型 或者 BaseResp 的实现类");
     }
 
 }

@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -141,8 +142,18 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
      * @return
      */
     public SearchResponse execute(Object param) {
+        return execute(null,param);
+    }
+
+    /**
+     * 代理查询 不构建结果
+     *
+     * @param param 需要解析的查询实体
+     * @return
+     */
+    public SearchResponse execute(Method method, Object param) {
         SearchResponse resp;
-        AbstractEsRequestHolder esHolder = EsQueryEngine.execute(param, GlobalConfig.visitQueryBeanParent);
+        AbstractEsRequestHolder esHolder = EsQueryEngine.execute(method,param, GlobalConfig.visitQueryBeanParent);
         SearchSourceBuilder source = esHolder.getSource();
         //设置超时时间
         source.timeout(new TimeValue(GlobalConfig.queryTimeOut, TimeUnit.SECONDS));
@@ -183,7 +194,7 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
         executePostProcessorAfter(param, resp, result);
         return result;
     }
-
+    
 
     /**
      * 校验是否存在分组查询注解

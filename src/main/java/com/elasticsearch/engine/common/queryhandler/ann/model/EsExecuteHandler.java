@@ -58,14 +58,14 @@ public class EsExecuteHandler extends EsBaseExecuteHandle {
     /**
      * List查询并构建结果
      *
-     * @param method 被代理的方法
+     * @param method        被代理的方法
      * @param param         需要解析的查询实体
      * @param responseClazz 查询结果实体类型
      * @param <T>           查询结果实体类型对应的泛型
      * @return
      */
     public <T> List<T> executeList(Method method, Object param, Class<T> responseClazz) {
-        BaseResp<T> result = execute(param, responseClazz);
+        BaseResp<T> result = execute(method, param, responseClazz);
         return result.getRecords();
     }
 
@@ -73,7 +73,7 @@ public class EsExecuteHandler extends EsBaseExecuteHandle {
      * 单个查询并构建结果
      * 若查询结果>1 会抛异常
      *
-     * @param method 被代理的方法
+     * @param method        被代理的方法
      * @param param         需要解析的查询实体
      * @param responseClazz 查询结果实体类型
      * @param <T>           查询结果实体类型对应的泛型
@@ -92,8 +92,8 @@ public class EsExecuteHandler extends EsBaseExecuteHandle {
 
     /**
      * 代理查询并构建结果(自定义扩展查询-兼容invoke)
-     * 
-     * @param method 被代理的方法
+     *
+     * @param method        被代理的方法
      * @param param         需要解析的查询实体
      * @param responseClazz 查询结果实体类型
      * @param <T>           查询结果实体类型对应的泛型
@@ -106,15 +106,16 @@ public class EsExecuteHandler extends EsBaseExecuteHandle {
 
     /**
      * 固定结果类型查询
+     *
      * @param method 被代理的方法
-     * @param param 需要解析的查询实体
+     * @param param  需要解析的查询实体
      * @return
      */
-    public BaseResp executeDefaultResp(Method method,Object param) {
+    public BaseResp executeDefaultResp(Method method, Object param) {
         //方法返回值
         Class<?> returnType = method.getReturnType();
         String simpleName = "a";
-        switch (simpleName){
+        switch (simpleName) {
             case "a":
                 return executeAggs(param);
         }

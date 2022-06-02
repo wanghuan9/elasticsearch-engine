@@ -105,7 +105,7 @@ public class EsParamExecuteHandler extends AbstractEsBaseExecuteHandle {
             SearchSourceBuilder source = esHolder.getSource();
             String methodName = ThreadLocalUtil.get(CommonConstant.INTERFACE_METHOD_NAME);
             //设置超时时间
-            source.timeout(new TimeValue(GlobalConfig.QUERY_TIME_OUT, TimeUnit.SECONDS));
+            source.timeout(new TimeValue(GlobalConfig.queryTimeOut, TimeUnit.SECONDS));
             //前置扩展
             executePostProcessorBefore(null, esHolder);
             log.info("{} execute-es-query-json is\n{}", methodName, esHolder.getSource().toString());

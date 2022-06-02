@@ -1,5 +1,6 @@
 package com.elasticsearch.engine.common.queryhandler.ann.model;
 
+import com.elasticsearch.engine.GlobalConfig;
 import com.elasticsearch.engine.common.parse.ann.model.EsQueryEngine;
 import com.elasticsearch.engine.holder.AbstractEsRequestHolder;
 import com.elasticsearch.engine.model.domain.BaseResp;
@@ -94,7 +95,7 @@ public class EsExecuteHandler extends EsBaseExecuteHandle {
      * @return
      */
     public <T> BaseResp<T> execute(Object param, Class responseClazz) {
-        AbstractEsRequestHolder esHolder = EsQueryEngine.execute(param, Boolean.FALSE);
+        AbstractEsRequestHolder esHolder = EsQueryEngine.execute(param, GlobalConfig.visitQueryBeanParent);
         return baseExecute(param, responseClazz, esHolder);
     }
 
@@ -106,7 +107,7 @@ public class EsExecuteHandler extends EsBaseExecuteHandle {
      * @return
      */
     public SearchSourceBuilder getSearchSourceBuilder(Object param) {
-        AbstractEsRequestHolder esHolder = EsQueryEngine.execute(param, Boolean.FALSE);
+        AbstractEsRequestHolder esHolder = EsQueryEngine.execute(param, GlobalConfig.visitQueryBeanParent);
         return esHolder.getSource();
     }
 

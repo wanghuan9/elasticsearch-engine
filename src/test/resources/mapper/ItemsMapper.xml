@@ -6,7 +6,7 @@
         item_no, sku_name, status
     </sql>
     
-    <select id="getByItemNo" resultType="com.elasticsearch.engine.elasticsearchengine.model.exception.ItemsEntity">
+    <select id="getByItemNo" resultType="com.elasticsearch.engine.model.exception.ItemsEntity">
 <!--        SELECT-->
 <!--        <include refid="Base_Column_List"/>-->
 <!--        FROM items t INNER JOIN item_extend d-->

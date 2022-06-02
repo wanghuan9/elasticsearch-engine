@@ -93,7 +93,7 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
     public SearchResponse execute(SearchSourceBuilder sourceBuilder, String indexName) {
         SearchResponse searchResponse;
         //设置超时时间
-        sourceBuilder.timeout(new TimeValue(GlobalConfig.QUERY_TIME_OUT, TimeUnit.SECONDS));
+        sourceBuilder.timeout(new TimeValue(GlobalConfig.queryTimeOut, TimeUnit.SECONDS));
         //ES的查询请求对象
         SearchRequest searchRequest = new SearchRequest().indices(indexName).source(sourceBuilder);
         log.info("execute-es-query-json is\n{}", searchRequest);
@@ -119,7 +119,7 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
     public <T> BaseResp<T> execute(SearchSourceBuilder sourceBuilder, String indexName, Class<T> responseClazz) {
         SearchResponse searchResponse;
         //设置超时时间
-        sourceBuilder.timeout(new TimeValue(GlobalConfig.QUERY_TIME_OUT, TimeUnit.SECONDS));
+        sourceBuilder.timeout(new TimeValue(GlobalConfig.queryTimeOut, TimeUnit.SECONDS));
         //ES的查询请求对象
         SearchRequest searchRequest = new SearchRequest().indices(indexName).source(sourceBuilder);
         log.info("execute-es-query-json is\n{}", searchRequest);
@@ -142,10 +142,10 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
      */
     public SearchResponse execute(Object param) {
         SearchResponse resp;
-        AbstractEsRequestHolder esHolder = EsQueryEngine.execute(param, Boolean.FALSE);
+        AbstractEsRequestHolder esHolder = EsQueryEngine.execute(param, GlobalConfig.visitQueryBeanParent);
         SearchSourceBuilder source = esHolder.getSource();
         //设置超时时间
-        source.timeout(new TimeValue(GlobalConfig.QUERY_TIME_OUT, TimeUnit.SECONDS));
+        source.timeout(new TimeValue(GlobalConfig.queryTimeOut, TimeUnit.SECONDS));
         //前置扩展
         executePostProcessorBefore(param, esHolder);
         try {
@@ -170,7 +170,7 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
         SearchResponse resp;
         SearchSourceBuilder source = esHolder.getSource();
         //设置超时时间
-        source.timeout(new TimeValue(GlobalConfig.QUERY_TIME_OUT, TimeUnit.SECONDS));
+        source.timeout(new TimeValue(GlobalConfig.queryTimeOut, TimeUnit.SECONDS));
         //前置扩展
         executePostProcessorBefore(param, esHolder);
         try {

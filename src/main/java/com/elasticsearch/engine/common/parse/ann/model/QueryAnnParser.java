@@ -192,7 +192,7 @@ public class QueryAnnParser {
                 return;
             }
             //没有添加注解的 基础类型设置默认 trem/trems查询
-            if (GlobalConfig.IS_BUILD_DEFAULT) {
+            if (GlobalConfig.isBuildDefault) {
                 List<EsQueryFieldBean> queryDes = this.mapFieldAnnDefault(field, view);
                 queryDesList.addAll(queryDes);
             }
@@ -370,7 +370,7 @@ public class QueryAnnParser {
             }
             queryDes.setLogicConnector(esConnector);
 
-            String column = ann.name();
+            String column = ann.value();
             if (StringUtils.isBlank(column)) {
                 column = field.getName();
                 //TODO 优化
@@ -383,7 +383,7 @@ public class QueryAnnParser {
                     }
                 }
                 //若设置默认下划线
-                if (GlobalConfig.QUERY_PARAM_IS_LOWER_UNDERSCORE) {
+                if (GlobalConfig.namingStrategy) {
                     column = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, column);
                 }
             }
@@ -421,7 +421,7 @@ public class QueryAnnParser {
                 }
             }
             //若设置默认下划线
-            if (GlobalConfig.QUERY_PARAM_IS_LOWER_UNDERSCORE) {
+            if (GlobalConfig.namingStrategy) {
                 column = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, column);
             }
             queryDes.setField(column);

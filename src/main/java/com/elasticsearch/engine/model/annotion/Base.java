@@ -21,7 +21,7 @@ public @interface Base {
      * filed name
      * return
      */
-    String name() default "";
+    String value() default "";
 
     /**
      * filed pase order

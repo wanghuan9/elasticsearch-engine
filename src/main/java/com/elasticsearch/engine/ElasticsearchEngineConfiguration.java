@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Configuration
 @EnableConfigurationProperties(ElasticSearchProperties.class)
-@ComponentScan(basePackages = "com.elasticsearch.engine.elasticsearchengine")
+@ComponentScan(basePackages = "com.elasticsearch.engine")
 public class ElasticsearchEngineConfiguration {
 
     @PostConstruct

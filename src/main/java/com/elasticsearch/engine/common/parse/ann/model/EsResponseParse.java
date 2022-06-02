@@ -1,10 +1,9 @@
 package com.elasticsearch.engine.common.parse.ann.model;
 
-import com.elasticsearch.engine.common.utils.JsonParser;
 import com.elasticsearch.engine.GlobalConfig;
+import com.elasticsearch.engine.common.utils.JsonParser;
 import com.elasticsearch.engine.model.domain.BaseHit;
 import com.elasticsearch.engine.model.domain.BaseResp;
-import com.elasticsearch.engine.model.emenu.JsonNamingStrategy;
 import com.elasticsearch.engine.model.exception.EsHelperQueryException;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.SearchHit;
@@ -118,7 +117,7 @@ public class EsResponseParse {
      * @return
      */
     private static <T> T jsonStrToObject(String jsonString, Class<T> type) {
-        if (GlobalConfig.RES_PROPERTY_NAMING_STRATEGY.equals(JsonNamingStrategy.SNAKE_CASE)) {
+        if (GlobalConfig.namingStrategy) {
             return JsonParser.asObjectSnakeCase(jsonString, type);
         } else {
             return JsonParser.asObject(jsonString, type);

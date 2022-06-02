@@ -30,7 +30,7 @@ public class EsSqlExecuteHandler {
     private static final String SQL_TRANSLATE_PREFIX;
 
     static {
-        EsVersionConstant constant = EsVersionConstant.of(GlobalConfig.ELASTIC_SEARCH_VERSION);
+        EsVersionConstant constant = EsVersionConstant.of(GlobalConfig.elasticVersion);
         SQL_QUERY_PREFIX = constant.getSqlQueryPrefix();
         SQL_TRANSLATE_PREFIX = constant.getSqlTranslatePrefix();
     }

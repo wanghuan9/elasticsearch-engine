@@ -1,10 +1,10 @@
 package com.elasticsearch.engine.common.proxy.handler.exannotation.impl;
 
-import com.elasticsearch.engine.common.queryhandler.ann.model.EsExecuteHandler;
-import com.elasticsearch.engine.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.common.proxy.enums.EsAnnotationQueryEnum;
 import com.elasticsearch.engine.common.proxy.handler.exannotation.AnnotationQueryCommon;
 import com.elasticsearch.engine.common.proxy.handler.exannotation.EsAnnotationQueryHandler;
+import com.elasticsearch.engine.common.queryhandler.ann.model.EsExecuteHandler;
+import com.elasticsearch.engine.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.hook.ResponseHook;
 import com.elasticsearch.engine.model.constant.CommonConstant;
 import com.elasticsearch.engine.model.domain.BaseESRepository;
@@ -74,14 +74,16 @@ public class EsAnnotationModelQueryHandler implements EsAnnotationQueryHandler {
             return esExecuteHandler.execute(method, param, returnGenericType);
         }
         //默认固定的实体响应
-        if (returnType.isAssignableFrom(DefaultResp.class)) {
+        if (BaseResp.class.isAssignableFrom(returnType)
+                && Objects.nonNull(returnGenericType)
+                && DefaultResp.class.isAssignableFrom(returnGenericType)) {
             return esExecuteHandler.executeDefaultResp(method, param);
         }
         //自定义ResponseHook返回值
         if (Objects.nonNull(responseHookResultType) && returnTypeType.getTypeName().equals(responseHookResultType.getTypeName())) {
             return esExecuteHandler.execute(method, param, returnType).getResult();
         }
-        throw new EsHelperExecuteException(prefix + "方法返回值泛型匹配异常: 返回值必须是 Repository 的泛型类型或 ResponseHook 的泛型类型 或者 BaseResp 的实现类");
+        throw new EsHelperExecuteException(prefix + "方法返回值泛型匹配异常: 返回值必须是 Repository 的泛型类型或 ResponseHook 的泛型类型或 DefaultResp 的实现类");
     }
 
 }

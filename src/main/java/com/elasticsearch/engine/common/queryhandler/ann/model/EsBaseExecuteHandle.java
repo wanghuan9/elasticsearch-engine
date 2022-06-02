@@ -142,7 +142,7 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
      * @return
      */
     public SearchResponse execute(Object param) {
-        return execute(null,param);
+        return execute(null, param);
     }
 
     /**
@@ -153,7 +153,7 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
      */
     public SearchResponse execute(Method method, Object param) {
         SearchResponse resp;
-        AbstractEsRequestHolder esHolder = EsQueryEngine.execute(method,param, GlobalConfig.visitQueryBeanParent);
+        AbstractEsRequestHolder esHolder = EsQueryEngine.execute(method, param, GlobalConfig.visitQueryBeanParent);
         SearchSourceBuilder source = esHolder.getSource();
         //设置超时时间
         source.timeout(new TimeValue(GlobalConfig.queryTimeOut, TimeUnit.SECONDS));
@@ -194,7 +194,7 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
         executePostProcessorAfter(param, resp, result);
         return result;
     }
-    
+
 
     /**
      * 校验是否存在分组查询注解
@@ -203,12 +203,12 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
      * @param param 需要解析的查询实体
      * @return
      */
-    public BaseResp<DefaultAggResp> executeAggs(Object param) {
+    public BaseResp<DefaultAggResp> executeAggs(Method method, Object param) {
         if (!checkExistsAggAnnotation(param)) {
             throw new EsHelperQueryException("param field Missing @Aggs annotation");
         }
         List<DefaultAggResp> records = new ArrayList<>();
-        SearchResponse searchResponse = execute(param);
+        SearchResponse searchResponse = execute(method, param);
         if (Objects.isNull(searchResponse.getAggregations())) {
             throw new EsHelperQueryException("aggs param value is null, result aggregations is empty");
         }
@@ -225,6 +225,17 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
         resp.setTotalHit((long) records.size());
         log.info("execute-es-result-json is\n{}", JsonParser.asJson(resp));
         return resp;
+    }
+
+    /**
+     * 校验是否存在分组查询注解
+     * 构建默认分组查询结果
+     *
+     * @param param 需要解析的查询实体
+     * @return
+     */
+    public BaseResp<DefaultAggResp> executeAggs(Object param) {
+        return executeAggs(null, param);
     }
 
     /**

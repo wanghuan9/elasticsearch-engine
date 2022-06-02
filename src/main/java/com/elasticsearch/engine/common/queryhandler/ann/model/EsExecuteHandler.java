@@ -117,7 +117,7 @@ public class EsExecuteHandler extends EsBaseExecuteHandle {
         String simpleName = "a";
         switch (simpleName) {
             case "a":
-                return executeAggs(param);
+                return executeAggs(method, param);
         }
         throw new EsHelperQueryException("");
     }

@@ -1,10 +1,10 @@
 package com.elasticsearch.engine.common.proxy.handler.exannotation.impl;
 
-import com.elasticsearch.engine.common.queryhandler.ann.param.EsParamExecuteHandler;
-import com.elasticsearch.engine.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.common.proxy.enums.EsAnnotationQueryEnum;
 import com.elasticsearch.engine.common.proxy.handler.exannotation.AnnotationQueryCommon;
 import com.elasticsearch.engine.common.proxy.handler.exannotation.EsAnnotationQueryHandler;
+import com.elasticsearch.engine.common.queryhandler.ann.param.EsParamExecuteHandler;
+import com.elasticsearch.engine.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.model.constant.CommonConstant;
 import com.elasticsearch.engine.model.domain.BaseESRepository;
 import com.elasticsearch.engine.model.domain.BaseResp;
@@ -61,7 +61,7 @@ public class EsAnnotationParamQueryHandler implements EsAnnotationQueryHandler {
                 && returnGenericType.isAssignableFrom(retEntityClass)) {
             return esParamExecuteHandler.execute(method, args, returnGenericType);
         }
-        throw new EsHelperExecuteException(prefix + "方法返回值泛型匹配异常: 返回值必须是 Repository 的泛型类型或 ResponseHook 的泛型类型");
+        throw new EsHelperExecuteException(prefix + "方法返回值泛型匹配异常: 返回值必须是 Repository 的泛型类型");
     }
 
 }

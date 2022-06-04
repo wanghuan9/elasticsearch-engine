@@ -56,7 +56,8 @@ public class MybatisEsQueryInterceptor implements Interceptor {
             Object parameter = args[1];
             boolean isUpdate = args.length == 2;
             MappedStatement ms = (MappedStatement) args[0];
-            if (!isUpdate && ms.getSqlCommandType() == SqlCommandType.SELECT) {
+            Method method = isEsQuery(ms);
+            if (Objects.nonNull(method) && !isUpdate && ms.getSqlCommandType() == SqlCommandType.SELECT) {
                 RowBounds rowBounds = (RowBounds) args[2];
                 ResultHandler resultHandler = (ResultHandler) args[3];
                 BoundSql boundSql;
@@ -67,7 +68,7 @@ public class MybatisEsQueryInterceptor implements Interceptor {
                     boundSql = (BoundSql) args[5];
                 }
                 //处理ES逻辑
-                return esQuery(ms, boundSql);
+                return doQueryEs(method, boundSql, ms.getConfiguration());
             }
         }
         return invocation.proceed();
@@ -85,17 +86,15 @@ public class MybatisEsQueryInterceptor implements Interceptor {
     public void setProperties(Properties properties) {
     }
 
+
     /**
-     * 处理ES逻辑
+     * 判断是否执行es查询
      *
      * @param ms
-     * @param boundSql
      * @return
      * @throws Exception
      */
-    private List<?> esQuery(MappedStatement ms, BoundSql boundSql) throws Exception {
-        // 获取节点的配置
-        Configuration configuration = ms.getConfiguration();
+    private Method isEsQuery(MappedStatement ms) throws Exception {
         //获取对应拦截Mapper类,
         Class<?> classType = Class.forName(ms.getId().substring(0, ms.getId().lastIndexOf(".")));
         //获取对应拦截方法名，获取方法名
@@ -105,11 +104,12 @@ public class MybatisEsQueryInterceptor implements Interceptor {
         for (Method method : methods) {
             //判断当前方法上是否有注解
             if (method.isAnnotationPresent(EsQuery.class) && method.getName().equals(mName)) {
-                return doQueryEs(method, boundSql, configuration);
+                return method;
             }
         }
         return null;
     }
+
 
     /**
      * 执行es查询
@@ -128,20 +128,20 @@ public class MybatisEsQueryInterceptor implements Interceptor {
         Class<?> returnGenericType = AnnotationQueryCommon.getReturnGenericType(method);
         log.info("原始sql: {}", boundSql.getSql());
         //改写sql
-        Select select = SqlParserHelper.rewriteSql(method, boundSql.getSql());
+        Select select = SqlParserHelper.rewriteSql(method, boundSql.getSql(), Boolean.FALSE);
         //通过反射修改sql语句
         Field field = boundSql.getClass().getDeclaredField("sql");
         field.setAccessible(true);
         field.set(boundSql, select.toString());
         log.info("改写后sql: {}", boundSql.getSql());
         //参数替换
-        String s = SqlParamParseHelper.paramParse(configuration, boundSql);
-        log.info("替换参数后sql: {}", s);
+        String sql = SqlParamParseHelper.paramParse(configuration, boundSql);
+        log.info("替换参数后sql: {}", sql);
         //执行ES查询
         if (List.class.isAssignableFrom(returnType) && Objects.nonNull(returnGenericType)) {
-            result = esSqlExecuteHandler.queryBySql(s, returnGenericType);
+            result = esSqlExecuteHandler.queryBySql(sql, returnGenericType, Boolean.TRUE);
         } else {
-            result = esSqlExecuteHandler.queryBySql(s, returnType);
+            result = esSqlExecuteHandler.queryBySql(sql, returnType, Boolean.TRUE);
         }
 
         return result;

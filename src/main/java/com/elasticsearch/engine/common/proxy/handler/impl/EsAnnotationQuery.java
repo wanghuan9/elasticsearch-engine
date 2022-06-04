@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * @author wanghuan
@@ -39,11 +40,11 @@ public class EsAnnotationQuery implements EsQueryProxyExecuteHandler {
         }
         EsAnnotationQueryEnum queryEnum;
         Class<?> clazz = args[0].getClass();
-        //只有一个参数 && 并且参数不是基础类型
-        if (args.length == NumberUtils.INTEGER_ONE && !ReflectionUtils.isBaseType(clazz)) {
+        //只有一个参数 && 并且参数不是基础类型 && 并且参数不是List
+        if (args.length == NumberUtils.INTEGER_ONE && !ReflectionUtils.isBaseTypeAndExtend(clazz) && (clazz.isAssignableFrom(List.class))) {
             queryEnum = EsAnnotationQueryEnum.ANNOTATION_MODEL_QUERY;
         } else if (args.length > NumberUtils.INTEGER_ZERO && ReflectionUtils.allParamIsBaseType(args)) {
-            //有一个或多个参数 && 都是基础类型
+            //有一个或多个参数 && 都是基础类型(包括List,LocalDateTime,LocalDate,BigDecimal)
             queryEnum = EsAnnotationQueryEnum.ANNOTATION_PARAM_QUERY;
         } else {
             throw new EsHelperQueryException(prefix + "方法参数异常: 查询参数不被支持,仅支持多个基本类型参数 或 者单个引用类型的参数并标记@EsQueryIndex注解");

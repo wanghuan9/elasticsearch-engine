@@ -2,6 +2,7 @@ package com.elasticsearch.engine.common.parse.ann.model;
 
 
 import com.elasticsearch.engine.GlobalConfig;
+import com.elasticsearch.engine.common.utils.CaseFormatUtils;
 import com.elasticsearch.engine.common.utils.ReflectionUtils;
 import com.elasticsearch.engine.hook.RequestHook;
 import com.elasticsearch.engine.mapping.annotation.Term;
@@ -13,7 +14,6 @@ import com.elasticsearch.engine.model.emenu.EsConnector;
 import com.elasticsearch.engine.model.emenu.QueryModel;
 import com.elasticsearch.engine.model.exception.EsHelperConfigException;
 import com.elasticsearch.engine.model.exception.EsHelperQueryException;
-import com.google.common.base.CaseFormat;
 import com.google.common.collect.Lists;
 import joptsimple.internal.Strings;
 import org.apache.commons.collections4.CollectionUtils;
@@ -392,7 +392,7 @@ public class QueryAnnParser {
                 }
                 //若设置默认下划线
                 if (GlobalConfig.namingStrategy) {
-                    column = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, column);
+                    column = CaseFormatUtils.camelToUnderscore(column);
                 }
             }
             queryDes.setField(column);
@@ -430,7 +430,7 @@ public class QueryAnnParser {
             }
             //若设置默认下划线
             if (GlobalConfig.namingStrategy) {
-                column = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, column);
+                column = CaseFormatUtils.camelToUnderscore(column);
             }
             queryDes.setField(column);
             Class<?> fieldType = field.getType();

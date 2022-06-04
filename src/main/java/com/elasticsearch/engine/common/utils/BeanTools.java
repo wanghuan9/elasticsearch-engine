@@ -1,6 +1,7 @@
 package com.elasticsearch.engine.common.utils;
 
 import com.elasticsearch.engine.model.emenu.DataType;
+import com.elasticsearch.engine.model.exception.EsHelperExecuteException;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.util.Assert;
@@ -20,7 +21,7 @@ import java.util.*;
  **/
 public class BeanTools {
     public static Object mapToObject(Map map, Class<?> beanClass) throws Exception {
-        if (map == null){
+        if (map == null) {
             return null;
         }
 
@@ -42,7 +43,7 @@ public class BeanTools {
     }
 
     public static <T> T typeMapToObject(Map<String, NameTypeValueMap> map, Class<T> beanClass) throws Exception {
-        if (map == null){
+        if (map == null) {
             return null;
         }
         T t = beanClass.newInstance();
@@ -57,7 +58,9 @@ public class BeanTools {
                 continue;
             }
             field.setAccessible(true);
-            field.set(t, fieldTypeCovert(nameTypeValueMap.getDataType(), nameTypeValueMap.getValue(), field.getType()));
+            if (!Objects.isNull(nameTypeValueMap.getValue())) {
+                field.set(t, fieldTypeCovert(nameTypeValueMap.getDataType(), nameTypeValueMap.getValue(), field.getType()));
+            }
         }
         return t;
     }
@@ -76,13 +79,13 @@ public class BeanTools {
                 if (Iterable.class.isAssignableFrom(propertyValue.getClass())) {
                     Iterable iterable = (Iterable) propertyValue;
                     Iterator iterator = iterable.iterator();
-                    if (!iterator.hasNext()){
+                    if (!iterator.hasNext()) {
                         noValuePropertySet.add(pd.getName());
-                    } 
+                    }
                 }
                 if (Map.class.isAssignableFrom(propertyValue.getClass())) {
                     Map map = (Map) propertyValue;
-                    if (map.isEmpty()){
+                    if (map.isEmpty()) {
                         noValuePropertySet.add(pd.getName());
                     }
                 }
@@ -128,7 +131,7 @@ public class BeanTools {
         } else if (dataType == DataType.short_type) {
             return Short.valueOf(value);
         } else {
-            throw new Exception("not support field type covert");
+            throw new EsHelperExecuteException("not support field type covert");
         }
     }
 

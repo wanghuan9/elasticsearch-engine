@@ -27,47 +27,6 @@ import java.util.regex.Pattern;
 public class SqlParamParseHelper {
 
     /**
-     * 替换sql中的占位符
-     *
-     * @param sql
-     * @param method
-     * @param args
-     * @param sqlParamParse
-     * @return
-     */
-    public static String getMethodArgsSql(String sql, Method method, Object[] args, SqlParamParse sqlParamParse) {
-        //参数为空直接返回无需解析
-        if (Objects.isNull(args) || args.length<1){
-            return sql;
-        }
-        Map<String, Object> paramMap = getParamMap(method, args);
-        return renderString(sql, paramMap, sqlParamParse.getRegexStr(), sqlParamParse.getPlaceHolder());
-    }
-
-    /**
-     * 拼接sql的参数
-     *
-     * @param sql
-     * @param map
-     * @return
-     */
-    public static String renderString(String sql, Map<String, Object> map, String regexStr, String placeHolder) {
-        Set<Map.Entry<String, Object>> entries = map.entrySet();
-        for (Map.Entry<String, Object> e : map.entrySet()) {
-            String regex = String.format(regexStr, e.getKey());
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(sql);
-            sql = matcher.replaceAll(e.getValue().toString());
-        }
-        //参数替换完之后如果还包含"#{" 说明有参数没有被替换
-        if (sql.contains(placeHolder)) {
-            throw new EsHelperQueryException("方法中的参数和sql中的参数 不匹配");
-        }
-        return sql;
-    }
-
-
-    /**
      * 对mybatis sql中的？进行参数替换
      *
      * @param configuration
@@ -106,47 +65,13 @@ public class SqlParamParseHelper {
                 }
             }
         }
-        return sql;
+        //like concat处理
+        return parseLikeConcat(sql);
     }
 
 
     /**
-     * 获取方法的所有参数
-     *
-     * @param method
-     * @param args
-     * @return
-     */
-    public static Map<String, Object> getParamMap(Method method, Object[] args) {
-        Map<String, Object> map = new HashMap<>();
-        Parameter[] parameters = method.getParameters();
-        for (int i = 0; i < parameters.length; i++) {
-            Parameter parameter = parameters[i];
-            Object val = args[i];
-            if (parameter.getType().isAssignableFrom(List.class) && ReflectionUtils.checkCollectionValueType(parameter, val)) {
-                if (val instanceof List) {
-                    List listParam = (List) val;
-                    StringBuffer sb = new StringBuffer();
-                    if (!listParam.isEmpty()) {
-                        listParam.forEach(item -> {
-                            sb.append("'" + item + "'");
-                        });
-                    }
-                    map.put(parameter.getName(), sb.toString());
-                }
-            } else if (val instanceof LocalDateTime) {
-                String formatVal = DateUtils.formatDefault((LocalDateTime) val);
-                String arg = "'" + formatVal + "'";
-                map.put(parameter.getName(), arg);
-            } else {
-                String arg = "'" + val + "'";
-                map.put(parameter.getName(), arg);
-            }
-        }
-        return map;
-    }
-
-    /**
+     * mybatis参数解析
      * 如果参数是String，则添加单引号， 如果是日期，则转换为时间格式器并加单引号； 对参数是null和不是null的情况作了处理
      *
      * @param obj
@@ -156,6 +81,9 @@ public class SqlParamParseHelper {
         String value;
         if (obj instanceof String) {
             value = "'" + obj + "'";
+        } else if (obj instanceof LocalDateTime) {
+            String formatVal = DateUtils.formatDefault((LocalDateTime) obj);
+            value = "'" + formatVal + "'";
         } else if (obj instanceof Date) {
             DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.CHINA);
             value = "'" + formatter.format(new Date()) + "'";
@@ -169,5 +97,198 @@ public class SqlParamParseHelper {
         return value;
     }
 
+    /**
+     * 替换sql中的占位符
+     *
+     * @param sql
+     * @param method
+     * @param args
+     * @param sqlParamParse
+     * @return
+     */
+    public static String getMethodArgsSqlAnn(String sql, Method method, Object[] args, SqlParamParse sqlParamParse) {
+        //参数为空直接返回无需解析
+        if (Objects.isNull(args) || args.length < 1) {
+            return sql;
+        }
+        Map<String, Object> paramMap = getParamMapAnn(method, args);
+        //替换参数
+        String sqlParam = renderStringAnn(sql, paramMap, sqlParamParse);
+        //like concat处理
+        return parseLikeConcat(sqlParam);
+    }
+
+    /**
+     * 获取方法的所有参数
+     *
+     * @param method
+     * @param args
+     * @return
+     */
+    public static Map<String, Object> getParamMapAnn(Method method, Object[] args) {
+        Map<String, Object> map = new HashMap<>();
+        Parameter[] parameters = method.getParameters();
+        for (int i = 0; i < parameters.length; i++) {
+            Parameter parameter = parameters[i];
+            Object val = args[i];
+            if (parameter.getType().isAssignableFrom(List.class) && ReflectionUtils.checkCollectionValueType(parameter, val)) {
+                if (val instanceof List) {
+                    List listParam = (List) val;
+                    StringBuffer sb = new StringBuffer();
+                    if (!listParam.isEmpty()) {
+                        listParam.forEach(item -> {
+                            sb.append("'" + item + "'").append(",");
+                        });
+                    }
+                    String param = sb.toString();
+                    param = param.substring(0, param.length() - 1);
+                    map.put(parameter.getName(), param);
+                }
+            } else if (val instanceof LocalDateTime) {
+                String formatVal = DateUtils.formatDefault((LocalDateTime) val);
+                String arg = "'" + formatVal + "'";
+                map.put(parameter.getName(), arg);
+            } else {
+                String arg = "'" + val + "'";
+                map.put(parameter.getName(), arg);
+            }
+        }
+        return map;
+    }
+
+
+    /**
+     * 拼接sql的参数
+     *
+     * @param sql
+     * @param map
+     * @return
+     */
+    public static String renderStringAnn(String sql, Map<String, Object> map, SqlParamParse sqlParamParse) {
+        for (Map.Entry<String, Object> e : map.entrySet()) {
+            String regex = String.format(sqlParamParse.getRegexStr(), e.getKey());
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(sql);
+            sql = matcher.replaceAll(e.getValue().toString());
+
+            String likeRegex = String.format(sqlParamParse.getLikeRegexStr(), e.getKey());
+            Pattern likePattern = Pattern.compile(likeRegex);
+            Matcher likeMatcher = likePattern.matcher(sql);
+            sql = likeMatcher.replaceAll(e.getValue().toString().replaceAll("'", ""));
+        }
+        //参数替换完之后如果还包含"#{" 说明有参数没有被替换
+        if (sql.contains(sqlParamParse.getPlaceHolder())) {
+            throw new EsHelperQueryException("方法中的参数和sql中的参数 不匹配");
+        }
+        return sql;
+    }
+
+
+    /**
+     * 替换sql中的占位符
+     *
+     * @param sql
+     * @param method
+     * @param args
+     * @param sqlParamParse
+     * @return
+     */
+    public static String getMethodArgsSqlJpa(String sql, Method method, Object[] args, SqlParamParse sqlParamParse) {
+        //参数为空直接返回无需解析
+        if (Objects.isNull(args) || args.length < 1) {
+            return sql;
+        }
+        List<Object> param = getParamMapJpa(method, args);
+        //替换参数
+        String sqlParam = renderStringJpa(sql, param, sqlParamParse);
+        //like concat处理
+        return parseLikeConcat(sqlParam);
+    }
+
+
+    private static List<Object> getParamMapJpa(Method method, Object[] args) {
+        List<Object> list = new ArrayList<>();
+        Parameter[] parameters = method.getParameters();
+        for (int i = 0; i < parameters.length; i++) {
+            Parameter parameter = parameters[i];
+            Object val = args[i];
+            if (parameter.getType().isAssignableFrom(List.class) && ReflectionUtils.checkCollectionValueType(parameter, val)) {
+                if (val instanceof List) {
+                    List listParam = (List) val;
+                    if (!listParam.isEmpty()) {
+                        listParam.forEach(item -> {
+                            list.add("'" + item + "'");
+                        });
+                    }
+                }
+            } else if (val instanceof LocalDateTime) {
+                String formatVal = DateUtils.formatDefault((LocalDateTime) val);
+                String arg = "'" + formatVal + "'";
+                list.add(arg);
+            } else {
+                String arg = "'" + val + "'";
+                list.add(arg);
+            }
+        }
+        return list;
+    }
+
+    private static String renderStringJpa(String sql, List<Object> param, SqlParamParse sqlParamParse) {
+        for (Object val : param) {
+            String regex = String.format(sqlParamParse.getRegexStr(), val);
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(sql);
+            sql = matcher.replaceFirst(val.toString());
+        }
+        //参数替换完之后如果还包含"#{" 说明有参数没有被替换
+        if (sql.contains(sqlParamParse.getPlaceHolder())) {
+            throw new EsHelperQueryException("方法中的参数和sql中的参数 不匹配");
+        }
+        return sql;
+
+    }
+
+    /**
+     * 解析Like Concat函数
+     *
+     * @param sql
+     * @return
+     */
+    public static String parseLikeConcat(String sql) {
+        int concatIndex = sql.indexOf("CONCAT");
+        if (concatIndex == 0) {
+            concatIndex = sql.indexOf("concat");
+            if (concatIndex > 0) {
+                return doParseLikeConcat(sql, concatIndex);
+            }
+        }
+        return sql;
+    }
+
+    /**
+     * 执行解析Like Concat函数
+     *
+     * @param sql
+     * @param indexConcat
+     * @return
+     */
+    public static String doParseLikeConcat(String sql, Integer indexConcat) {
+        //concat之后的串
+        String concatAfter = sql.substring(indexConcat);
+        //concat后第一个'('
+        int i = concatAfter.indexOf("(");
+        //concat后第一个')'
+        int j = concatAfter.indexOf(")");
+        String likeBody = concatAfter.substring(i + 1, j);
+        String[] split = likeBody.split(",");
+        StringBuilder likeSb = new StringBuilder();
+        for (String s : split) {
+            likeSb.append(s.trim().replaceAll("'", ""));
+        }
+        //替换后的like参数
+        String likeParam = "'" + likeSb + "'";
+        //重新拼接concat前半段+替换后的like+concat后半段
+        return sql.substring(0, indexConcat).concat(likeParam) + sql.substring(j + indexConcat + 1);
+    }
 
 }

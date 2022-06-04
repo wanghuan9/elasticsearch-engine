@@ -4,6 +4,7 @@ import com.elasticsearch.engine.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.model.constant.CommonConstant;
 import com.elasticsearch.engine.model.exception.EsHelperJpaExecuteException;
 import org.hibernate.resource.jdbc.spi.StatementInspector;
+import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
@@ -12,6 +13,7 @@ import java.util.Objects;
  * @description: ROOD
  * @date 2022-05-24 23:17
  */
+@Component
 public class SqlStatementInspector implements StatementInspector {
     @Override
     public String inspect(String sql) {

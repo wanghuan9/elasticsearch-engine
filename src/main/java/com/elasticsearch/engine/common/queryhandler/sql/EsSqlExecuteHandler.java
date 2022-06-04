@@ -1,8 +1,8 @@
 package com.elasticsearch.engine.common.queryhandler.sql;
 
+import com.elasticsearch.engine.GlobalConfig;
 import com.elasticsearch.engine.common.utils.*;
 import com.elasticsearch.engine.config.ElasticSearchProperties;
-import com.elasticsearch.engine.GlobalConfig;
 import com.elasticsearch.engine.model.constant.CommonConstant;
 import com.elasticsearch.engine.model.domain.SqlResponse;
 import com.elasticsearch.engine.model.emenu.DataType;
@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -118,10 +119,11 @@ public class EsSqlExecuteHandler {
      *
      * @param sql   sql脚本（支持mysql语法）
      * @param clazz 索引pojo类类型
+     * @param clazz 索引pojo类类型
      * @return
      * @throws Exception
      */
-    public <T> List<T> queryBySql(String sql, Class<T> clazz) {
+    public <T> List<T> queryBySql(String sql, Class<T> clazz, Boolean isExtendQuery) {
         String s = queryBySql(sql, SqlFormat.JSON);
         SqlResponse sqlResponse = JsonParser.asObject(s, SqlResponse.class);
         //正常响应时 status 为null
@@ -132,7 +134,7 @@ public class EsSqlExecuteHandler {
         if (!CollectionUtils.isEmpty(sqlResponse.getRows())) {
             for (List<String> row : sqlResponse.getRows()) {
                 try {
-                    result.add(generateObjBySqlReps(sqlResponse.getColumns(), row, clazz));
+                    result.add(generateObjBySqlReps(sqlResponse.getColumns(), row, clazz, isExtendQuery));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -152,19 +154,24 @@ public class EsSqlExecuteHandler {
      * @return
      * @throws Exception
      */
-    private <T> T generateObjBySqlReps(List<SqlResponse.ColumnsDTO> columns, List<String> rows, Class<T> clazz) throws Exception {
+    private <T> T generateObjBySqlReps(List<SqlResponse.ColumnsDTO> columns, List<String> rows, Class<T> clazz, Boolean isExtendQuery) throws Exception {
         if (rows.size() != columns.size()) {
             throw new Exception("sql column not match");
         }
-        //count,sum 结果转换
-        if (rows.size() == 1 && ReflectionUtils.isBaseType(clazz)) {
+        //单个结果: count,sum 结果转换
+        if (rows.size() == 1 && (ReflectionUtils.isBaseType(clazz) || clazz.equals(BigDecimal.class))) {
             return (T) BeanTools.fieldTypeCovert(DataType.getDataTypeByStr(columns.get(0).getType()), rows.get(0), clazz);
         }
+        //entity listEntity
         Map<String, BeanTools.NameTypeValueMap> valueMap = new HashMap(32);
         for (int i = 0; i < rows.size(); i++) {
             BeanTools.NameTypeValueMap m = new BeanTools.NameTypeValueMap();
             m.setDataType(DataType.getDataTypeByStr(columns.get(i).getType()));
-            String paramName = NameExchangeUtil.toCamelCase(columns.get(i).getName());
+            String paramName = columns.get(i).getName();
+            //是否下划线转驼峰转 
+            if (GlobalConfig.namingStrategy) {
+                paramName = CaseFormatUtils.underscoreToCamel(paramName);
+            }
             m.setFieldName(paramName);
             m.setValue(rows.get(i));
             valueMap.put(paramName, m);

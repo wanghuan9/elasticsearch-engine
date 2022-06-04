@@ -48,11 +48,11 @@ public class JpaEsQueryAop {
         Object[] args = pjp.getArgs();
         Object result;
         try {
-            ThreadLocalUtil.set(CommonConstant.IS_ES_QUERY,Boolean.TRUE);
+            ThreadLocalUtil.set(CommonConstant.IS_ES_QUERY, Boolean.TRUE);
             result = pjp.proceed(args);
         } catch (EsHelperJpaExecuteException e) {
             result = esQuery(method, e.getMessage(), args);
-        }finally {
+        } finally {
             ThreadLocalUtil.remove(CommonConstant.IS_ES_QUERY);
         }
         return result;
@@ -70,11 +70,11 @@ public class JpaEsQueryAop {
     private Object esQuery(Method method, String sql, Object[] args) throws JSQLParserException {
         log.info("原始sql: {}", sql);
         //改写sql
-        Select select = SqlParserHelper.rewriteSql(method, sql);
+        Select select = SqlParserHelper.rewriteSql(method, sql, Boolean.TRUE);
         log.info("改写后sql: {}", select);
         //参数替换
         // 解析sql参数
-        String paramSql = SqlParamParseHelper.getMethodArgsSql(select.toString(), method, args, SqlParamParse.JAP_SQL_PARAM);
+        String paramSql = SqlParamParseHelper.getMethodArgsSqlJpa(select.toString(), method, args, SqlParamParse.JAP_SQL_PARAM);
         log.info("替换参数后sql: {}", paramSql);
         //执行ES查询
         return doQueryEs(paramSql, method);
@@ -95,9 +95,9 @@ public class JpaEsQueryAop {
 
         List<?> list;
         if (List.class.isAssignableFrom(returnType) && Objects.nonNull(returnGenericType)) {
-            list = esSqlExecuteHandler.queryBySql(sql, returnGenericType);
+            list = esSqlExecuteHandler.queryBySql(sql, returnGenericType, Boolean.TRUE);
         } else {
-            list = esSqlExecuteHandler.queryBySql(sql, returnType);
+            list = esSqlExecuteHandler.queryBySql(sql, returnType, Boolean.TRUE);
         }
 
         if (List.class.isAssignableFrom(returnType)) {

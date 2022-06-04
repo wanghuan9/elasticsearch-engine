@@ -1,11 +1,11 @@
 package com.elasticsearch.engine.common.proxy.handler.exsql.impl;
 
-import com.elasticsearch.engine.common.proxy.handler.exannotation.AnnotationQueryCommon;
-import com.elasticsearch.engine.common.queryhandler.sql.EsSqlExecuteHandler;
-import com.elasticsearch.engine.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.common.parse.sql.SqlParamParseHelper;
 import com.elasticsearch.engine.common.proxy.enums.EsSqlQueryEnum;
+import com.elasticsearch.engine.common.proxy.handler.exannotation.AnnotationQueryCommon;
 import com.elasticsearch.engine.common.proxy.handler.exsql.EsSqlQueryHandler;
+import com.elasticsearch.engine.common.queryhandler.sql.EsSqlExecuteHandler;
+import com.elasticsearch.engine.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.model.annotion.EsQuery;
 import com.elasticsearch.engine.model.constant.CommonConstant;
 import com.elasticsearch.engine.model.emenu.SqlParamParse;
@@ -48,13 +48,13 @@ public class EsAnnotationSqlQueryHandler implements EsSqlQueryHandler {
             throw new EsHelperExecuteException(prefix + "@EsQuery 注解不存在或参数为空");
         }
         // 解析sql参数
-        String sql = SqlParamParseHelper.getMethodArgsSql(esQuery.value(),method, args, SqlParamParse.ANN_SQL_PARAM);
+        String sql = SqlParamParseHelper.getMethodArgsSqlAnn(esQuery.value(), method, args, SqlParamParse.ANN_SQL_PARAM);
 
         List<?> list;
         if (List.class.isAssignableFrom(returnType) && Objects.nonNull(returnGenericType)) {
-            list = esSqlExecuteHandler.queryBySql(sql, returnGenericType);
+            list = esSqlExecuteHandler.queryBySql(sql, returnGenericType, Boolean.FALSE);
         } else {
-            list = esSqlExecuteHandler.queryBySql(sql, returnType);
+            list = esSqlExecuteHandler.queryBySql(sql, returnType, Boolean.FALSE);
         }
 
         if (List.class.isAssignableFrom(returnType)) {
@@ -66,5 +66,5 @@ public class EsAnnotationSqlQueryHandler implements EsSqlQueryHandler {
             return null;
         }
     }
-  
+
 }

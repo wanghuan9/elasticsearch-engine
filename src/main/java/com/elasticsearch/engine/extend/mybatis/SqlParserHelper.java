@@ -6,9 +6,7 @@ import com.elasticsearch.engine.model.annotion.EsQueryIndex;
 import com.elasticsearch.engine.model.exception.EsHelperQueryException;
 import com.google.common.collect.Lists;
 import net.sf.jsqlparser.JSQLParserException;
-import net.sf.jsqlparser.expression.BinaryExpression;
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.Parenthesis;
+import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.schema.Column;
@@ -46,7 +44,7 @@ public class SqlParserHelper {
         //清除关联
         plain.setJoins(Lists.newArrayList());
         //from 别名清除
-        setSelectItem(plain.getSelectItems(), isCleanAs);
+        setSelectItem(plain, isCleanAs);
         //where 别名清除
         setWhereItem(plain.getWhere());
         //group by 别名清除
@@ -75,30 +73,33 @@ public class SqlParserHelper {
     }
 
     /**
-     * select 改写
+     * 设置替换select 里面的字段
      *
-     * @param selectItems
+     * @param plainSelect
+     * @return
      */
-    public static void setSelectItem(List<SelectItem> selectItems, Boolean isCleanAs) {
-        if (CollectionUtils.isEmpty(selectItems)) {
-            return;
+    public static void setSelectItem(PlainSelect plainSelect, Boolean isCleanAs) {
+        for (SelectItem selectItem : plainSelect.getSelectItems()) {
+            selectItem.accept(new SelectItemVisitorAdapter() {
+                @Override
+                public void visit(SelectExpressionItem item) {
+                    if (item.getExpression() instanceof Function) {
+                        setFunction((Function) item.getExpression());
+                    } else if (item.getExpression() instanceof CaseExpression) {
+                        setCaseExpression((CaseExpression) item.getExpression());
+                    } else if (item.getExpression() instanceof Column) {
+                        Column column = (Column) item.getExpression();
+                        //清除t.
+                        reNameColumnName(column);
+                        column.setTable(new Table());
+                    }
+                    //清除as
+                    if (isCleanAs) {
+                        item.setAlias(null);
+                    }
+                }
+            });
         }
-        selectItems.forEach(item -> {
-            if (item instanceof SelectExpressionItem) {
-                SelectExpressionItem selectColumn = (SelectExpressionItem) item;
-                //清除t.
-                Expression expression = selectColumn.getExpression();
-                if (expression instanceof Column) {
-                    Column groupColumn = (Column) expression;
-                    reNameColumnName(groupColumn);
-                    groupColumn.setTable(new Table());
-                }
-                //清除as
-                if (isCleanAs) {
-                    selectColumn.setAlias(null);
-                }
-            }
-        });
     }
 
     /**
@@ -129,6 +130,8 @@ public class SqlParserHelper {
             reNameColumnName(rightColumn);
             //清除表别名
             rightColumn.setTable(new Table());
+        } else if (rightExpression instanceof Function) {
+            setFunction((Function) rightExpression);
         } else {
             setWhereItem(rightExpression);
         }
@@ -137,6 +140,8 @@ public class SqlParserHelper {
             reNameColumnName(leftColumn);
             //清除表别名
             leftColumn.setTable(new Table());
+        } else if (leftExpression instanceof Function) {
+            setFunction((Function) leftExpression);
         } else {
             setWhereItem(leftExpression);
         }
@@ -188,6 +193,47 @@ public class SqlParserHelper {
                 Column groupColumn = (Column) expression;
                 reNameColumnName(groupColumn);
                 groupColumn.setTable(new Table());
+            }
+        });
+    }
+
+
+    /**
+     * 设置替换select 中 function里面的字段
+     *
+     * @param function
+     */
+    private static void setFunction(Function function) {
+        if (function.getParameters() == null || function.getParameters().getExpressions() == null) {
+            return;
+        }
+        List<Expression> list = function.getParameters().getExpressions();
+        list.forEach(data -> {
+            if (data instanceof Function) {
+                setFunction((Function) data);
+            } else if (data instanceof Column) {
+                Column column = (Column) data;
+                reNameColumnName(column);
+                //清除表别名
+                column.setTable(new Table());
+            }
+        });
+    }
+
+    /**
+     * 设置替换 select里面CaseExpression里面的字段
+     *
+     * @param caseExpression
+     * @return
+     */
+    public static void setCaseExpression(CaseExpression caseExpression) {
+        if (caseExpression.getWhenClauses() == null) {
+            return;
+        }
+        List<WhenClause> list = caseExpression.getWhenClauses();
+        list.forEach(data -> {
+            if (data instanceof WhenClause) {
+                setWhereItem(((WhenClause) data).getWhenExpression());
             }
         });
     }

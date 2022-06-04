@@ -16,6 +16,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -68,9 +69,16 @@ public class JpaEsQueryAop {
      * @throws JSQLParserException
      */
     private Object esQuery(Method method, String sql, Object[] args) throws JSQLParserException {
+        //是否清除as别名
+        Boolean isCleanAs = Boolean.TRUE;
         log.info("原始sql: {}", sql);
+        //jpa原生查询 则不清楚 as别名
+        Query query = method.getAnnotation(Query.class);
+        if (Objects.nonNull(query) && query.nativeQuery()) {
+            isCleanAs = Boolean.FALSE;
+        }
         //改写sql
-        Select select = SqlParserHelper.rewriteSql(method, sql, Boolean.TRUE);
+        Select select = SqlParserHelper.rewriteSql(method, sql, isCleanAs);
         log.info("改写后sql: {}", select);
         //参数替换
         // 解析sql参数

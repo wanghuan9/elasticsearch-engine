@@ -256,11 +256,11 @@ public class SqlParamParseHelper {
      */
     public static String parseLikeConcat(String sql) {
         int concatIndex = sql.indexOf("CONCAT");
-        if (concatIndex == 0) {
+        if (concatIndex == -1) {
             concatIndex = sql.indexOf("concat");
-            if (concatIndex > 0) {
-                return doParseLikeConcat(sql, concatIndex);
-            }
+        }
+        if (concatIndex > 0) {
+            return parseLikeConcat(doParseLikeConcat(sql, concatIndex));
         }
         return sql;
     }

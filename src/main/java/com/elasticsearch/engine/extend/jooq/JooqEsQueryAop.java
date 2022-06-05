@@ -1,10 +1,10 @@
 package com.elasticsearch.engine.extend.jooq;
 
 import com.elasticsearch.engine.common.parse.sql.SqlParamParseHelper;
+import com.elasticsearch.engine.common.parse.sql.SqlParserHelper;
 import com.elasticsearch.engine.common.proxy.handler.exannotation.AnnotationQueryCommon;
 import com.elasticsearch.engine.common.queryhandler.sql.EsSqlExecuteHandler;
 import com.elasticsearch.engine.common.utils.ThreadLocalUtil;
-import com.elasticsearch.engine.extend.mybatis.SqlParserHelper;
 import com.elasticsearch.engine.model.constant.CommonConstant;
 import com.elasticsearch.engine.model.emenu.SqlParamParse;
 import com.elasticsearch.engine.model.exception.EsHelperJpaExecuteException;

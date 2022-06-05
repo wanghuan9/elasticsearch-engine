@@ -1,4 +1,4 @@
-package com.elasticsearch.engine.extend.mybatis;
+package com.elasticsearch.engine.common.parse.sql;
 
 import com.elasticsearch.engine.GlobalConfig;
 import com.elasticsearch.engine.common.utils.CaseFormatUtils;
@@ -111,6 +111,10 @@ public class SqlParserHelper {
     public static void setWhereItem(Expression where) {
         if (where == null) {
             return;
+        }
+        if (where instanceof Parenthesis) {
+            Parenthesis inExpression = (Parenthesis) where;
+            where = inExpression.getExpression();
         }
         Expression rightExpression = null;
         Expression leftExpression = null;

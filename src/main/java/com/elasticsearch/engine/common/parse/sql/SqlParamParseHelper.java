@@ -131,7 +131,10 @@ public class SqlParamParseHelper {
         for (int i = 0; i < parameters.length; i++) {
             Parameter parameter = parameters[i];
             Object val = args[i];
-            if (parameter.getType().isAssignableFrom(List.class) && ReflectionUtils.checkCollectionValueType(parameter, val)) {
+            if (parameter.getType().isAssignableFrom(String.class)) {
+                String arg = "'" + val + "'";
+                map.put(parameter.getName(), arg);
+            } else if (parameter.getType().isAssignableFrom(List.class) && ReflectionUtils.checkCollectionValueType(parameter, val)) {
                 if (val instanceof List) {
                     List listParam = (List) val;
                     StringBuffer sb = new StringBuffer();
@@ -144,13 +147,12 @@ public class SqlParamParseHelper {
                     param = param.substring(0, param.length() - 1);
                     map.put(parameter.getName(), param);
                 }
-            } else if (val instanceof LocalDateTime) {
+            } else if (parameter.getType().isAssignableFrom(LocalDateTime.class)) {
                 String formatVal = DateUtils.formatDefault((LocalDateTime) val);
                 String arg = "'" + formatVal + "'";
                 map.put(parameter.getName(), arg);
             } else {
-                String arg = "'" + val + "'";
-                map.put(parameter.getName(), arg);
+                map.put(parameter.getName(), val.toString());
             }
         }
         return map;
@@ -212,7 +214,10 @@ public class SqlParamParseHelper {
         for (int i = 0; i < parameters.length; i++) {
             Parameter parameter = parameters[i];
             Object val = args[i];
-            if (parameter.getType().isAssignableFrom(List.class) && ReflectionUtils.checkCollectionValueType(parameter, val)) {
+            if (parameter.getType().isAssignableFrom(String.class)) {
+                String arg = "'" + val + "'";
+                list.add(arg);
+            } else if (parameter.getType().isAssignableFrom(List.class) && ReflectionUtils.checkCollectionValueType(parameter, val)) {
                 if (val instanceof List) {
                     List listParam = (List) val;
                     if (!listParam.isEmpty()) {
@@ -221,13 +226,13 @@ public class SqlParamParseHelper {
                         });
                     }
                 }
-            } else if (val instanceof LocalDateTime) {
+            } else if (parameter.getType().isAssignableFrom(LocalDateTime.class)) {
                 String formatVal = DateUtils.formatDefault((LocalDateTime) val);
                 String arg = "'" + formatVal + "'";
                 list.add(arg);
             } else {
-                String arg = "'" + val + "'";
-                list.add(arg);
+
+                list.add(val.toString());
             }
         }
         return list;

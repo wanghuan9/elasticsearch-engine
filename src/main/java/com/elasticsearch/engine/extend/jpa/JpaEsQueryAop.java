@@ -1,28 +1,17 @@
 package com.elasticsearch.engine.extend.jpa;
 
-import com.elasticsearch.engine.common.parse.sql.SqlParamParseHelper;
-import com.elasticsearch.engine.common.parse.sql.SqlParserHelper;
-import com.elasticsearch.engine.common.proxy.handler.exannotation.AnnotationQueryCommon;
-import com.elasticsearch.engine.common.queryhandler.sql.EsSqlExecuteHandler;
-import com.elasticsearch.engine.common.utils.ThreadLocalUtil;
-import com.elasticsearch.engine.model.constant.CommonConstant;
-import com.elasticsearch.engine.model.emenu.SqlParamParse;
-import com.elasticsearch.engine.model.exception.EsHelperJpaExecuteException;
+import com.elasticsearch.engine.common.parse.sql.EsSqlQueryHelper;
+import com.elasticsearch.engine.model.domain.BackDto;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.jsqlparser.JSQLParserException;
-import net.sf.jsqlparser.statement.select.Select;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Objects;
 
 
 /**
@@ -34,8 +23,9 @@ import java.util.Objects;
 @Component
 @Aspect
 public class JpaEsQueryAop {
+
     @Resource
-    private EsSqlExecuteHandler esSqlExecuteHandler;
+    private EsSqlQueryHelper esSqlQueryHelper;
 
     // 自己定义切点 拦截重试模方法
     @Pointcut("@annotation(com.elasticsearch.engine.model.annotion.JpaEsQuery)")
@@ -46,77 +36,6 @@ public class JpaEsQueryAop {
     public Object retryAdvice(ProceedingJoinPoint pjp) throws Throwable {
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Method method = signature.getMethod();
-        Object[] args = pjp.getArgs();
-        Object result;
-        try {
-            ThreadLocalUtil.set(CommonConstant.IS_ES_QUERY, Boolean.TRUE);
-            result = pjp.proceed(args);
-        } catch (EsHelperJpaExecuteException e) {
-            result = esQuery(method, e.getMessage(), args);
-        } finally {
-            ThreadLocalUtil.remove(CommonConstant.IS_ES_QUERY);
-        }
-        return result;
+        return esSqlQueryHelper.esSqlQueryAopCommon(pjp, BackDto.hasJpaBack(method));
     }
-
-    /**
-     * es查询
-     *
-     * @param method
-     * @param sql
-     * @param args
-     * @return
-     * @throws JSQLParserException
-     */
-    private Object esQuery(Method method, String sql, Object[] args) throws JSQLParserException {
-        //是否清除as别名
-        Boolean isCleanAs = Boolean.TRUE;
-        log.info("原始sql: {}", sql);
-        //jpa原生查询 则不清楚 as别名
-        Query query = method.getAnnotation(Query.class);
-        if (Objects.nonNull(query) && query.nativeQuery()) {
-            isCleanAs = Boolean.FALSE;
-        }
-        //改写sql
-        Select select = SqlParserHelper.rewriteSql(method, sql, isCleanAs, null);
-        log.info("改写后sql: {}", select);
-        //参数替换
-        // 解析sql参数
-        String paramSql = SqlParamParseHelper.getMethodArgsSqlJpa(select.toString(), method, args, SqlParamParse.JAP_SQL_PARAM);
-        log.info("替换参数后sql: {}", paramSql);
-        //执行ES查询
-        return doQueryEs(paramSql, method);
-    }
-
-    /**
-     * 执行es查询
-     *
-     * @param sql
-     * @param method
-     * @return
-     */
-    private Object doQueryEs(String sql, Method method) {
-        //方法返回值
-        Class<?> returnType = method.getReturnType();
-        //方法返回值的泛型
-        Class<?> returnGenericType = AnnotationQueryCommon.getReturnGenericType(method);
-
-        List<?> list;
-        if (List.class.isAssignableFrom(returnType) && Objects.nonNull(returnGenericType)) {
-            list = esSqlExecuteHandler.queryBySql(sql, returnGenericType, Boolean.TRUE);
-        } else {
-            list = esSqlExecuteHandler.queryBySql(sql, returnType, Boolean.TRUE);
-        }
-
-        if (List.class.isAssignableFrom(returnType)) {
-            return list;
-        } else {
-            if (list.size() > 0) {
-                return list.get(0);
-            }
-            return null;
-        }
-    }
-
-
 }

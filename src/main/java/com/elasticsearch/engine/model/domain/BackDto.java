@@ -1,6 +1,8 @@
 package com.elasticsearch.engine.model.domain;
 
 import com.elasticsearch.engine.model.annotion.EsQuery;
+import com.elasticsearch.engine.model.annotion.JooqEsQuery;
+import com.elasticsearch.engine.model.annotion.JpaEsQuery;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +29,26 @@ public class BackDto {
 
     public static BackDto hasBack(Method method) {
         EsQuery esQuery = method.getAnnotation(EsQuery.class);
+        String backColumn = esQuery.backColumn();
+        Class<?> backColumnTyp = esQuery.backColumnType();
+        if (StringUtils.isNotEmpty(backColumn) && Objects.nonNull(backColumnTyp) && !backColumnTyp.equals(Objects.class)) {
+            return BackDto.builder().backColumn(backColumn).backColumnTyp(backColumnTyp).build();
+        }
+        return null;
+    }
+
+    public static BackDto hasJpaBack(Method method) {
+        JpaEsQuery esQuery = method.getAnnotation(JpaEsQuery.class);
+        String backColumn = esQuery.backColumn();
+        Class<?> backColumnTyp = esQuery.backColumnType();
+        if (StringUtils.isNotEmpty(backColumn) && Objects.nonNull(backColumnTyp) && !backColumnTyp.equals(Objects.class)) {
+            return BackDto.builder().backColumn(backColumn).backColumnTyp(backColumnTyp).build();
+        }
+        return null;
+    }
+
+    public static BackDto hasJooQBack(Method method) {
+        JooqEsQuery esQuery = method.getAnnotation(JooqEsQuery.class);
         String backColumn = esQuery.backColumn();
         Class<?> backColumnTyp = esQuery.backColumnType();
         if (StringUtils.isNotEmpty(backColumn) && Objects.nonNull(backColumnTyp) && !backColumnTyp.equals(Objects.class)) {

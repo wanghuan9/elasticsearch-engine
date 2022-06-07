@@ -28,6 +28,10 @@ public class CommonConstant {
      */
     public final static String VERSION_PATH = "elasticseach-engine.properties";
 
+    /**
+     * 查询sql
+     */
+    public static final String BACK_QUERY_SQL = "back_sql";
 
     /**
      * es查询标记

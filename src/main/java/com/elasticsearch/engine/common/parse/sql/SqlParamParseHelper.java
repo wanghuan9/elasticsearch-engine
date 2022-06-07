@@ -182,7 +182,11 @@ public class SqlParamParseHelper {
             Object val = args[i];
             if (parameter.getType().isAssignableFrom(List.class) && ReflectionUtils.checkCollectionValueType(parameter, val)) {
                 if (val instanceof List) {
-                    list.add(getListParameterValue(val));
+                    List listParam = (List) val;
+                    if (!listParam.isEmpty()) {
+                        listParam.forEach(item -> list.add(getParameterValue(item)));
+                    }
+
                 }
             } else {
                 list.add(getParameterValue(val));
@@ -223,9 +227,7 @@ public class SqlParamParseHelper {
         List listParam = (List) val;
         StringBuffer sb = new StringBuffer();
         if (!listParam.isEmpty()) {
-            listParam.forEach(item -> {
-                sb.append(getParameterValue(item)).append(",");
-            });
+            listParam.forEach(item -> sb.append(getParameterValue(item)).append(","));
         }
         String param = sb.toString();
         return param.substring(0, param.length() - 1);

@@ -13,4 +13,18 @@ import java.lang.annotation.*;
 @Documented
 public @interface JpaEsQuery {
 
+    /**
+     * 回表字段
+     *
+     * @return
+     */
+    String backColumn() default "";
+
+    /**
+     * 回表字段类型
+     *
+     * @return
+     */
+    Class<?> backColumnType() default Object.class;
+
 }

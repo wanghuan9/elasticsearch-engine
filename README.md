@@ -1,7 +1,7 @@
 # elasticsearch-engine
 
 #### 介绍
-elasticsearch 查询引擎, 基于注解,sql,原生语句查询. 并整合 mybatis , spring data jpa
+elasticsearch 查询引擎, 基于注解,sql,原生语句查询. 并整合 mybatis , spring data jpa ,jooq
 
 #### 软件架构
 软件架构说明

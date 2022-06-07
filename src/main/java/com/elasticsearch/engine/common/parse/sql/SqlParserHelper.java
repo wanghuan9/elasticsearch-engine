@@ -3,20 +3,26 @@ package com.elasticsearch.engine.common.parse.sql;
 import com.elasticsearch.engine.GlobalConfig;
 import com.elasticsearch.engine.common.utils.CaseFormatUtils;
 import com.elasticsearch.engine.model.annotion.EsQueryIndex;
+import com.elasticsearch.engine.model.domain.BackDto;
 import com.elasticsearch.engine.model.exception.EsHelperQueryException;
 import com.google.common.collect.Lists;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.*;
+import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
+import net.sf.jsqlparser.util.SelectUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author wanghuan
@@ -34,7 +40,7 @@ public class SqlParserHelper {
      * @return
      * @throws JSQLParserException
      */
-    public static Select rewriteSql(Method method, String oldSql, Boolean isCleanAs) throws JSQLParserException {
+    public static Select rewriteSql(Method method, String oldSql, Boolean isCleanAs, BackDto backDto) throws JSQLParserException {
         // 获得原始sql语句
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         Select select = (Select) parserManager.parse(new StringReader(oldSql));
@@ -44,7 +50,11 @@ public class SqlParserHelper {
         //清除关联
         plain.setJoins(Lists.newArrayList());
         //from 别名清除
-        setSelectItem(plain, isCleanAs);
+        if (Objects.isNull(backDto)) {
+            setSelectItem(plain, isCleanAs);
+        } else {
+            setSelectItem(select, backDto);
+        }
         //where 别名清除
         setWhereItem(plain.getWhere());
         //group by 别名清除
@@ -54,6 +64,51 @@ public class SqlParserHelper {
         //order by 别名清除
         setOrderItem(plain.getOrderByElements());
         return select;
+    }
+
+    /**
+     * 回表sql改写
+     *
+     * @param oldSql
+     * @param backDto
+     * @param esResult
+     * @return
+     * @throws Exception
+     */
+    public static String rewriteBackSql(String oldSql, BackDto backDto, List<?> esResult) throws Exception {
+        CCJSqlParserManager parserManager = new CCJSqlParserManager();
+        Select select = (Select) parserManager.parse(new StringReader(oldSql));
+        PlainSelect plain = (PlainSelect) select.getSelectBody();
+        //where 别名清除
+        setBackWhereItem(plain, backDto, esResult);
+        plain.setGroupByElement(null);
+        plain.setHaving(null);
+        plain.setOrderByElements(null);
+        return select.toString();
+    }
+
+    /**
+     * 回表sql where改写
+     *
+     * @param plain
+     * @param backDto
+     * @param esResult
+     * @throws Exception
+     */
+    private static void setBackWhereItem(PlainSelect plain, BackDto backDto, List<?> esResult) throws Exception {
+        //ColumnName es驼峰 转 mysql下划线 
+        String backColumn = backDto.getBackColumn();
+        if (!GlobalConfig.namingStrategy) {
+            backColumn = CaseFormatUtils.camelToUnderscore(backColumn);
+        }
+        String backSql = " " + backColumn + " in (" + SqlParamParseHelper.getListParameterValue(esResult) + ")";
+        if (StringUtils.isNotEmpty(backSql)) {
+            if (plain.getWhere() == null) {
+                plain.setWhere(CCJSqlParserUtil.parseCondExpression(backSql));
+            } else {
+                plain.setWhere(new AndExpression(plain.getWhere(), CCJSqlParserUtil.parseCondExpression(backSql)));
+            }
+        }
     }
 
     /**
@@ -100,6 +155,22 @@ public class SqlParserHelper {
                 }
             });
         }
+
+
+    }
+
+    /**
+     * 清除原本的item
+     * 设置回表查item
+     *
+     * @param select
+     * @param backDto
+     */
+    private static void setSelectItem(Select select, BackDto backDto) {
+        PlainSelect plain = (PlainSelect) select.getSelectBody();
+        List<SelectItem> selectItems = plain.getSelectItems();
+        selectItems.clear();
+        SelectUtils.addExpression(select, new Column(backDto.getBackColumn()));
     }
 
     /**

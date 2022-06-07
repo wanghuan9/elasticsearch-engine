@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 public class SqlParamParseHelper {
 
     /**
-     * 对mybatis sql中的？进行参数替换
+     * mybatis查询参数解析 sql中的？进行参数替换
      *
      * @param configuration
      * @param boundSql
@@ -71,34 +71,7 @@ public class SqlParamParseHelper {
 
 
     /**
-     * mybatis参数解析
-     * 如果参数是String，则添加单引号， 如果是日期，则转换为时间格式器并加单引号； 对参数是null和不是null的情况作了处理
-     *
-     * @param obj
-     * @return
-     */
-    private static String getParameterValue(Object obj) {
-        String value;
-        if (obj instanceof String) {
-            value = "'" + obj + "'";
-        } else if (obj instanceof LocalDateTime) {
-            String formatVal = DateUtils.formatDefault((LocalDateTime) obj);
-            value = "'" + formatVal + "'";
-        } else if (obj instanceof Date) {
-            DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.CHINA);
-            value = "'" + formatter.format(new Date()) + "'";
-        } else {
-            if (obj != null) {
-                value = obj.toString();
-            } else {
-                value = "";
-            }
-        }
-        return value;
-    }
-
-    /**
-     * 替换sql中的占位符
+     * 自定义注解查询参数解析 替换sql中的占位符
      *
      * @param sql
      * @param method
@@ -119,6 +92,7 @@ public class SqlParamParseHelper {
     }
 
     /**
+     * getMethodArgsSqlAnn
      * 获取方法的所有参数
      *
      * @param method
@@ -131,28 +105,12 @@ public class SqlParamParseHelper {
         for (int i = 0; i < parameters.length; i++) {
             Parameter parameter = parameters[i];
             Object val = args[i];
-            if (parameter.getType().isAssignableFrom(String.class)) {
-                String arg = "'" + val + "'";
-                map.put(parameter.getName(), arg);
-            } else if (parameter.getType().isAssignableFrom(List.class) && ReflectionUtils.checkCollectionValueType(parameter, val)) {
+            if (parameter.getType().isAssignableFrom(List.class) && ReflectionUtils.checkCollectionValueType(parameter, val)) {
                 if (val instanceof List) {
-                    List listParam = (List) val;
-                    StringBuffer sb = new StringBuffer();
-                    if (!listParam.isEmpty()) {
-                        listParam.forEach(item -> {
-                            sb.append("'" + item + "'").append(",");
-                        });
-                    }
-                    String param = sb.toString();
-                    param = param.substring(0, param.length() - 1);
-                    map.put(parameter.getName(), param);
+                    map.put(parameter.getName(), getListParameterValue(val));
                 }
-            } else if (parameter.getType().isAssignableFrom(LocalDateTime.class)) {
-                String formatVal = DateUtils.formatDefault((LocalDateTime) val);
-                String arg = "'" + formatVal + "'";
-                map.put(parameter.getName(), arg);
             } else {
-                map.put(parameter.getName(), val.toString());
+                map.put(parameter.getName(), getParameterValue(val));
             }
         }
         return map;
@@ -160,6 +118,7 @@ public class SqlParamParseHelper {
 
 
     /**
+     * getMethodArgsSqlAnn
      * 拼接sql的参数
      *
      * @param sql
@@ -208,36 +167,38 @@ public class SqlParamParseHelper {
     }
 
 
+    /**
+     * Jpa查询参数解析 替换sql中的占位符
+     *
+     * @param method
+     * @param args
+     * @return
+     */
     private static List<Object> getParamMapJpa(Method method, Object[] args) {
         List<Object> list = new ArrayList<>();
         Parameter[] parameters = method.getParameters();
         for (int i = 0; i < parameters.length; i++) {
             Parameter parameter = parameters[i];
             Object val = args[i];
-            if (parameter.getType().isAssignableFrom(String.class)) {
-                String arg = "'" + val + "'";
-                list.add(arg);
-            } else if (parameter.getType().isAssignableFrom(List.class) && ReflectionUtils.checkCollectionValueType(parameter, val)) {
+            if (parameter.getType().isAssignableFrom(List.class) && ReflectionUtils.checkCollectionValueType(parameter, val)) {
                 if (val instanceof List) {
-                    List listParam = (List) val;
-                    if (!listParam.isEmpty()) {
-                        listParam.forEach(item -> {
-                            list.add("'" + item + "'");
-                        });
-                    }
+                    list.add(getListParameterValue(val));
                 }
-            } else if (parameter.getType().isAssignableFrom(LocalDateTime.class)) {
-                String formatVal = DateUtils.formatDefault((LocalDateTime) val);
-                String arg = "'" + formatVal + "'";
-                list.add(arg);
             } else {
-
-                list.add(val.toString());
+                list.add(getParameterValue(val));
             }
         }
         return list;
     }
 
+    /**
+     * jpa参数替换
+     *
+     * @param sql
+     * @param param
+     * @param sqlParamParse
+     * @return
+     */
     private static String renderStringJpa(String sql, List<Object> param, SqlParamParse sqlParamParse) {
         for (Object val : param) {
             String regex = String.format(sqlParamParse.getRegexStr(), val);
@@ -250,7 +211,50 @@ public class SqlParamParseHelper {
             throw new EsHelperQueryException("方法中的参数和sql中的参数 不匹配");
         }
         return sql;
+    }
 
+    /**
+     * list 参数解析
+     *
+     * @param val
+     * @return
+     */
+    public static String getListParameterValue(Object val) {
+        List listParam = (List) val;
+        StringBuffer sb = new StringBuffer();
+        if (!listParam.isEmpty()) {
+            listParam.forEach(item -> {
+                sb.append(getParameterValue(item)).append(",");
+            });
+        }
+        String param = sb.toString();
+        return param.substring(0, param.length() - 1);
+    }
+
+    /**
+     * 参数解析
+     * 如果参数是String，则添加单引号， 如果是日期，则转换为时间格式器并加单引号； 对参数是null和不是null的情况作了处理
+     *
+     * @param obj
+     * @return
+     */
+    public static String getParameterValue(Object obj) {
+        if (obj == null) {
+            return "";
+        }
+        String value;
+        if (obj instanceof String) {
+            value = "'" + obj + "'";
+        } else if (obj instanceof LocalDateTime) {
+            String formatVal = DateUtils.formatDefault((LocalDateTime) obj);
+            value = "'" + formatVal + "'";
+        } else if (obj instanceof Date) {
+            DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.CHINA);
+            value = "'" + formatter.format(new Date()) + "'";
+        } else {
+            value = obj.toString();
+        }
+        return value;
     }
 
     /**

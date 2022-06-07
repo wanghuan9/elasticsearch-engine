@@ -29,4 +29,19 @@ public @interface EsQuery {
      */
     EsQueryType queryType() default EsQueryType.SQL;
     //表示左右都不包含 >L and < G
+
+    /**
+     * 回表字段
+     *
+     * @return
+     */
+    String backColumn() default "";
+
+    /**
+     * 回表字段类型
+     *
+     * @return
+     */
+    Class<?> backColumnType() default Object.class;
+
 }

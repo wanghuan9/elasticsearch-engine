@@ -78,7 +78,7 @@ public class JpaEsQueryAop {
             isCleanAs = Boolean.FALSE;
         }
         //改写sql
-        Select select = SqlParserHelper.rewriteSql(method, sql, isCleanAs);
+        Select select = SqlParserHelper.rewriteSql(method, sql, isCleanAs, null);
         log.info("改写后sql: {}", select);
         //参数替换
         // 解析sql参数

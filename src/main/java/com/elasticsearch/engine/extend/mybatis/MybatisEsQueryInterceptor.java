@@ -5,15 +5,16 @@ import com.elasticsearch.engine.common.parse.sql.SqlParserHelper;
 import com.elasticsearch.engine.common.proxy.handler.exannotation.AnnotationQueryCommon;
 import com.elasticsearch.engine.common.queryhandler.sql.EsSqlExecuteHandler;
 import com.elasticsearch.engine.model.annotion.EsQuery;
+import com.elasticsearch.engine.model.domain.BackDto;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.statement.select.Select;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.plugin.*;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
@@ -23,6 +24,7 @@ import javax.annotation.Resource;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
@@ -43,7 +45,7 @@ import java.util.Properties;
 )
 @Slf4j
 public class MybatisEsQueryInterceptor implements Interceptor {
-
+    private static final List<ResultMapping> EMPTY_RESULT_MAPPING = new ArrayList<ResultMapping>(0);
 
     @Resource
     private EsSqlExecuteHandler esSqlExecuteHandler;
@@ -68,8 +70,15 @@ public class MybatisEsQueryInterceptor implements Interceptor {
                     // 几乎不可能走进这里面,除非使用Executor的代理对象调用query[args[6]]
                     boundSql = (BoundSql) args[5];
                 }
-                //处理ES逻辑
-                return doQueryEs(method, boundSql, ms.getConfiguration());
+                BackDto backDto = BackDto.hasBack(method);
+                if (Objects.nonNull(backDto)) {
+                    //处理ES逻辑
+                    MappedStatement mappedStatement = doQueryEsBack(method, boundSql, ms, backDto);
+                    args[0] = mappedStatement;
+                } else {
+                    //处理ES逻辑
+                    return doQueryEs(method, boundSql, ms.getConfiguration());
+                }
             }
         }
         return invocation.proceed();
@@ -129,7 +138,7 @@ public class MybatisEsQueryInterceptor implements Interceptor {
         Class<?> returnGenericType = AnnotationQueryCommon.getReturnGenericType(method);
         log.info("原始sql: {}", boundSql.getSql());
         //改写sql
-        Select select = SqlParserHelper.rewriteSql(method, boundSql.getSql(), Boolean.FALSE);
+        Select select = SqlParserHelper.rewriteSql(method, boundSql.getSql(), Boolean.FALSE, null);
         //通过反射修改sql语句
         Field field = boundSql.getClass().getDeclaredField("sql");
         field.setAccessible(true);
@@ -146,5 +155,81 @@ public class MybatisEsQueryInterceptor implements Interceptor {
         }
 
         return result;
+    }
+
+
+    private MappedStatement doQueryEsBack(Method method, BoundSql boundSql, MappedStatement ms, BackDto backDto) throws Exception {
+        Configuration configuration = ms.getConfiguration();
+        String originalSql = boundSql.getSql();
+        log.info("原始sql: {}", originalSql);
+        //改写sql
+        Select select = SqlParserHelper.rewriteSql(method, boundSql.getSql(), Boolean.FALSE, backDto);
+        //通过反射修改sql语句
+        Field field = boundSql.getClass().getDeclaredField("sql");
+        field.setAccessible(true);
+        field.set(boundSql, select.toString());
+
+        log.info("改写后sql: {}", boundSql.getSql());
+        //参数替换
+        String sql = SqlParamParseHelper.paramParse(configuration, boundSql);
+        log.info("替换参数后sql: {}", sql);
+        //执行ES查询
+        List<?> esResult = esSqlExecuteHandler.queryBySql(sql, backDto.getBackColumnTyp(), Boolean.TRUE);
+
+        //将原sql改写成回表sql
+        String backSql = SqlParserHelper.rewriteBackSql(originalSql, backDto, esResult);
+        log.info("回表sql :  {}", backSql);
+
+        //替换mybatis执行的sql
+        MappedStatement qs = newMappedStatement(ms, new BoundSqlSqlSource(boundSql));
+        MetaObject msObject = SystemMetaObject.forObject(qs);
+        msObject.setValue("sqlSource.boundSql.sql", backSql);
+        return qs;
+    }
+
+    /**
+     * 由于MappedStatement是一个全局共享的对象，因而需要复制一个对象来进行操作，防止并发访问导致错误
+     *
+     * @param ms
+     * @param newSqlSource
+     * @return
+     */
+    private MappedStatement newMappedStatement(MappedStatement ms, SqlSource newSqlSource) throws InstantiationException, IllegalAccessException {
+        MappedStatement.Builder builder = new MappedStatement.Builder(ms.getConfiguration(), ms.getId() + "_分页", newSqlSource, ms.getSqlCommandType());
+        builder.resource(ms.getResource());
+        builder.fetchSize(ms.getFetchSize());
+        builder.statementType(ms.getStatementType());
+        builder.keyGenerator(ms.getKeyGenerator());
+        if (ms.getKeyProperties() != null && ms.getKeyProperties().length != 0) {
+            StringBuffer keyProperties = new StringBuffer();
+            for (String keyProperty : ms.getKeyProperties()) {
+                keyProperties.append(keyProperty).append(",");
+            }
+            keyProperties.delete(keyProperties.length() - 1, keyProperties.length());
+            builder.keyProperty(keyProperties.toString());
+        }
+
+        builder.timeout(ms.getTimeout());
+        builder.parameterMap(ms.getParameterMap());
+        builder.resultMaps(ms.getResultMaps());
+        builder.resultSetType(ms.getResultSetType());
+        builder.cache(ms.getCache());
+        builder.flushCacheRequired(ms.isFlushCacheRequired());
+        builder.useCache(ms.isUseCache());
+        return builder.build();
+    }
+
+
+    private class BoundSqlSqlSource implements SqlSource {
+        BoundSql boundSql;
+
+        public BoundSqlSqlSource(BoundSql boundSql) {
+            this.boundSql = boundSql;
+        }
+
+        @Override
+        public BoundSql getBoundSql(Object parameterObject) {
+            return boundSql;
+        }
     }
 }

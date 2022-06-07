@@ -1,0 +1,37 @@
+package com.elasticsearch.engine.model.domain;
+
+import com.elasticsearch.engine.model.annotion.EsQuery;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+
+import java.lang.reflect.Method;
+import java.util.Objects;
+
+/**
+ * @author wanghuan
+ * @description BackDto
+ * @mail 958721894@qq.com
+ * @date 2022-06-05 15:44
+ */
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class BackDto {
+
+    private String backColumn;
+    private Class<?> backColumnTyp;
+
+    public static BackDto hasBack(Method method) {
+        EsQuery esQuery = method.getAnnotation(EsQuery.class);
+        String backColumn = esQuery.backColumn();
+        Class<?> backColumnTyp = esQuery.backColumnType();
+        if (StringUtils.isNotEmpty(backColumn) && Objects.nonNull(backColumnTyp) && !backColumnTyp.equals(Objects.class)) {
+            return BackDto.builder().backColumn(backColumn).backColumnTyp(backColumnTyp).build();
+        }
+        return null;
+    }
+}

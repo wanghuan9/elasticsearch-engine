@@ -70,7 +70,7 @@ public class JooqEsQueryAop {
     private Object esQuery(Method method, String sql, Object[] args) throws JSQLParserException {
         log.info("原始sql: {}", sql);
         //改写sql
-        Select select = SqlParserHelper.rewriteSql(method, sql, Boolean.TRUE);
+        Select select = SqlParserHelper.rewriteSql(method, sql, Boolean.TRUE, null);
         log.info("改写后sql: {}", select);
         //参数替换
         // 解析sql参数

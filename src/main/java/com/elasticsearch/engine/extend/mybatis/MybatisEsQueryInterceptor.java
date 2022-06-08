@@ -11,7 +11,10 @@ import net.sf.jsqlparser.statement.select.Select;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
-import org.apache.ibatis.mapping.*;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
@@ -23,8 +26,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
@@ -37,15 +38,12 @@ import java.util.Properties;
 @Component
 @Intercepts(
         {
-                @Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class}),
-                @Signature(type = StatementHandler.class, method = "getBoundSql", args = {}),
                 @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
                 @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
         }
 )
 @Slf4j
 public class MybatisEsQueryInterceptor implements Interceptor {
-    private static final List<ResultMapping> EMPTY_RESULT_MAPPING = new ArrayList<ResultMapping>(0);
 
     @Resource
     private EsSqlExecuteHandler esSqlExecuteHandler;
@@ -55,14 +53,11 @@ public class MybatisEsQueryInterceptor implements Interceptor {
         Object target = invocation.getTarget();
         Object[] args = invocation.getArgs();
         if (target instanceof Executor) {
-            final Executor executor = (Executor) target;
             Object parameter = args[1];
             boolean isUpdate = args.length == 2;
             MappedStatement ms = (MappedStatement) args[0];
             Method method = isEsQuery(ms);
             if (Objects.nonNull(method) && !isUpdate && ms.getSqlCommandType() == SqlCommandType.SELECT) {
-                RowBounds rowBounds = (RowBounds) args[2];
-                ResultHandler resultHandler = (ResultHandler) args[3];
                 BoundSql boundSql;
                 if (args.length == 4) {
                     boundSql = ms.getBoundSql(parameter);
@@ -201,7 +196,7 @@ public class MybatisEsQueryInterceptor implements Interceptor {
         builder.statementType(ms.getStatementType());
         builder.keyGenerator(ms.getKeyGenerator());
         if (ms.getKeyProperties() != null && ms.getKeyProperties().length != 0) {
-            StringBuffer keyProperties = new StringBuffer();
+            StringBuilder keyProperties = new StringBuilder();
             for (String keyProperty : ms.getKeyProperties()) {
                 keyProperties.append(keyProperty).append(",");
             }
@@ -220,7 +215,7 @@ public class MybatisEsQueryInterceptor implements Interceptor {
     }
 
 
-    private class BoundSqlSqlSource implements SqlSource {
+    private static class BoundSqlSqlSource implements SqlSource {
         BoundSql boundSql;
 
         public BoundSqlSqlSource(BoundSql boundSql) {

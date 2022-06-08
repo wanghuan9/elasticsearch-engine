@@ -10,6 +10,7 @@ import com.elasticsearch.engine.model.exception.EsHelperJpaExecuteException;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.statement.select.Select;
+import org.apache.commons.collections4.CollectionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.data.jpa.repository.Query;
@@ -45,13 +46,16 @@ public class EsSqlQueryHelper {
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Method method = signature.getMethod();
         Object[] args = pjp.getArgs();
-        Object result;
+        Object result = null;
         try {
             ThreadLocalUtil.set(CommonConstant.IS_ES_QUERY, Boolean.TRUE);
             result = pjp.proceed(args);
         } catch (EsHelperJpaExecuteException e) {
             if (Objects.nonNull(backDto)) {
-                esQueryBack(method, e.getMessage(), args, backDto);
+                List<?> esResult = esQueryBack(method, e.getMessage(), args, backDto);
+                if(CollectionUtils.isEmpty(esResult)){
+                    return result;
+                }
                 result = pjp.proceed(args);
             } else {
                 result = esQuery(method, e.getMessage(), args, backDto);
@@ -86,16 +90,19 @@ public class EsSqlQueryHelper {
      * @param backDto
      * @throws Exception
      */
-    private void esQueryBack(Method method, String sql, Object[] args, BackDto backDto) throws Exception {
+    private  List<?> esQueryBack(Method method, String sql, Object[] args, BackDto backDto) throws Exception {
         String paramSql = fillParamSql(method, sql, args, backDto);
         //执行ES查询
         List<?> esResult = esSqlExecuteHandler.queryBySql(paramSql, backDto.getBackColumnTyp(), Boolean.TRUE);
-
+        if (CollectionUtils.isEmpty(esResult)){
+            return null;
+        }
         //将原sql改写成回表sql
         String backSql = SqlParserHelper.rewriteBackSql(sql, backDto, esResult);
         log.info("回表sql :  {}", backSql);
         //将回表sql添加到threadLocal
         ThreadLocalUtil.set(CommonConstant.BACK_QUERY_SQL, backSql);
+        return esResult;
     }
 
     /**

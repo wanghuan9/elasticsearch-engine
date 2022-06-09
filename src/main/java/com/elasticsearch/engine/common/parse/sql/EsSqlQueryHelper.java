@@ -62,6 +62,7 @@ public class EsSqlQueryHelper {
             }
         } finally {
             ThreadLocalUtil.remove(CommonConstant.IS_ES_QUERY);
+            ThreadLocalUtil.remove(CommonConstant.BACK_QUERY_SQL);
         }
         return result;
     }

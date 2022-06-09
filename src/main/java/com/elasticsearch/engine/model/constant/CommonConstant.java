@@ -34,6 +34,16 @@ public class CommonConstant {
     public static final String BACK_QUERY_SQL = "back_sql";
 
     /**
+     * 查询sql前缀 小写
+     */
+    public static final String SELECT_SQL_PREFIX_LOWER = "select";
+
+    /**
+     * 查询sql前缀 大写
+     */
+    public static final String SELECT_SQL_PREFIX_UPPER = "SELECT";
+
+    /**
      * es查询标记
      */
     public static final String IS_ES_QUERY = "is_es_query";

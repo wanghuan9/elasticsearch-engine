@@ -10,9 +10,11 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 /**
- * author     JohenTeng
- * date      2021/7/21
- */
+* @author wanghuan
+* @description EsQueryProxy
+* @mail 958721894@qq.com       
+* @date 2022/6/9 14:12 
+*/
 public class EsQueryProxy<T> implements InvocationHandler {
     private static final Logger log = LoggerFactory.getLogger(EsQueryProxy.class);
 

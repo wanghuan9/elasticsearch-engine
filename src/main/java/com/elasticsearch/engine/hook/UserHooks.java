@@ -1,12 +1,11 @@
 package com.elasticsearch.engine.hook;
 
 /**
- * project  elasticsearch-helper
- * packages   org.pippi.elasticsearch.helper.core.hook
- * date     2021/9/9
- * author    JohenTeng
- * email    1078481395@qq.com
- **/
+* @author wanghuan
+* @description UserHooks
+* @mail 958721894@qq.com       
+* @date 2022/6/9 14:09 
+*/
 public interface UserHooks {
 
 

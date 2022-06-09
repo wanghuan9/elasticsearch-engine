@@ -3,11 +3,11 @@ package com.elasticsearch.engine.model.annotion;
 import java.lang.annotation.*;
 
 /**
- * EsHelperProxy
- * <p>
- * author     JohenTeng
- * date      2021/9/17
- */
+* @author wanghuan
+* @description EsHelperProxy
+* @mail 958721894@qq.com       
+* @date 2022/6/9 14:09 
+*/
 @Inherited
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

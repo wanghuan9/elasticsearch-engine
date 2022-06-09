@@ -3,8 +3,8 @@ package com.elasticsearch.engine.common.parse.ann.model;
 import com.elasticsearch.engine.common.utils.ReflectionUtils;
 import com.elasticsearch.engine.mapping.handler.AbstractQueryHandler;
 import com.elasticsearch.engine.model.annotion.EsQueryHandle;
-import com.elasticsearch.engine.model.exception.EsHelperConfigException;
-import com.elasticsearch.engine.model.exception.EsHelperQueryException;
+import com.elasticsearch.engine.model.exception.EsEngineConfigException;
+import com.elasticsearch.engine.model.exception.EsEngineQueryException;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 
@@ -33,7 +33,7 @@ public class QueryHandlerFactory {
         for (Class<? extends AbstractQueryHandler> targetClazz : subQueryClazz) {
             boolean flag = targetClazz.isAnnotationPresent(EsQueryHandle.class);
             if (!flag) {
-                throw new EsHelperConfigException("query handle have to ann by @EsQueryHandle");
+                throw new EsEngineConfigException("query handle have to ann by @EsQueryHandle");
             }
             EsQueryHandle ann = targetClazz.getAnnotation(EsQueryHandle.class);
             String handleName = ann.queryType();
@@ -41,7 +41,7 @@ public class QueryHandlerFactory {
                 handleName = ann.value().getSimpleName();
             }
             if (StringUtils.isBlank(handleName)) {
-                throw new EsHelperConfigException("handle-name is undefine");
+                throw new EsEngineConfigException("handle-name is undefine");
             }
             QueryHandlerFactory.registryQueryHandler(handleName, targetClazz);
         }
@@ -66,7 +66,7 @@ public class QueryHandlerFactory {
     public static AbstractQueryHandler getTargetHandleInstance(String handlerName) {
         AbstractQueryHandler targetHandler = QUERY_HANDLE_MAP.get(handlerName);
         if (targetHandler == null) {
-            throw new EsHelperQueryException("un-match given handleName");
+            throw new EsEngineQueryException("un-match given handleName");
         }
         return targetHandler;
     }

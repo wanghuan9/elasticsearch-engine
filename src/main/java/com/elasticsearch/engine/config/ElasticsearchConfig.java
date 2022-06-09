@@ -1,6 +1,6 @@
 package com.elasticsearch.engine.config;
 
-import com.elasticsearch.engine.model.exception.EsHelperConfigException;
+import com.elasticsearch.engine.model.exception.EsEngineConfigException;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
@@ -90,11 +90,11 @@ public class ElasticsearchConfig {
      */
     private void configCheck() {
         if (Objects.isNull(elasticSearchProperties)) {
-            throw new EsHelperConfigException("elasticSearch config hosts is null");
+            throw new EsEngineConfigException("elasticSearch config hosts is null");
         }
 
         if (StringUtils.isEmpty(elasticSearchProperties.getHosts())) {
-            throw new EsHelperConfigException("elasticSearch config hosts is empty");
+            throw new EsEngineConfigException("elasticSearch config hosts is empty");
         }
     }
 

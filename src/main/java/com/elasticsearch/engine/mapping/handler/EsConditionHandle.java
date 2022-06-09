@@ -1,12 +1,11 @@
 package com.elasticsearch.engine.mapping.handler;
 
 /**
- * project  elasticsearch-helper
- * packages   org.pippi.elasticsearch.helper.core
- * date     2021/12/3
- * author   JohenTeng
- * email    1078481395@qq.com
- **/
+* @author wanghuan
+* @description EsConditionHandle
+* @mail 958721894@qq.com       
+* @date 2022/6/9 14:11 
+*/
 public interface EsConditionHandle<T> {
 
     /**

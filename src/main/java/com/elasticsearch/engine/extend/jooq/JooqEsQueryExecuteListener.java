@@ -2,7 +2,7 @@ package com.elasticsearch.engine.extend.jooq;
 
 import com.elasticsearch.engine.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.model.constant.CommonConstant;
-import com.elasticsearch.engine.model.exception.EsHelperJpaExecuteException;
+import com.elasticsearch.engine.model.exception.EsEngineJpaExecuteException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.ExecuteContext;
@@ -57,7 +57,7 @@ public class JooqEsQueryExecuteListener extends DefaultExecuteListener implement
         Boolean isEsQuery = ThreadLocalUtil.get(CommonConstant.IS_ES_QUERY);
         if (Objects.nonNull(isEsQuery) && isEsQuery) {
             ThreadLocalUtil.remove(CommonConstant.IS_ES_QUERY);
-            throw new EsHelperJpaExecuteException(sql);
+            throw new EsEngineJpaExecuteException(sql);
         }
     }
 

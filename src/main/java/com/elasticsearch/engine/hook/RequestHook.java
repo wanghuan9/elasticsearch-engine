@@ -4,9 +4,11 @@ package com.elasticsearch.engine.hook;
 import com.elasticsearch.engine.holder.AbstractEsRequestHolder;
 
 /**
- * author     JohenTeng
- * date      2021/7/21
- */
+* @author wanghuan
+* @description RequestHook
+* @mail 958721894@qq.com       
+* @date 2022/6/9 14:10 
+*/
 @FunctionalInterface
 public interface RequestHook<PARAM> {
 

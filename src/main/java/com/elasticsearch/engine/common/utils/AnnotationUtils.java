@@ -12,13 +12,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * AnnotationUtils
- * annotation mapping to Map<String, Object>
- * Action: annotation don't define property equals(), can't mapping to Map result,
- * OBJECT_METHOD_FILTER({@link Annotation})'s methods will be excluded
- * author     JohenTeng
- * date      2021/9/24
- */
+* @author wanghuan
+* @description AnnotationUtils
+* @mail 958721894@qq.com       
+* @date 2022/6/9 14:11 
+*/
 public class AnnotationUtils {
 
     private static final HashSet<String> OBJECT_METHOD_FILTER = Sets.newHashSet(

@@ -6,7 +6,7 @@ import com.elasticsearch.engine.mapping.model.PageQueryBean;
 import com.elasticsearch.engine.mapping.model.extend.PageParam;
 import com.elasticsearch.engine.model.annotion.EsQueryHandle;
 import com.elasticsearch.engine.model.domain.EsQueryFieldBean;
-import com.elasticsearch.engine.model.exception.EsHelperQueryException;
+import com.elasticsearch.engine.model.exception.EsEngineQueryException;
 import org.apache.commons.collections4.MapUtils;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -28,7 +28,7 @@ public class PageAndOrderQueryHandler extends AbstractQueryHandler<PageQueryBean
     public QueryBuilder handle(EsQueryFieldBean queryDes, AbstractEsRequestHolder searchHelper) {
         Object value = queryDes.getValue();
         if (!value.getClass().equals(PageParam.class)) {
-            throw new EsHelperQueryException("@PageAndOrder have to define as PageParam.class");
+            throw new EsEngineQueryException("@PageAndOrder have to define as PageParam.class");
         }
         PageParam pageParam = (PageParam) value;
         SearchSourceBuilder source = searchHelper.getSource();

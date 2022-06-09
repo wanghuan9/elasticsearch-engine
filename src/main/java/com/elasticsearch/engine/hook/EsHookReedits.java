@@ -1,7 +1,7 @@
 package com.elasticsearch.engine.hook;
 
 import com.elasticsearch.engine.holder.AbstractEsRequestHolder;
-import com.elasticsearch.engine.model.exception.EsHelperConfigException;
+import com.elasticsearch.engine.model.exception.EsEngineConfigException;
 import com.google.common.collect.Maps;
 import org.elasticsearch.action.search.SearchResponse;
 
@@ -10,13 +10,11 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * project     Name:elasticsearch-helper
- * file        Name:EsResponseHookFactory
- * package     Name:org.pippi.elasticsearch.helper.view
- * date 2021/7/21 00:36
- * author  JohenTeng
- * Description:
- */
+* @author wanghuan
+* @description EsHookReedits
+* @mail 958721894@qq.com       
+* @date 2022/6/9 14:11 
+*/
 public class EsHookReedits {
 
     public static final Map<String, RequestHook> REP_FUNC_REGEDIT = Maps.newHashMap();
@@ -26,7 +24,7 @@ public class EsHookReedits {
     public static void addReqHook(String key, RequestHook requestHook) {
         RequestHook checkBean = REP_FUNC_REGEDIT.get(key);
         if (Objects.nonNull(checkBean)) {
-            throw new EsHelperConfigException("Duplicated RequestHook-Func Key define!!!");
+            throw new EsEngineConfigException("Duplicated RequestHook-Func Key define!!!");
         }
         REP_FUNC_REGEDIT.put(key, requestHook);
     }
@@ -34,7 +32,7 @@ public class EsHookReedits {
     public static void addRespHook(String key, ResponseHook responseHook) {
         ResponseHook checkBean = RESP_FUNC_REGEDIT.get(key);
         if (Objects.nonNull(checkBean)) {
-            throw new EsHelperConfigException("Duplicated ResponseHook-Func Key define!!!");
+            throw new EsEngineConfigException("Duplicated ResponseHook-Func Key define!!!");
         }
         RESP_FUNC_REGEDIT.put(key, responseHook);
     }

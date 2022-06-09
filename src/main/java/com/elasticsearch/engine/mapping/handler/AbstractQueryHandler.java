@@ -4,7 +4,7 @@ import com.elasticsearch.engine.common.utils.ExtAnnBeanMapUtils;
 import com.elasticsearch.engine.holder.AbstractEsRequestHolder;
 import com.elasticsearch.engine.model.domain.EsQueryFieldBean;
 import com.elasticsearch.engine.model.domain.AbstractQueryBean;
-import com.elasticsearch.engine.model.exception.EsHelperConfigException;
+import com.elasticsearch.engine.model.exception.EsEngineConfigException;
 import org.elasticsearch.index.query.QueryBuilder;
 
 import java.lang.reflect.ParameterizedType;
@@ -75,7 +75,7 @@ public abstract class AbstractQueryHandler<T extends AbstractQueryBean> {
             queryDes.setExtBean(extBean);
             return queryDes;
         } catch (ClassNotFoundException e) {
-            throw new EsHelperConfigException("queryHandle-actualType class not found, cause:", e);
+            throw new EsEngineConfigException("queryHandle-actualType class not found, cause:", e);
         }
     }
 

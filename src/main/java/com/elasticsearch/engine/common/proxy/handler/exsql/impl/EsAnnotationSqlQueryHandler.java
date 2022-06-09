@@ -9,7 +9,7 @@ import com.elasticsearch.engine.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.model.annotion.EsQuery;
 import com.elasticsearch.engine.model.constant.CommonConstant;
 import com.elasticsearch.engine.model.emenu.SqlParamParse;
-import com.elasticsearch.engine.model.exception.EsHelperExecuteException;
+import com.elasticsearch.engine.model.exception.EsEngineExecuteException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -45,7 +45,7 @@ public class EsAnnotationSqlQueryHandler implements EsSqlQueryHandler {
         Class<?> returnGenericType = AnnotationQueryCommon.getReturnGenericType(method);
         EsQuery esQuery = method.getAnnotation(EsQuery.class);
         if (Objects.isNull(esQuery) || StringUtils.isEmpty(esQuery.value())) {
-            throw new EsHelperExecuteException(prefix + "@EsQuery 注解不存在或参数为空");
+            throw new EsEngineExecuteException(prefix + "@EsQuery 注解不存在或参数为空");
         }
         // 解析sql参数
         String sql = SqlParamParseHelper.getMethodArgsSqlAnn(esQuery.value(), method, args, SqlParamParse.ANN_SQL_PARAM);

@@ -9,7 +9,7 @@ import com.elasticsearch.engine.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.holder.AbstractEsRequestHolder;
 import com.elasticsearch.engine.model.constant.CommonConstant;
 import com.elasticsearch.engine.model.domain.BaseResp;
-import com.elasticsearch.engine.model.exception.EsHelperQueryException;
+import com.elasticsearch.engine.model.exception.EsEngineQueryException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.elasticsearch.action.search.SearchResponse;
@@ -74,7 +74,7 @@ public class EsParamExecuteHandler extends AbstractEsBaseExecuteHandle {
             return null;
         }
         if (result.getRecords().size() > 1) {
-            throw new EsHelperQueryException("except one result, but find more");
+            throw new EsEngineQueryException("except one result, but find more");
         }
         return result.getRecords().stream().findFirst().get();
     }
@@ -112,7 +112,7 @@ public class EsParamExecuteHandler extends AbstractEsBaseExecuteHandle {
             try {
                 resp = restClient.search(esHolder.getRequest(), RequestOptions.DEFAULT);
             } catch (IOException e) {
-                throw new EsHelperQueryException("Execute Query Error, Method-invokeRes ,cause:", e);
+                throw new EsEngineQueryException("Execute Query Error, Method-invokeRes ,cause:", e);
             }
             //后置处理扩展 加入自定义结果解析
             BaseResp<T> result = EsResponseParse.returnDefaultResult(resp, responseClazz);

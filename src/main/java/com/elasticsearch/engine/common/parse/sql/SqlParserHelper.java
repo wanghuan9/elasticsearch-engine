@@ -4,7 +4,7 @@ import com.elasticsearch.engine.GlobalConfig;
 import com.elasticsearch.engine.common.utils.CaseFormatUtils;
 import com.elasticsearch.engine.model.annotion.EsQueryIndex;
 import com.elasticsearch.engine.model.domain.BackDto;
-import com.elasticsearch.engine.model.exception.EsHelperQueryException;
+import com.elasticsearch.engine.model.exception.EsEngineQueryException;
 import com.google.common.collect.Lists;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.*;
@@ -122,7 +122,7 @@ public class SqlParserHelper {
         Class<?> clazz = method.getDeclaringClass();
         EsQueryIndex ann = clazz.getAnnotation(EsQueryIndex.class);
         if (ann == null) {
-            throw new EsHelperQueryException("undefine query-index @EsQueryIndex");
+            throw new EsEngineQueryException("undefine query-index @EsQueryIndex");
         }
         plain.setFromItem(new Table(ann.value()));
     }

@@ -4,7 +4,7 @@ import com.elasticsearch.engine.hook.EsHookReedits;
 import com.elasticsearch.engine.hook.UserHooks;
 import com.elasticsearch.engine.model.annotion.EsHelperProxy;
 import com.elasticsearch.engine.model.domain.BaseESRepository;
-import com.elasticsearch.engine.model.exception.EsHelperConfigException;
+import com.elasticsearch.engine.model.exception.EsEngineConfigException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -37,17 +37,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * EsHelperInterfaceScanner
- * read all Interface which annotated by
+ * @author wanghuan
+ * @description EsEngineInterfaceScanner
  * {@link EsHelperProxy @EsHelperProxy}
- * and  load a proxy instance for it
- * author     JohenTeng
- * date      2021/9/18
+ * @mail 958721894@qq.com
+ * @date 2022/6/9 14:12
  */
 @Component
-public class EsHelperInterfaceScanner implements ApplicationContextAware, ResourceLoaderAware, BeanDefinitionRegistryPostProcessor, ApplicationRunner {
+public class EsEngineInterfaceScanner implements ApplicationContextAware, ResourceLoaderAware, BeanDefinitionRegistryPostProcessor, ApplicationRunner {
 
-    private static final Logger log = LoggerFactory.getLogger(EsHelperInterfaceScanner.class);
+    private static final Logger log = LoggerFactory.getLogger(EsEngineInterfaceScanner.class);
 
     private static final String DEFAULT_RESOURCE_PATTERN = "**/*.class";
 
@@ -94,7 +93,7 @@ public class EsHelperInterfaceScanner implements ApplicationContextAware, Resour
 //                    new EsHelperProxyBeanFactory(beanClazz, proxyAnn.visitParent())
 //            );
             definition.setInstanceSupplier(() ->
-                    new EsHelperProxyBeanFactory(beanClazz)
+                    new EsEngineProxyBeanFactory(beanClazz)
             );
             definition.setAutowireMode(GenericBeanDefinition.AUTOWIRE_BY_TYPE);
             String simpleName = beanClazz.getSimpleName();
@@ -159,9 +158,9 @@ public class EsHelperInterfaceScanner implements ApplicationContextAware, Resour
                 }
             }
         } catch (ClassNotFoundException e) {
-            throw new EsHelperConfigException("Es-helper init Reflection ERROR, cause", e);
+            throw new EsEngineConfigException("Es-helper init Reflection ERROR, cause", e);
         } catch (IOException e) {
-            throw new EsHelperConfigException("Es-helper init I/O ERROR, cause", e);
+            throw new EsEngineConfigException("Es-helper init I/O ERROR, cause", e);
         }
         return set;
     }

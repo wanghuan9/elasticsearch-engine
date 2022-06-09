@@ -12,7 +12,7 @@ import com.elasticsearch.engine.mapping.annotation.Aggs;
 import com.elasticsearch.engine.model.constant.EsConstant;
 import com.elasticsearch.engine.model.domain.BaseResp;
 import com.elasticsearch.engine.model.domain.DefaultAggResp;
-import com.elasticsearch.engine.model.exception.EsHelperQueryException;
+import com.elasticsearch.engine.model.exception.EsEngineQueryException;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -101,7 +101,7 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
         try {
             searchResponse = restClient.search(searchRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
-            throw new EsHelperQueryException("Execute Query Error, Method-invokeNative ,cause:", e);
+            throw new EsEngineQueryException("Execute Query Error, Method-invokeNative ,cause:", e);
         }
         SearchHits hitsResult = searchResponse.getHits();
         log.info("命中总记录数 ={}", hitsResult.getTotalHits());
@@ -127,7 +127,7 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
         try {
             searchResponse = restClient.search(searchRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
-            throw new EsHelperQueryException("Execute Query Error, Method-invokeNativeBuildRes ,cause:", e);
+            throw new EsEngineQueryException("Execute Query Error, Method-invokeNativeBuildRes ,cause:", e);
         }
         SearchHits hitsResult = searchResponse.getHits();
         log.info("命中总记录数 ={}", hitsResult.getTotalHits());
@@ -162,7 +162,7 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
         try {
             resp = restClient.search(esHolder.getRequest(), RequestOptions.DEFAULT);
         } catch (IOException e) {
-            throw new EsHelperQueryException("Execute Query Error, Method-invoke ,cause:", e);
+            throw new EsEngineQueryException("Execute Query Error, Method-invoke ,cause:", e);
         }
         return resp;
     }
@@ -187,7 +187,7 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
         try {
             resp = restClient.search(esHolder.getRequest(), RequestOptions.DEFAULT);
         } catch (IOException e) {
-            throw new EsHelperQueryException("Execute Query Error, Method-invokeRes ,cause:", e);
+            throw new EsEngineQueryException("Execute Query Error, Method-invokeRes ,cause:", e);
         }
         //后置处理扩展 加入自定义结果解析
         BaseResp<T> result = EsResponseParse.returnDefaultResult(resp, responseClazz);
@@ -205,12 +205,12 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
      */
     public BaseResp<DefaultAggResp> executeAggs(Method method, Object param) {
         if (!checkExistsAggAnnotation(param)) {
-            throw new EsHelperQueryException("param field Missing @Aggs annotation");
+            throw new EsEngineQueryException("param field Missing @Aggs annotation");
         }
         List<DefaultAggResp> records = new ArrayList<>();
         SearchResponse searchResponse = execute(method, param);
         if (Objects.isNull(searchResponse.getAggregations())) {
-            throw new EsHelperQueryException("aggs param value is null, result aggregations is empty");
+            throw new EsEngineQueryException("aggs param value is null, result aggregations is empty");
         }
         Terms agg = searchResponse.getAggregations().get(EsConstant.AGG);
         for (Terms.Bucket bucketOneAgg : agg.getBuckets()) {

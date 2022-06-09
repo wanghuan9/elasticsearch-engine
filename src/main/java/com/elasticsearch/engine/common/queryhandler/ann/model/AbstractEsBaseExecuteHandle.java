@@ -5,7 +5,7 @@ import com.elasticsearch.engine.holder.AbstractEsRequestHolder;
 import com.elasticsearch.engine.hook.RequestHook;
 import com.elasticsearch.engine.hook.ResponseHook;
 import com.elasticsearch.engine.model.domain.BaseResp;
-import com.elasticsearch.engine.model.exception.EsHelperConfigException;
+import com.elasticsearch.engine.model.exception.EsEngineConfigException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.elasticsearch.action.search.SearchResponse;
@@ -64,7 +64,7 @@ public abstract class AbstractEsBaseExecuteHandle {
             String configIndex = environment.getProperty(envProperty);
             //配置的是读取配置中心的参数, 没有读到,并且没有设置默认值, 则抛出异常
             if (StringUtils.isEmpty(configIndex) && !parseIndexName.contains(":")) {
-                throw new EsHelperConfigException("index name is empty");
+                throw new EsEngineConfigException("index name is empty");
             }
             //优先使用配置中心配置的索引名
             if (StringUtils.isNotEmpty(configIndex)) {

@@ -4,7 +4,7 @@ import com.elasticsearch.engine.GlobalConfig;
 import com.elasticsearch.engine.common.utils.JsonParser;
 import com.elasticsearch.engine.model.domain.BaseHit;
 import com.elasticsearch.engine.model.domain.BaseResp;
-import com.elasticsearch.engine.model.exception.EsHelperQueryException;
+import com.elasticsearch.engine.model.exception.EsEngineQueryException;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -36,7 +36,7 @@ public class EsResponseParse {
                 baseResp = EsResponseParse.getList(resp, responseClazz);
             }
         } catch (Exception e) {
-            throw new EsHelperQueryException("convert result error, cause:", e);
+            throw new EsEngineQueryException("convert result error, cause:", e);
         }
         return baseResp;
     }
@@ -97,7 +97,7 @@ public class EsResponseParse {
         SearchHits hits = resp.getHits();
         SearchHit[] hitArr = hits.getHits();
         if (hitArr.length > 1) {
-            throw new EsHelperQueryException("except one result, but find more");
+            throw new EsEngineQueryException("except one result, but find more");
         }
         if (hitArr.length == 1) {
             String jsonResStr = hitArr[0].getSourceAsString();

@@ -2,7 +2,7 @@ package com.elasticsearch.engine.common.proxy.handler.exsql;
 
 import com.elasticsearch.engine.common.factory.FactoryList;
 import com.elasticsearch.engine.common.proxy.enums.EsSqlQueryEnum;
-import com.elasticsearch.engine.model.exception.EsHelperExecuteException;
+import com.elasticsearch.engine.model.exception.EsEngineExecuteException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -26,6 +26,6 @@ public class EsSqlQueryFactory implements FactoryList<EsSqlQueryHandler, EsSqlQu
                 return esAnnotationQueryHandler;
             }
         }
-        throw new EsHelperExecuteException("factory class not found");
+        throw new EsEngineExecuteException("factory class not found");
     }
 }

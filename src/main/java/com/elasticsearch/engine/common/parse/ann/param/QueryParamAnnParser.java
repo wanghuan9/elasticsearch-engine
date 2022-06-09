@@ -13,8 +13,8 @@ import com.elasticsearch.engine.model.constant.CommonConstant;
 import com.elasticsearch.engine.model.domain.*;
 import com.elasticsearch.engine.model.emenu.EsConnector;
 import com.elasticsearch.engine.model.emenu.QueryModel;
-import com.elasticsearch.engine.model.exception.EsHelperConfigException;
-import com.elasticsearch.engine.model.exception.EsHelperQueryException;
+import com.elasticsearch.engine.model.exception.EsEngineConfigException;
+import com.elasticsearch.engine.model.exception.EsEngineQueryException;
 import com.google.common.collect.Lists;
 import joptsimple.internal.Strings;
 import org.apache.commons.collections4.CollectionUtils;
@@ -67,7 +67,7 @@ public class QueryParamAnnParser {
         Class<?> clazz = method.getDeclaringClass();
         EsQueryIndex ann = clazz.getAnnotation(EsQueryIndex.class);
         if (ann == null) {
-            throw new EsHelperQueryException("undefine query-index @EsQueryIndex");
+            throw new EsEngineQueryException("undefine query-index @EsQueryIndex");
         }
         String index = ann.value();
         QueryModel model = ann.model();
@@ -179,7 +179,7 @@ public class QueryParamAnnParser {
             //TODO 类型转换器扩展 支持
             //TODO 参数校验器扩展***
         } else {
-            throw new EsHelperQueryException("es annotation query parameter has wrong parameter, just support primitive type or their decorate type is list or EsComplexParam ; error param is: " + param.getName());
+            throw new EsEngineQueryException("es annotation query parameter has wrong parameter, just support primitive type or their decorate type is list or EsComplexParam ; error param is: " + param.getName());
         }
     }
 
@@ -243,7 +243,7 @@ public class QueryParamAnnParser {
             }
             queryDes.setValue(paramValue);
         } else {
-            throw new EsHelperQueryException("es annotation query field has error field, just support primitive type or their decorate type is List ; error param is: " + param.getName());
+            throw new EsEngineQueryException("es annotation query field has error field, just support primitive type or their decorate type is List ; error param is: " + param.getName());
         }
         return queryDes;
     }
@@ -292,7 +292,7 @@ public class QueryParamAnnParser {
             Base ann = (Base) baseMethod.invoke(targetAnn);
             EsConnector esConnector = ann.connect();
             if (esConnector == null) {
-                throw new EsHelperQueryException("ES-QUERY-LOGIC-CONNECTOR cant be null");
+                throw new EsEngineQueryException("ES-QUERY-LOGIC-CONNECTOR cant be null");
             }
             queryDes.setLogicConnector(esConnector);
 
@@ -317,12 +317,12 @@ public class QueryParamAnnParser {
             queryDes.setOrder(ann.order());
             String query = targetAnn.annotationType().getSimpleName();
             if (StringUtils.isBlank(query)) {
-                throw new EsHelperQueryException("QUERY-TYPE missing, it's necessary");
+                throw new EsEngineQueryException("QUERY-TYPE missing, it's necessary");
             }
             queryDes.setQueryType(query);
 
         } catch (Exception e) {
-            throw new EsHelperConfigException("annotation analysis Error, cause:", e);
+            throw new EsEngineConfigException("annotation analysis Error, cause:", e);
         }
     }
 
@@ -365,11 +365,11 @@ public class QueryParamAnnParser {
                 queryDes.setExtAnnotation(annotation);
             }
             if (StringUtils.isBlank(query)) {
-                throw new EsHelperQueryException("QUERY-TYPE missing, it's necessary");
+                throw new EsEngineQueryException("QUERY-TYPE missing, it's necessary");
             }
             queryDes.setQueryType(query);
         } catch (Exception e) {
-            throw new EsHelperConfigException("annotation analysis Error, cause:", e);
+            throw new EsEngineConfigException("annotation analysis Error, cause:", e);
         }
     }
 

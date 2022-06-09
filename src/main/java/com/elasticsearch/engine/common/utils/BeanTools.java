@@ -1,7 +1,7 @@
 package com.elasticsearch.engine.common.utils;
 
 import com.elasticsearch.engine.model.emenu.DataType;
-import com.elasticsearch.engine.model.exception.EsHelperExecuteException;
+import com.elasticsearch.engine.model.exception.EsEngineExecuteException;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.util.Assert;
@@ -131,7 +131,7 @@ public class BeanTools {
         } else if (dataType == DataType.short_type) {
             return Short.valueOf(value);
         } else {
-            throw new EsHelperExecuteException("not support field type covert");
+            throw new EsEngineExecuteException("not support field type covert");
         }
     }
 

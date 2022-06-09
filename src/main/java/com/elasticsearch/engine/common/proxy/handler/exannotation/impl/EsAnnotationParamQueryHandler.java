@@ -8,7 +8,7 @@ import com.elasticsearch.engine.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.model.constant.CommonConstant;
 import com.elasticsearch.engine.model.domain.BaseESRepository;
 import com.elasticsearch.engine.model.domain.BaseResp;
-import com.elasticsearch.engine.model.exception.EsHelperExecuteException;
+import com.elasticsearch.engine.model.exception.EsEngineExecuteException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -43,7 +43,7 @@ public class EsAnnotationParamQueryHandler implements EsAnnotationQueryHandler {
         Class<?> retEntityClass = AnnotationQueryCommon.getClazzImplClassGeneric(method.getDeclaringClass(), BaseESRepository.class);
         //Repository泛型 单个返回值
         if (Objects.isNull(retEntityClass)) {
-            throw new EsHelperExecuteException(prefix + "泛型声明异常:Repository 缺少泛型声明");
+            throw new EsEngineExecuteException(prefix + "泛型声明异常:Repository 缺少泛型声明");
         }
         if (returnType.isAssignableFrom(retEntityClass)) {
             return esParamExecuteHandler.executeOne(method, args, returnType);
@@ -61,7 +61,7 @@ public class EsAnnotationParamQueryHandler implements EsAnnotationQueryHandler {
                 && returnGenericType.isAssignableFrom(retEntityClass)) {
             return esParamExecuteHandler.execute(method, args, returnGenericType);
         }
-        throw new EsHelperExecuteException(prefix + "方法返回值泛型匹配异常: 返回值必须是 Repository 的泛型类型");
+        throw new EsEngineExecuteException(prefix + "方法返回值泛型匹配异常: 返回值必须是 Repository 的泛型类型");
     }
 
 }

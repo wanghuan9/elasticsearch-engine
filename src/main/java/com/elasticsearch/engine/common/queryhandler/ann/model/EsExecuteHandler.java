@@ -4,7 +4,7 @@ import com.elasticsearch.engine.GlobalConfig;
 import com.elasticsearch.engine.common.parse.ann.model.EsQueryEngine;
 import com.elasticsearch.engine.holder.AbstractEsRequestHolder;
 import com.elasticsearch.engine.model.domain.BaseResp;
-import com.elasticsearch.engine.model.exception.EsHelperQueryException;
+import com.elasticsearch.engine.model.exception.EsEngineQueryException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -85,7 +85,7 @@ public class EsExecuteHandler extends EsBaseExecuteHandle {
             return null;
         }
         if (result.getRecords().size() > 1) {
-            throw new EsHelperQueryException("except one result, but find more");
+            throw new EsEngineQueryException("except one result, but find more");
         }
         return result.getRecords().stream().findFirst().get();
     }
@@ -119,7 +119,7 @@ public class EsExecuteHandler extends EsBaseExecuteHandle {
             case "a":
                 return executeAggs(method, param);
         }
-        throw new EsHelperQueryException("");
+        throw new EsEngineQueryException("");
     }
 
     /**

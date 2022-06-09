@@ -2,7 +2,7 @@ package com.elasticsearch.engine.extend.jpa;
 
 import com.elasticsearch.engine.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.model.constant.CommonConstant;
-import com.elasticsearch.engine.model.exception.EsHelperJpaExecuteException;
+import com.elasticsearch.engine.model.exception.EsEngineJpaExecuteException;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.resource.jdbc.spi.StatementInspector;
 import org.springframework.stereotype.Component;
@@ -42,7 +42,7 @@ public class JpaEsQueryStatementInspector implements StatementInspector {
         String backSql = ThreadLocalUtil.get(CommonConstant.BACK_QUERY_SQL);
         if (Objects.nonNull(isEsQuery) && isEsQuery) {
             ThreadLocalUtil.remove(CommonConstant.IS_ES_QUERY);
-            throw new EsHelperJpaExecuteException(sql);
+            throw new EsEngineJpaExecuteException(sql);
         } else if (StringUtils.isNotEmpty(backSql)) {
             ThreadLocalUtil.remove(CommonConstant.BACK_QUERY_SQL);
             return backSql;

@@ -3,7 +3,7 @@ package com.elasticsearch.engine.common.parse.sql;
 import com.elasticsearch.engine.common.utils.DateUtils;
 import com.elasticsearch.engine.common.utils.ReflectionUtils;
 import com.elasticsearch.engine.model.emenu.SqlParamParse;
-import com.elasticsearch.engine.model.exception.EsHelperQueryException;
+import com.elasticsearch.engine.model.exception.EsEngineQueryException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.ParameterMapping;
@@ -139,7 +139,7 @@ public class SqlParamParseHelper {
         }
         //参数替换完之后如果还包含"#{" 说明有参数没有被替换
         if (sql.contains(sqlParamParse.getPlaceHolder())) {
-            throw new EsHelperQueryException("方法中的参数和sql中的参数 不匹配");
+            throw new EsEngineQueryException("方法中的参数和sql中的参数 不匹配");
         }
         return sql;
     }
@@ -212,7 +212,7 @@ public class SqlParamParseHelper {
         }
         //参数替换完之后如果还包含"#{" 说明有参数没有被替换
         if (sql.contains(sqlParamParse.getPlaceHolder())) {
-            throw new EsHelperQueryException("方法中的参数和sql中的参数 不匹配");
+            throw new EsEngineQueryException("方法中的参数和sql中的参数 不匹配");
         }
         return sql;
     }

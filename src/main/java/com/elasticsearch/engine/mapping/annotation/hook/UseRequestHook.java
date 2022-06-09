@@ -3,13 +3,11 @@ package com.elasticsearch.engine.mapping.annotation.hook;
 import java.lang.annotation.*;
 
 /**
- * Project Name:elasticsearch-helper
- * File Name:RequestHook
- * Package Name:org.pippi.elasticsearch.helper.beans.annotation
- * Date:2021/7/21 00:31
- * author    JohenTeng
- * Description:
- */
+* @author wanghuan
+* @description UseRequestHook
+* @mail 958721894@qq.com       
+* @date 2022/6/9 14:11 
+*/
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})

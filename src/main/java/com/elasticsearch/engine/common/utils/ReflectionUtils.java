@@ -14,12 +14,11 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
- * project  elasticsearch-helper
- * packages   org.pippi.elasticsearch.helper.core.utils
- * date     2021/7/18
- * author    JohenTeng
- * email    1078481395@qq.com
- **/
+* @author wanghuan
+* @description ReflectionUtils
+* @mail 958721894@qq.com       
+* @date 2022/6/9 14:11 
+*/
 public class ReflectionUtils {
 
     public static boolean isBaseTypeAndExtend(Class<?> type) {

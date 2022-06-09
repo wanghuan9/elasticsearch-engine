@@ -1,7 +1,7 @@
 package com.elasticsearch.engine.common.proxy.handler.exannotation;
 
 import com.elasticsearch.engine.model.domain.BaseResp;
-import com.elasticsearch.engine.model.exception.EsHelperExecuteException;
+import com.elasticsearch.engine.model.exception.EsEngineExecuteException;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -68,12 +68,12 @@ public class AnnotationQueryCommon {
      * @return
      */
     public static Type getClazzImplClassGenericType(Class<?> clazz, Class<?> implClass) {
-        EsHelperExecuteException esHelperExecuteException = new EsHelperExecuteException("泛型声明异常: " + clazz.getSimpleName() + " implements " + implClass.getSimpleName());
+        EsEngineExecuteException esHelperExecuteException = new EsEngineExecuteException("泛型声明异常: " + clazz.getSimpleName() + " implements " + implClass.getSimpleName());
         //获取class实现的接口
         Type[] interfaces = clazz.getGenericInterfaces();
         Map<? extends Class<?>, ParameterizedType> collect = Arrays.stream(interfaces).map(type -> {
             if (!(type instanceof ParameterizedType)) {
-                throw new EsHelperExecuteException("泛型声明异常: " + clazz.getSimpleName() + " 缺少泛型声明");
+                throw new EsEngineExecuteException("泛型声明异常: " + clazz.getSimpleName() + " 缺少泛型声明");
             }
             return (ParameterizedType) type;
         }).collect(Collectors.toMap(item -> {

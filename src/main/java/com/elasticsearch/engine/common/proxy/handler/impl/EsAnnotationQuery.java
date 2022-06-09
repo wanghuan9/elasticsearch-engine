@@ -7,7 +7,7 @@ import com.elasticsearch.engine.common.proxy.handler.exannotation.EsAnnotationQu
 import com.elasticsearch.engine.common.utils.ReflectionUtils;
 import com.elasticsearch.engine.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.model.constant.CommonConstant;
-import com.elasticsearch.engine.model.exception.EsHelperQueryException;
+import com.elasticsearch.engine.model.exception.EsEngineQueryException;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +36,7 @@ public class EsAnnotationQuery implements EsQueryProxyExecuteHandler {
     public Object handle(Object proxy, Method method, Object[] args) {
         String prefix = ThreadLocalUtil.get(CommonConstant.INTERFACE_METHOD_NAME);
         if (args == null || args.length == 0) {
-            throw new EsHelperQueryException(prefix + "missing parameters");
+            throw new EsEngineQueryException(prefix + "missing parameters");
         }
         EsAnnotationQueryEnum queryEnum;
         Class<?> clazz = args[0].getClass();
@@ -47,7 +47,7 @@ public class EsAnnotationQuery implements EsQueryProxyExecuteHandler {
             //有一个或多个参数 && 都是基础类型(包括List,LocalDateTime,LocalDate,BigDecimal)
             queryEnum = EsAnnotationQueryEnum.ANNOTATION_PARAM_QUERY;
         } else {
-            throw new EsHelperQueryException(prefix + "方法参数异常: 查询参数不被支持,仅支持多个基本类型参数 或 者单个引用类型的参数并标记@EsQueryIndex注解");
+            throw new EsEngineQueryException(prefix + "方法参数异常: 查询参数不被支持,仅支持多个基本类型参数 或 者单个引用类型的参数并标记@EsQueryIndex注解");
         }
         return esAnnotationQueryFactory.getBean(queryEnum).handle(proxy, method, args);
     }

@@ -14,12 +14,12 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * EsHelperProxyBeanFactory
- * <p>
- * author     JohenTeng
- * date      2021/9/18
- */
-public class EsHelperProxyBeanFactory<T> implements ApplicationContextAware, InitializingBean, FactoryBean<T> {
+* @author wanghuan
+* @description EsEngineProxyBeanFactory
+* @mail 958721894@qq.com       
+* @date 2022/6/9 14:10 
+*/
+public class EsEngineProxyBeanFactory<T> implements ApplicationContextAware, InitializingBean, FactoryBean<T> {
 
     private static final String ENABLE_LOG_OUT_PROPERTIES = "es.helper.queryLogOut.enable";
     private Class<T> targetInterfaceClazz;
@@ -29,11 +29,11 @@ public class EsHelperProxyBeanFactory<T> implements ApplicationContextAware, Ini
     private ApplicationContext applicationContext;
     private boolean enableLogOut = false;
 
-    public EsHelperProxyBeanFactory(Class<T> targetInterfaceClazz) {
+    public EsEngineProxyBeanFactory(Class<T> targetInterfaceClazz) {
         this.targetInterfaceClazz = targetInterfaceClazz;
     }
 
-    public EsHelperProxyBeanFactory(Class<T> targetInterfaceClazz, boolean visitQueryBeanParent) {
+    public EsEngineProxyBeanFactory(Class<T> targetInterfaceClazz, boolean visitQueryBeanParent) {
         this.targetInterfaceClazz = targetInterfaceClazz;
         this.visitQueryBeanParent = visitQueryBeanParent;
     }

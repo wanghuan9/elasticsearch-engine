@@ -6,7 +6,7 @@ import com.elasticsearch.engine.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.model.constant.CommonConstant;
 import com.elasticsearch.engine.model.domain.BackDto;
 import com.elasticsearch.engine.model.emenu.SqlParamParse;
-import com.elasticsearch.engine.model.exception.EsHelperJpaExecuteException;
+import com.elasticsearch.engine.model.exception.EsEngineJpaExecuteException;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.statement.select.Select;
@@ -50,7 +50,7 @@ public class EsSqlQueryHelper {
         try {
             ThreadLocalUtil.set(CommonConstant.IS_ES_QUERY, Boolean.TRUE);
             result = pjp.proceed(args);
-        } catch (EsHelperJpaExecuteException e) {
+        } catch (EsEngineJpaExecuteException e) {
             if (Objects.nonNull(backDto)) {
                 List<?> esResult = esQueryBack(method, e.getMessage(), args, backDto);
                 if(CollectionUtils.isEmpty(esResult)){

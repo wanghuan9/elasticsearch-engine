@@ -5,11 +5,11 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 /**
- * ExtAnnBeanMapUtils
- * <p>
- * author     JohenTeng
- * date      2021/9/23
- */
+* @author wanghuan
+* @description ExtAnnBeanMapUtils
+* @mail 958721894@qq.com       
+* @date 2022/6/9 14:11 
+*/
 public class ExtAnnBeanMapUtils {
 
 

@@ -7,7 +7,7 @@ import com.elasticsearch.engine.common.proxy.enums.EsQueryType;
 import com.elasticsearch.engine.common.proxy.enums.EsSqlQueryEnum;
 import com.elasticsearch.engine.common.proxy.handler.EsQueryProxyExecuteHandler;
 import com.elasticsearch.engine.model.constant.CommonConstant;
-import com.elasticsearch.engine.model.exception.EsHelperQueryException;
+import com.elasticsearch.engine.model.exception.EsEngineQueryException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +37,7 @@ public class EsSqlQuery implements EsQueryProxyExecuteHandler {
         if (args != null && args.length > 0) {
             //参数类型校验
             if (!ReflectionUtils.allParamIsBaseType(args)) {
-                throw new EsHelperQueryException(prefix + "方法参数异常: 查询参数不被支持,仅支持多个基本类型参数 或 者单个引用类型的参数并标记@EsQueryIndex注解");
+                throw new EsEngineQueryException(prefix + "方法参数异常: 查询参数不被支持,仅支持多个基本类型参数 或 者单个引用类型的参数并标记@EsQueryIndex注解");
             }
         }
        

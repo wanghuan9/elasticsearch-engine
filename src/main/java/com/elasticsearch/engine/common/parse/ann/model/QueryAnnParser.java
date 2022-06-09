@@ -12,8 +12,8 @@ import com.elasticsearch.engine.model.constant.CommonConstant;
 import com.elasticsearch.engine.model.domain.*;
 import com.elasticsearch.engine.model.emenu.EsConnector;
 import com.elasticsearch.engine.model.emenu.QueryModel;
-import com.elasticsearch.engine.model.exception.EsHelperConfigException;
-import com.elasticsearch.engine.model.exception.EsHelperQueryException;
+import com.elasticsearch.engine.model.exception.EsEngineConfigException;
+import com.elasticsearch.engine.model.exception.EsEngineQueryException;
 import com.google.common.collect.Lists;
 import joptsimple.internal.Strings;
 import org.apache.commons.collections4.CollectionUtils;
@@ -89,12 +89,12 @@ public class QueryAnnParser {
         EsQueryIndex ann = clazz.getAnnotation(EsQueryIndex.class);
         if (ann == null) {
             if (method == null) {
-                throw new EsHelperQueryException("undefine query-index @EsQueryIndex");
+                throw new EsEngineQueryException("undefine query-index @EsQueryIndex");
             }
             clazz = method.getDeclaringClass();
             ann = clazz.getAnnotation(EsQueryIndex.class);
             if (ann == null) {
-                throw new EsHelperQueryException("undefine query-index @EsQueryIndex");
+                throw new EsEngineQueryException("undefine query-index @EsQueryIndex");
             }
         }
         String index = ann.value();
@@ -161,7 +161,7 @@ public class QueryAnnParser {
                     try {
                         val = field.get(view);
                     } catch (IllegalAccessException e) {
-                        throw new EsHelperQueryException("unable reach target field ", e);
+                        throw new EsEngineQueryException("unable reach target field ", e);
                     }
                     //扩展嵌套对象自定义查询
                     Class<?> type = field.getType();
@@ -237,10 +237,10 @@ public class QueryAnnParser {
                 //TODO 类型转换器扩展 支持
                 //TODO 参数校验器扩展***
             } else {
-                throw new EsHelperQueryException("es annotation query field has error field, just support primitive type or their decorate type is List or EsComplexParam or add @Nested ; error field is: " + field.getName());
+                throw new EsEngineQueryException("es annotation query field has error field, just support primitive type or their decorate type is List or EsComplexParam or add @Nested ; error field is: " + field.getName());
             }
         } catch (IllegalAccessException e) {
-            throw new EsHelperQueryException("unable reach target field ", e);
+            throw new EsEngineQueryException("unable reach target field ", e);
         }
     }
 
@@ -278,7 +278,7 @@ public class QueryAnnParser {
             queryDes.setValue(val);
             return queryDes;
         } catch (IllegalAccessException e) {
-            throw new EsHelperQueryException("unable reach target field ", e);
+            throw new EsEngineQueryException("unable reach target field ", e);
         }
     }
 
@@ -299,11 +299,11 @@ public class QueryAnnParser {
                 }
                 queryDes.setValue(val);
             } else {
-                throw new EsHelperQueryException("es default query fields have wrong fields, Just support primitive type or their decorate type is List  or add @Nested; error field is: " + field.getName());
+                throw new EsEngineQueryException("es default query fields have wrong fields, Just support primitive type or their decorate type is List  or add @Nested; error field is: " + field.getName());
             }
             return queryDes;
         } catch (IllegalAccessException e) {
-            throw new EsHelperQueryException("unable reach target field ", e);
+            throw new EsEngineQueryException("unable reach target field ", e);
         }
     }
 
@@ -374,7 +374,7 @@ public class QueryAnnParser {
             Base ann = (Base) baseMethod.invoke(targetAnn);
             EsConnector esConnector = ann.connect();
             if (esConnector == null) {
-                throw new EsHelperQueryException("ES-QUERY-LOGIC-CONNECTOR cant be null");
+                throw new EsEngineQueryException("ES-QUERY-LOGIC-CONNECTOR cant be null");
             }
             queryDes.setLogicConnector(esConnector);
 
@@ -399,12 +399,12 @@ public class QueryAnnParser {
             queryDes.setOrder(ann.order());
             String query = targetAnn.annotationType().getSimpleName();
             if (StringUtils.isBlank(query)) {
-                throw new EsHelperQueryException("QUERY-TYPE missing, it's necessary");
+                throw new EsEngineQueryException("QUERY-TYPE missing, it's necessary");
             }
             queryDes.setQueryType(query);
 
         } catch (Exception e) {
-            throw new EsHelperConfigException("annotation analysis Error, cause:", e);
+            throw new EsEngineConfigException("annotation analysis Error, cause:", e);
         }
     }
 
@@ -448,11 +448,11 @@ public class QueryAnnParser {
                 queryDes.setExtAnnotation(annotation);
             }
             if (StringUtils.isBlank(query)) {
-                throw new EsHelperQueryException("QUERY-TYPE missing, it's necessary");
+                throw new EsEngineQueryException("QUERY-TYPE missing, it's necessary");
             }
             queryDes.setQueryType(query);
         } catch (Exception e) {
-            throw new EsHelperConfigException("annotation analysis Error, cause:", e);
+            throw new EsEngineConfigException("annotation analysis Error, cause:", e);
         }
     }
 

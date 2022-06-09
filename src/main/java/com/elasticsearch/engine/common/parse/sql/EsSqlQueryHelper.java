@@ -52,12 +52,14 @@ public class EsSqlQueryHelper {
             result = pjp.proceed(args);
         } catch (EsEngineJpaExecuteException e) {
             if (Objects.nonNull(backDto)) {
+                //回表sql执行, sql重新时使用 原生未绑定参数的sql
                 List<?> esResult = esQueryBack(method, e.getMessage(), args, backDto);
                 if(CollectionUtils.isEmpty(esResult)){
                     return result;
                 }
                 result = pjp.proceed(args);
             } else {
+                //原生es执行 直接使用绑定参数后的sql
                 result = esQuery(method, e.getMessage(), args, backDto);
             }
         } finally {
@@ -76,7 +78,7 @@ public class EsSqlQueryHelper {
      * @return
      * @throws JSQLParserException
      */
-    private Object esQuery(Method method, String sql, Object[] args, BackDto backDto) throws JSQLParserException {
+    public Object esQuery(Method method, String sql, Object[] args, BackDto backDto) throws JSQLParserException {
         String paramSql = fillParamSql(method, sql, args, backDto);
         //执行ES查询
         return doQueryEs(paramSql, method);
@@ -91,7 +93,7 @@ public class EsSqlQueryHelper {
      * @param backDto
      * @throws Exception
      */
-    private  List<?> esQueryBack(Method method, String sql, Object[] args, BackDto backDto) throws Exception {
+    public List<?> esQueryBack(Method method, String sql, Object[] args, BackDto backDto) throws Exception {
         String paramSql = fillParamSql(method, sql, args, backDto);
         //执行ES查询
         List<?> esResult = esSqlExecuteHandler.queryBySql(paramSql, backDto.getBackColumnTyp(), Boolean.TRUE);

@@ -15,11 +15,11 @@ import org.springframework.stereotype.Component;
 import java.util.Objects;
 
 /**
-* @author wanghuan
-* @description jooq sql切es查询拦截器
-* @mail 958721894@qq.com       
-* @date 2022/6/9 11:44 
-*/
+ * @author wanghuan
+ * @description jooq sql切es查询拦截器
+ * @mail 958721894@qq.com
+ * @date 2022/6/9 11:44
+ */
 @Order(100)
 @Slf4j
 @Component("customizeExecuteListener")
@@ -48,15 +48,29 @@ public class JooqEsQueryExecuteListener extends DefaultExecuteListener implement
 //        log.info("jooq回表执行sql: " + ctx.sql());
     }
 
+    @Override
     public void start(ExecuteContext ctx) {
-        String sql = ctx.query().getSQL();
+//        String sql = ctx.query().getSQL();
+//        //非select语句直接返回
+//        if (!sql.startsWith(CommonConstant.SELECT_SQL_PREFIX_LOWER) && !sql.startsWith(CommonConstant.SELECT_SQL_PREFIX_UPPER)) {
+//            return;
+//        }
+//        Boolean isEsQuery = ThreadLocalUtil.get(CommonConstant.IS_ES_QUERY);
+//        if (Objects.nonNull(isEsQuery) && isEsQuery) {
+//            ThreadLocalUtil.remove(CommonConstant.IS_ES_QUERY);
+//            throw new EsEngineJpaExecuteException(sql);
+//        }
+    }
+
+    @Override
+    public void bindEnd(ExecuteContext ctx) {
+        String sql = ctx.query().toString();
         //非select语句直接返回
-        if (!sql.startsWith(CommonConstant.SELECT_SQL_PREFIX_LOWER) && !sql.startsWith(CommonConstant.SELECT_SQL_PREFIX_UPPER)) {
+        if (!sql.trim().startsWith(CommonConstant.SELECT_SQL_PREFIX_LOWER) && !sql.trim().startsWith(CommonConstant.SELECT_SQL_PREFIX_UPPER)) {
             return;
         }
-        Boolean isEsQuery = ThreadLocalUtil.get(CommonConstant.IS_ES_QUERY);
+        Boolean isEsQuery = ThreadLocalUtil.remove(CommonConstant.IS_ES_QUERY);
         if (Objects.nonNull(isEsQuery) && isEsQuery) {
-            ThreadLocalUtil.remove(CommonConstant.IS_ES_QUERY);
             throw new EsEngineJpaExecuteException(sql);
         }
     }

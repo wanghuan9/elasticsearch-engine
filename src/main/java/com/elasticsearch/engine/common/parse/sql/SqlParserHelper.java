@@ -81,9 +81,9 @@ public class SqlParserHelper {
         PlainSelect plain = (PlainSelect) select.getSelectBody();
         //where 别名清除
         setBackWhereItem(plain, backDto, esResult);
-        plain.setGroupByElement(null);
-        plain.setHaving(null);
-        plain.setOrderByElements(null);
+//        plain.setGroupByElement(null);
+//        plain.setHaving(null);
+//        plain.setOrderByElements(null);
         return select.toString();
     }
 

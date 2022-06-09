@@ -34,6 +34,11 @@ public class CommonConstant {
     public static final String BACK_QUERY_SQL = "back_sql";
 
     /**
+     * 存储jpa未绑定参数前的sql
+     */
+    public static final String JPA_NATIVE_SQL = "jpa_native_sql";
+
+    /**
      * 查询sql前缀 小写
      */
     public static final String SELECT_SQL_PREFIX_LOWER = "select";

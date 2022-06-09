@@ -1,8 +1,12 @@
 package com.elasticsearch.engine.extend.jooq;
 
 import com.elasticsearch.engine.common.parse.sql.EsSqlQueryHelper;
+import com.elasticsearch.engine.common.utils.ThreadLocalUtil;
+import com.elasticsearch.engine.model.constant.CommonConstant;
 import com.elasticsearch.engine.model.domain.BackDto;
+import com.elasticsearch.engine.model.exception.EsEngineJpaExecuteException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -12,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -36,7 +42,27 @@ public class JooqEsQueryAop {
     public Object retryAdvice(ProceedingJoinPoint pjp) throws Throwable {
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Method method = signature.getMethod();
-        return esSqlQueryHelper.esSqlQueryAopCommon(pjp, BackDto.hasJooQBack(method));
+        Object[] args = pjp.getArgs();
+        BackDto backDto = BackDto.hasJpaBack(method);
+        Object result = null;
+        try {
+            ThreadLocalUtil.set(CommonConstant.IS_ES_QUERY, Boolean.TRUE);
+            result = pjp.proceed(args);
+        } catch (EsEngineJpaExecuteException e) {
+            if (Objects.nonNull(backDto)) {
+                List<?> esResult = esSqlQueryHelper.esQueryBack(method, e.getMessage(), args, backDto);
+                if (CollectionUtils.isEmpty(esResult)) {
+                    return result;
+                }
+                result = pjp.proceed(args);
+            } else {
+                result = esSqlQueryHelper.esQuery(method, e.getMessage(), args, backDto);
+            }
+        } finally {
+            ThreadLocalUtil.remove(CommonConstant.IS_ES_QUERY);
+            ThreadLocalUtil.remove(CommonConstant.BACK_QUERY_SQL);
+        }
+        return result;
     }
 
 }

@@ -204,6 +204,10 @@ public class SqlParamParseHelper {
      * @return
      */
     private static String renderStringJpa(String sql, List<Object> param, SqlParamParse sqlParamParse) {
+        //无需填充参数的情况
+        if(!sql.contains(sqlParamParse.getPlaceHolder())){
+            return sql;
+        }
         for (Object val : param) {
             String regex = String.format(sqlParamParse.getRegexStr(), val);
             Pattern pattern = Pattern.compile(regex);

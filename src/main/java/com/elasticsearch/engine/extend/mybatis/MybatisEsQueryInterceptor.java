@@ -31,10 +31,11 @@ import java.util.Objects;
 import java.util.Properties;
 
 /**
- * @author wanghuan
- * @description: mybatis  切es查询拦截器
- * @date 2022-05-10 21:59
- */
+* @author wanghuan
+* @description mybatis 切es查询拦截器
+* @mail 958721894@qq.com       
+* @date 2022-05-10 21:59
+*/
 @Component
 @Intercepts(
         {

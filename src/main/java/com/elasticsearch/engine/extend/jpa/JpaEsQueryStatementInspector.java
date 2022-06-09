@@ -17,6 +17,7 @@ import java.util.Objects;
 */
 @Component
 public class JpaEsQueryStatementInspector implements StatementInspector {
+    private static final long serialVersionUID = -2084992774423895712L;
 //    @Override
 //    public String inspect(String sql) {
 //        Boolean isEsQuery = ThreadLocalUtil.get(CommonConstant.IS_ES_QUERY);

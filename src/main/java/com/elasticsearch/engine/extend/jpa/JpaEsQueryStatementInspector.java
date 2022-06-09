@@ -16,7 +16,7 @@ import java.util.Objects;
 * @date 2022/6/9 11:42 
 */
 @Component
-public class SqlStatementInspector implements StatementInspector {
+public class JpaEsQueryStatementInspector implements StatementInspector {
 //    @Override
 //    public String inspect(String sql) {
 //        Boolean isEsQuery = ThreadLocalUtil.get(CommonConstant.IS_ES_QUERY);

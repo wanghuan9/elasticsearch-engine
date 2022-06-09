@@ -23,7 +23,7 @@ import java.util.Objects;
 @Order(100)
 @Slf4j
 @Component("customizeExecuteListener")
-public class CustomizeExecuteListener extends DefaultExecuteListener implements ExecuteListenerProvider {
+public class JooqEsQueryExecuteListener extends DefaultExecuteListener implements ExecuteListenerProvider {
 
     private static final long serialVersionUID = 912957571617470108L;
 

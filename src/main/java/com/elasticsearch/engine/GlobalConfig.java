@@ -59,7 +59,7 @@ public class GlobalConfig {
     /**
      * 查询字段前缀列表 解析字段名时会使用去除后缀后的值解析
      */
-    public static Set<String> QUERY_PARAM_PREFIX = new HashSet<String>() {
+    public static Set<String> queryParamPrefix = new HashSet<String>() {
         {
             add("list");
             add("start");
@@ -71,7 +71,7 @@ public class GlobalConfig {
     /**
      * 查询字段后缀列表, 解析字段名时会使用去除后缀后的值解析
      */
-    public static Set<String> QUERY_PARAM_SUFFIX = new HashSet<String>() {
+    public static Set<String> queryParamSuffix = new HashSet<String>() {
         {
             add("List");
             add("Start");
@@ -83,7 +83,7 @@ public class GlobalConfig {
     /**
      * 默认查询需要忽略的字段
      */
-    public static Set<String> QUERY_IGNORE_PARAM = new HashSet<String>() {
+    public static Set<String> queryIgnoreParam = new HashSet<String>() {
         {
             add("log");
             add("page");

@@ -93,6 +93,11 @@ public class GlobalConfig {
         }
     };
 
+    @Value("${es.engine.config.elastic.version:7}")
+    public void setNamingStrategy(Integer elasticVersion) {
+        GlobalConfig.elasticVersion = elasticVersion;
+    }
+    
     @Value("${es.engine.config.naming.strategy:false}")
     public void setNamingStrategy(boolean isSnakeCase) {
         GlobalConfig.namingStrategy = isSnakeCase;

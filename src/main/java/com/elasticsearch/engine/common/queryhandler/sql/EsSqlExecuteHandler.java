@@ -27,16 +27,6 @@ import java.util.*;
 @Component
 public class EsSqlExecuteHandler {
 
-    private static final String SQL_QUERY_PREFIX;
-    private static final String SQL_TRANSLATE_PREFIX;
-
-    static {
-        EsVersionConstant constant = EsVersionConstant.of(GlobalConfig.elasticVersion);
-        SQL_QUERY_PREFIX = constant.getSqlQueryPrefix();
-        SQL_TRANSLATE_PREFIX = constant.getSqlTranslatePrefix();
-    }
-
-
     @Resource
     private ElasticSearchProperties elasticSearchProperties;
 
@@ -49,6 +39,7 @@ public class EsSqlExecuteHandler {
      * @throws Exception
      */
     public String queryBySql(String sql, SqlFormat sqlFormat) {
+        EsVersionConstant constant = EsVersionConstant.of(GlobalConfig.elasticVersion);
         String host = elasticSearchProperties.getHosts();
         if (StringUtils.isEmpty(host)) {
             host = CommonConstant.DEFAULT_ES_HOST;
@@ -62,16 +53,16 @@ public class EsSqlExecuteHandler {
             ipport = hosts[randomindex];
         }
         ipport = "http://" + ipport;
-        log.info(ipport + SQL_QUERY_PREFIX + sqlFormat.getFormat());
+        log.info(ipport + constant.getSqlQueryPrefix() + sqlFormat.getFormat());
         log.info("{\"query\":\"" + sql + "\"}");
 
         String username = elasticSearchProperties.getUsername();
         String password = elasticSearchProperties.getPassword();
         try {
             if (!StringUtils.isEmpty(username)) {
-                return HttpClientTool.execute(ipport + SQL_QUERY_PREFIX + sqlFormat.getFormat(), "{\"query\":\"" + sql + "\"}", username, password);
+                return HttpClientTool.execute(ipport + constant.getSqlQueryPrefix() + sqlFormat.getFormat(), "{\"query\":\"" + sql + "\"}", username, password);
             }
-            return HttpClientTool.execute(ipport + SQL_QUERY_PREFIX + sqlFormat.getFormat(), "{\"query\":\"" + sql + "\"}");
+            return HttpClientTool.execute(ipport + constant.getSqlQueryPrefix() + sqlFormat.getFormat(), "{\"query\":\"" + sql + "\"}");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -86,6 +77,7 @@ public class EsSqlExecuteHandler {
      * @throws Exception
      */
     public String querySqlTranslate(String sql, SqlFormat sqlFormat) {
+        EsVersionConstant constant = EsVersionConstant.of(GlobalConfig.elasticVersion);
         String host = elasticSearchProperties.getHosts();
         if (StringUtils.isEmpty(host)) {
             host = CommonConstant.DEFAULT_ES_HOST;
@@ -99,16 +91,16 @@ public class EsSqlExecuteHandler {
             ipport = hosts[randomindex];
         }
         ipport = "http://" + ipport;
-        log.info(ipport + SQL_TRANSLATE_PREFIX + sqlFormat.getFormat());
+        log.info(ipport + constant.getSqlTranslatePrefix() + sqlFormat.getFormat());
         log.info("{\"query\":\"" + sql + "\"}");
 
         String username = elasticSearchProperties.getUsername();
         String password = elasticSearchProperties.getPassword();
         try {
             if (!StringUtils.isEmpty(username)) {
-                return HttpClientTool.execute(ipport + SQL_TRANSLATE_PREFIX + sqlFormat.getFormat(), "{\"query\":\"" + sql + "\"}", username, password);
+                return HttpClientTool.execute(ipport + constant.getSqlTranslatePrefix() + sqlFormat.getFormat(), "{\"query\":\"" + sql + "\"}", username, password);
             }
-            return HttpClientTool.execute(ipport + SQL_TRANSLATE_PREFIX + sqlFormat.getFormat(), "{\"query\":\"" + sql + "\"}");
+            return HttpClientTool.execute(ipport + constant.getSqlTranslatePrefix() + sqlFormat.getFormat(), "{\"query\":\"" + sql + "\"}");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

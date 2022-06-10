@@ -43,7 +43,7 @@ public class JooqEsQueryAop {
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Method method = signature.getMethod();
         Object[] args = pjp.getArgs();
-        BackDto backDto = BackDto.hasJpaBack(method);
+        BackDto backDto = BackDto.hasJooQBack(method);
         Object result = null;
         try {
             ThreadLocalUtil.set(CommonConstant.IS_ES_QUERY, Boolean.TRUE);

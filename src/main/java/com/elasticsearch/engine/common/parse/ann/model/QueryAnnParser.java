@@ -1,7 +1,7 @@
 package com.elasticsearch.engine.common.parse.ann.model;
 
 
-import com.elasticsearch.engine.GlobalConfig;
+import com.elasticsearch.engine.config.EsEngineConfig;
 import com.elasticsearch.engine.common.utils.CaseFormatUtils;
 import com.elasticsearch.engine.common.utils.ReflectionUtils;
 import com.elasticsearch.engine.hook.RequestHook;
@@ -196,11 +196,11 @@ public class QueryAnnParser {
         } else {
             //默认的全局忽略字段  不加term 查询
             //例如 log字段,当类添加了 @Slf4j 默认会加上log的本地变量  pageSize
-            if (GlobalConfig.queryIgnoreParam.contains(field.getName())) {
+            if (EsEngineConfig.getQueryIgnoreParam().contains(field.getName())) {
                 return;
             }
             //没有添加注解的 基础类型设置默认 trem/trems查询
-            if (GlobalConfig.isBuildDefault) {
+            if (EsEngineConfig.isIsBuildDefault()) {
                 List<EsQueryFieldBean> queryDes = this.mapFieldAnnDefault(field, view);
                 queryDesList.addAll(queryDes);
             }
@@ -383,15 +383,14 @@ public class QueryAnnParser {
                 column = field.getName();
                 //TODO 优化
                 //设置list后缀
-                GlobalConfig.queryParamSuffix.addAll(GlobalConfig.queryParamPrefix);
-                for (String fix : GlobalConfig.queryParamSuffix) {
+                for (String fix : EsEngineConfig.getQueryParamPrefixAndSuffix()) {
                     if (column.contains(fix)) {
                         column = column.replace(fix, "");
                         break;
                     }
                 }
                 //若设置默认下划线
-                if (GlobalConfig.namingStrategy) {
+                if (EsEngineConfig.isNamingStrategy()) {
                     column = CaseFormatUtils.camelToUnderscore(column);
                 }
             }
@@ -421,15 +420,14 @@ public class QueryAnnParser {
             queryDes.setLogicConnector(esConnector);
             String column = field.getName();
             //设置list后缀
-            GlobalConfig.queryParamSuffix.addAll(GlobalConfig.queryParamPrefix);
-            for (String fix : GlobalConfig.queryParamSuffix) {
+            for (String fix : EsEngineConfig.getQueryParamPrefixAndSuffix()) {
                 if (column.contains(fix)) {
                     column = column.replace(fix, "");
                     break;
                 }
             }
             //若设置默认下划线
-            if (GlobalConfig.namingStrategy) {
+            if (EsEngineConfig.isNamingStrategy()) {
                 column = CaseFormatUtils.camelToUnderscore(column);
             }
             queryDes.setField(column);

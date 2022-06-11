@@ -2,6 +2,7 @@ package com.elasticsearch.engine;
 
 import com.elasticsearch.engine.common.parse.ann.model.QueryHandlerFactory;
 import com.elasticsearch.engine.config.ElasticSearchProperties;
+import com.elasticsearch.engine.config.EsEngineConfigProperties;
 import com.elasticsearch.engine.config.LoadFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Configuration
-@EnableConfigurationProperties(ElasticSearchProperties.class)
+@EnableConfigurationProperties(value = {ElasticSearchProperties.class, EsEngineConfigProperties.class})
 @ComponentScan(basePackages = "com.elasticsearch.engine")
 public class ElasticsearchEngineConfiguration {
 

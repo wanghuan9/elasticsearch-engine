@@ -1,6 +1,6 @@
 package com.elasticsearch.engine.common.queryhandler.ann.model;
 
-import com.elasticsearch.engine.GlobalConfig;
+import com.elasticsearch.engine.config.EsEngineConfig;
 import com.elasticsearch.engine.common.parse.ann.model.EsQueryEngine;
 import com.elasticsearch.engine.common.parse.ann.model.EsResponseParse;
 import com.elasticsearch.engine.common.parse.ann.model.QueryAnnParser;
@@ -94,7 +94,7 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
     public SearchResponse execute(SearchSourceBuilder sourceBuilder, String indexName) {
         SearchResponse searchResponse;
         //设置超时时间
-        sourceBuilder.timeout(new TimeValue(GlobalConfig.queryTimeOut, TimeUnit.SECONDS));
+        sourceBuilder.timeout(new TimeValue(EsEngineConfig.getQueryTimeOut(), TimeUnit.SECONDS));
         //ES的查询请求对象
         SearchRequest searchRequest = new SearchRequest().indices(indexName).source(sourceBuilder);
         log.info("execute-es-query-json is\n{}", searchRequest);
@@ -120,7 +120,7 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
     public <T> BaseResp<T> execute(SearchSourceBuilder sourceBuilder, String indexName, Class<T> responseClazz) {
         SearchResponse searchResponse;
         //设置超时时间
-        sourceBuilder.timeout(new TimeValue(GlobalConfig.queryTimeOut, TimeUnit.SECONDS));
+        sourceBuilder.timeout(new TimeValue(EsEngineConfig.getQueryTimeOut(), TimeUnit.SECONDS));
         //ES的查询请求对象
         SearchRequest searchRequest = new SearchRequest().indices(indexName).source(sourceBuilder);
         log.info("execute-es-query-json is\n{}", searchRequest);
@@ -153,10 +153,10 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
      */
     public SearchResponse execute(Method method, Object param) {
         SearchResponse resp;
-        AbstractEsRequestHolder esHolder = EsQueryEngine.execute(method, param, GlobalConfig.visitQueryBeanParent);
+        AbstractEsRequestHolder esHolder = EsQueryEngine.execute(method, param, EsEngineConfig.isVisitQueryBeanParent());
         SearchSourceBuilder source = esHolder.getSource();
         //设置超时时间
-        source.timeout(new TimeValue(GlobalConfig.queryTimeOut, TimeUnit.SECONDS));
+        source.timeout(new TimeValue(EsEngineConfig.getQueryTimeOut(), TimeUnit.SECONDS));
         //前置扩展
         executePostProcessorBefore(param, esHolder);
         try {
@@ -181,7 +181,7 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
         SearchResponse resp;
         SearchSourceBuilder source = esHolder.getSource();
         //设置超时时间
-        source.timeout(new TimeValue(GlobalConfig.queryTimeOut, TimeUnit.SECONDS));
+        source.timeout(new TimeValue(EsEngineConfig.getQueryTimeOut(), TimeUnit.SECONDS));
         //前置扩展
         executePostProcessorBefore(param, esHolder);
         try {

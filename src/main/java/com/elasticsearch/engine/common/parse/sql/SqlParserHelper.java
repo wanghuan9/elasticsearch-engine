@@ -1,6 +1,6 @@
 package com.elasticsearch.engine.common.parse.sql;
 
-import com.elasticsearch.engine.GlobalConfig;
+import com.elasticsearch.engine.config.EsEngineConfig;
 import com.elasticsearch.engine.common.utils.CaseFormatUtils;
 import com.elasticsearch.engine.model.annotion.EsQueryIndex;
 import com.elasticsearch.engine.model.domain.BackDto;
@@ -98,7 +98,7 @@ public class SqlParserHelper {
     private static void setBackWhereItem(PlainSelect plain, BackDto backDto, List<?> esResult) throws Exception {
         //ColumnName es驼峰 转 mysql下划线 
         String backColumn = backDto.getBackColumn();
-        if (!GlobalConfig.namingStrategy) {
+        if (!EsEngineConfig.isNamingStrategy()) {
             backColumn = CaseFormatUtils.camelToUnderscore(backColumn);
         }
         String backSql = " " + backColumn + " in (" + SqlParamParseHelper.getListParameterValue(esResult) + ")";
@@ -319,7 +319,7 @@ public class SqlParserHelper {
      * @param column
      */
     private static void reNameColumnName(Column column) {
-        if (!GlobalConfig.namingStrategy) {
+        if (!EsEngineConfig.isNamingStrategy()) {
             String columnName = column.getColumnName();
             columnName = CaseFormatUtils.underscoreToCamel(columnName);
             column.setColumnName(columnName);

@@ -1,6 +1,6 @@
 package com.elasticsearch.engine.common.queryhandler.sql;
 
-import com.elasticsearch.engine.GlobalConfig;
+import com.elasticsearch.engine.config.EsEngineConfig;
 import com.elasticsearch.engine.common.utils.*;
 import com.elasticsearch.engine.config.ElasticSearchProperties;
 import com.elasticsearch.engine.model.constant.CommonConstant;
@@ -39,7 +39,7 @@ public class EsSqlExecuteHandler {
      * @throws Exception
      */
     public String queryBySql(String sql, SqlFormat sqlFormat) {
-        EsVersionConstant constant = EsVersionConstant.of(GlobalConfig.elasticVersion);
+        EsVersionConstant constant = EsVersionConstant.of(EsEngineConfig.getElasticVersion());
         String host = elasticSearchProperties.getHosts();
         if (StringUtils.isEmpty(host)) {
             host = CommonConstant.DEFAULT_ES_HOST;
@@ -77,7 +77,7 @@ public class EsSqlExecuteHandler {
      * @throws Exception
      */
     public String querySqlTranslate(String sql, SqlFormat sqlFormat) {
-        EsVersionConstant constant = EsVersionConstant.of(GlobalConfig.elasticVersion);
+        EsVersionConstant constant = EsVersionConstant.of(EsEngineConfig.getElasticVersion());
         String host = elasticSearchProperties.getHosts();
         if (StringUtils.isEmpty(host)) {
             host = CommonConstant.DEFAULT_ES_HOST;
@@ -161,7 +161,7 @@ public class EsSqlExecuteHandler {
             m.setDataType(DataType.getDataTypeByStr(columns.get(i).getType()));
             String paramName = columns.get(i).getName();
             //是否下划线转驼峰转 
-            if (GlobalConfig.namingStrategy) {
+            if (EsEngineConfig.isNamingStrategy()) {
                 paramName = CaseFormatUtils.underscoreToCamel(paramName);
             }
             m.setFieldName(paramName);

@@ -1,6 +1,6 @@
 package com.elasticsearch.engine.common.parse.ann.model;
 
-import com.elasticsearch.engine.GlobalConfig;
+import com.elasticsearch.engine.config.EsEngineConfig;
 import com.elasticsearch.engine.common.utils.JsonParser;
 import com.elasticsearch.engine.model.domain.BaseHit;
 import com.elasticsearch.engine.model.domain.BaseResp;
@@ -117,7 +117,7 @@ public class EsResponseParse {
      * @return
      */
     private static <T> T jsonStrToObject(String jsonString, Class<T> type) {
-        if (GlobalConfig.namingStrategy) {
+        if (EsEngineConfig.isNamingStrategy()) {
             return JsonParser.asObjectSnakeCase(jsonString, type);
         } else {
             return JsonParser.asObject(jsonString, type);

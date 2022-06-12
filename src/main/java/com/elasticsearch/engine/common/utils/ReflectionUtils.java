@@ -1,6 +1,7 @@
 package com.elasticsearch.engine.common.utils;
 
 
+import com.elasticsearch.engine.common.parse.sql.SqlParamParseHelper;
 import com.google.common.collect.Lists;
 
 import java.lang.reflect.*;
@@ -220,7 +221,8 @@ public class ReflectionUtils {
             String name = parentName + "." + field.getName();
             Object val = field.get(view);
             if(isBaseTypeAndExtend(field.getType())){
-                map.put(name, val);
+                String parameterVal = SqlParamParseHelper.getParameterValue(val);
+                map.put(name, parameterVal);
             }else{
                 getFields(val,map,name);
             }

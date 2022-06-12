@@ -139,7 +139,7 @@ public class SqlParamParseHelper {
                 String regex = SqlParamParse.getRegex(String.format(sqlParamParse.getRegexStr(), e.getKey()));
                 Pattern pattern = Pattern.compile(regex);
                 Matcher matcher = pattern.matcher(sql);
-                sql = matcher.replaceAll(e.getValue() != null ? e.getValue().toString() : null);
+                sql = matcher.replaceAll(e.getValue().toString());
             }
 
             String likeFormat = String.format(sqlParamParse.getLikeformatStr(), e.getKey());
@@ -147,7 +147,7 @@ public class SqlParamParseHelper {
                 String likeRegex = SqlParamParse.getRegex(String.format(sqlParamParse.getLikeRegexStr(), e.getKey()));
                 Pattern likePattern = Pattern.compile(likeRegex);
                 Matcher likeMatcher = likePattern.matcher(sql);
-                sql = likeMatcher.replaceAll(e.getValue() != null ? e.getValue().toString().replaceAll("'", "") : null);
+                sql = likeMatcher.replaceAll(e.getValue().toString().replaceAll("'", ""));
             }
         }
         //参数替换完之后如果还包含"#{" 说明有参数没有被替换
@@ -260,7 +260,7 @@ public class SqlParamParseHelper {
      */
     public static String getParameterValue(Object obj) {
         if (obj == null) {
-            return "";
+            return "null";
         }
         String value;
         if (obj instanceof String) {

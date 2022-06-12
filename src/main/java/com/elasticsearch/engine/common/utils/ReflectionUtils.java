@@ -7,18 +7,15 @@ import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Predicate;
 
 /**
-* @author wanghuan
-* @description ReflectionUtils
-* @mail 958721894@qq.com       
-* @date 2022/6/9 14:11 
-*/
+ * @author wanghuan
+ * @description ReflectionUtils
+ * @mail 958721894@qq.com
+ * @date 2022/6/9 14:11
+ */
 public class ReflectionUtils {
 
     public static boolean isBaseTypeAndExtend(Class<?> type) {
@@ -186,6 +183,48 @@ public class ReflectionUtils {
     public static boolean isExtendsType(Class<?> type) {
         return type.equals(LocalDateTime.class) || type.equals(LocalDate.class) || type.equals(BigDecimal.class);
 
+    }
+
+
+    /**
+     * 获取对象的filed name 和 value,支持嵌套
+     * file 的name 格式为 为 objectName.filedName的形式
+     * 
+     * @param view
+     * @param paramName
+     * @return
+     * @throws IllegalAccessException
+     */
+    public static Map<String, Object> getNestedFieldsMap(String paramName,Object view)  {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            getFields(view,map, paramName);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return map;
+    }
+
+    /**
+     * 递归获取对象的 filed name 和 value
+     * @param view
+     * @param map
+     * @param parentName
+     * @throws IllegalAccessException
+     */
+    public static void getFields(Object view, Map<String, Object> map, String parentName) throws IllegalAccessException {
+        Class<?> clazz = view.getClass();
+        Field[] fieldArr = clazz.getDeclaredFields();
+        for (Field field : fieldArr) {
+            field.setAccessible(true);
+            String name = parentName + "." + field.getName();
+            Object val = field.get(view);
+            if(isBaseTypeAndExtend(field.getType())){
+                map.put(name, val);
+            }else{
+                getFields(val,map,name);
+            }
+        }
     }
 
 }

@@ -84,7 +84,7 @@ public class SqlParamParseHelper {
         if (Objects.isNull(args) || args.length < 1) {
             return sql;
         }
-        Map<String, Object> paramMap = getParamMapAnn(method, args);
+        Map<String, Object> paramMap = getParamMapAnn(method, args, sqlParamParse);
         //替换参数
         String sqlParam = renderStringAnn(sql, paramMap, sqlParamParse);
         //like concat处理
@@ -99,18 +99,25 @@ public class SqlParamParseHelper {
      * @param args
      * @return
      */
-    public static Map<String, Object> getParamMapAnn(Method method, Object[] args) {
+    public static Map<String, Object> getParamMapAnn(Method method, Object[] args, SqlParamParse sqlParamParse) {
         Map<String, Object> map = new HashMap<>();
         Parameter[] parameters = method.getParameters();
         for (int i = 0; i < parameters.length; i++) {
             Parameter parameter = parameters[i];
             Object val = args[i];
-            if (parameter.getType().isAssignableFrom(List.class) && ReflectionUtils.checkCollectionValueType(parameter, val)) {
+            boolean isBase = ReflectionUtils.isBaseTypeAndExtend(parameter.getType());
+            String parameterName = parameter.getName();
+            if (isBase) {
+                //基础类型解析
+                map.put(parameterName, getParameterValue(val));
+            } else if (parameter.getType().isAssignableFrom(List.class) && ReflectionUtils.checkCollectionValueType(parameter, val)) {
+                //List类型解析
                 if (val instanceof List) {
-                    map.put(parameter.getName(), getListParameterValue(val));
+                    map.put(parameterName, getListParameterValue(val));
                 }
             } else {
-                map.put(parameter.getName(), getParameterValue(val));
+                //对象Object解析
+                map.putAll(ReflectionUtils.getNestedFieldsMap(parameter.getName(), val));
             }
         }
         return map;
@@ -127,15 +134,21 @@ public class SqlParamParseHelper {
      */
     public static String renderStringAnn(String sql, Map<String, Object> map, SqlParamParse sqlParamParse) {
         for (Map.Entry<String, Object> e : map.entrySet()) {
-            String regex = String.format(sqlParamParse.getRegexStr(), e.getKey());
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(sql);
-            sql = matcher.replaceAll(e.getValue().toString());
+            String format = String.format(sqlParamParse.getFormatStr(), e.getKey());
+            if (sql.contains(format)) {
+                String regex = SqlParamParse.getRegex(String.format(sqlParamParse.getRegexStr(), e.getKey()));
+                Pattern pattern = Pattern.compile(regex);
+                Matcher matcher = pattern.matcher(sql);
+                sql = matcher.replaceAll(e.getValue() != null ? e.getValue().toString() : null);
+            }
 
-            String likeRegex = String.format(sqlParamParse.getLikeRegexStr(), e.getKey());
-            Pattern likePattern = Pattern.compile(likeRegex);
-            Matcher likeMatcher = likePattern.matcher(sql);
-            sql = likeMatcher.replaceAll(e.getValue().toString().replaceAll("'", ""));
+            String likeFormat = String.format(sqlParamParse.getLikeformatStr(), e.getKey());
+            if (sql.contains(likeFormat)) {
+                String likeRegex = SqlParamParse.getRegex(String.format(sqlParamParse.getLikeRegexStr(), e.getKey()));
+                Pattern likePattern = Pattern.compile(likeRegex);
+                Matcher likeMatcher = likePattern.matcher(sql);
+                sql = likeMatcher.replaceAll(e.getValue() != null ? e.getValue().toString().replaceAll("'", "") : null);
+            }
         }
         //参数替换完之后如果还包含"#{" 说明有参数没有被替换
         if (sql.contains(sqlParamParse.getPlaceHolder())) {
@@ -154,7 +167,8 @@ public class SqlParamParseHelper {
      * @param sqlParamParse
      * @return
      */
-    public static String getMethodArgsSqlJpa(String sql, Method method, Object[] args, SqlParamParse sqlParamParse) {
+    public static String getMethodArgsSqlJpa(String sql, Method method, Object[] args, SqlParamParse
+            sqlParamParse) {
         //参数为空直接返回无需解析
         if (Objects.isNull(args) || args.length < 1) {
             return sql;
@@ -205,7 +219,7 @@ public class SqlParamParseHelper {
      */
     private static String renderStringJpa(String sql, List<Object> param, SqlParamParse sqlParamParse) {
         //无需填充参数的情况
-        if(!sql.contains(sqlParamParse.getPlaceHolder())){
+        if (!sql.contains(sqlParamParse.getPlaceHolder())) {
             return sql;
         }
         for (Object val : param) {

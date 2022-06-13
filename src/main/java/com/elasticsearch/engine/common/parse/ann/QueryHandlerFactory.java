@@ -1,4 +1,4 @@
-package com.elasticsearch.engine.common.parse.ann.model;
+package com.elasticsearch.engine.common.parse.ann;
 
 import com.elasticsearch.engine.common.utils.ReflectionUtils;
 import com.elasticsearch.engine.mapping.handler.AbstractQueryHandler;

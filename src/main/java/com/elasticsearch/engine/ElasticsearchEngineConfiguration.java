@@ -1,6 +1,6 @@
 package com.elasticsearch.engine;
 
-import com.elasticsearch.engine.common.parse.ann.model.QueryHandlerFactory;
+import com.elasticsearch.engine.common.parse.ann.QueryHandlerFactory;
 import com.elasticsearch.engine.config.ElasticSearchProperties;
 import com.elasticsearch.engine.config.EsEngineConfigProperties;
 import com.elasticsearch.engine.config.LoadFactory;

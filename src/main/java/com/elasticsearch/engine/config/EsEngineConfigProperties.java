@@ -40,6 +40,12 @@ public class EsEngineConfigProperties {
      */
     private Integer queryTimeOut = 10;
 
+
+    /**
+     * 默认查询size,查询没有设置size时默认的size
+     */
+    private Integer defaultQuerySize = 1000;
+
     /**
      * 查询字段前缀列表 解析字段名时会使用去除后缀后的值解析
      */

@@ -1,5 +1,8 @@
 小版本:
 1)@size  (默认1000)   @sort( 没有sort,每次查询结果不一样)
+2)回表查询数量限制
+3)全局开关
+
 
 @include
 2)@EsQueryIndex  加在 entity或者mapper

@@ -2,7 +2,7 @@ package com.elasticsearch.engine.common.queryhandler.ann.model;
 
 import com.elasticsearch.engine.config.EsEngineConfig;
 import com.elasticsearch.engine.common.parse.ann.model.EsQueryEngine;
-import com.elasticsearch.engine.common.parse.ann.model.EsResponseParse;
+import com.elasticsearch.engine.common.parse.ann.EsResponseParse;
 import com.elasticsearch.engine.common.parse.ann.model.QueryAnnParser;
 import com.elasticsearch.engine.common.utils.JsonParser;
 import com.elasticsearch.engine.holder.AbstractEsRequestHolder;

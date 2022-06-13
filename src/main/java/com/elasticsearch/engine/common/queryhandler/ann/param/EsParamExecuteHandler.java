@@ -1,7 +1,7 @@
 package com.elasticsearch.engine.common.queryhandler.ann.param;
 
 import com.elasticsearch.engine.config.EsEngineConfig;
-import com.elasticsearch.engine.common.parse.ann.model.EsResponseParse;
+import com.elasticsearch.engine.common.parse.ann.EsResponseParse;
 import com.elasticsearch.engine.common.parse.ann.param.EsParamQueryEngine;
 import com.elasticsearch.engine.common.queryhandler.ann.model.AbstractEsBaseExecuteHandle;
 import com.elasticsearch.engine.common.utils.JsonParser;
@@ -120,8 +120,6 @@ public class EsParamExecuteHandler extends AbstractEsBaseExecuteHandle {
             log.info("{} execute-es-result-json is\n{}", methodName, JsonParser.asJson(result));
             ThreadLocalUtil.remove();
             return result;
-        } catch (Exception e) {
-            throw e;
         } finally {
             ThreadLocalUtil.remove(CommonConstant.INTERFACE_METHOD_NAME);
         }

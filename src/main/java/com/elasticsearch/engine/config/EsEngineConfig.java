@@ -47,6 +47,10 @@ public class EsEngineConfig {
         return globalConfig.esEngineConfigProperties.getQueryTimeOut();
     }
 
+    public static Integer getDefaultQuerySize() {
+        return globalConfig.esEngineConfigProperties.getDefaultQuerySize();
+    }
+
     public static Set<String> getQueryParamPrefixAndSuffix() {
         Set<String> queryParamPrefix = globalConfig.esEngineConfigProperties.getQueryParamPrefix();
         Set<String> queryParamSuffix = globalConfig.esEngineConfigProperties.getQueryParamSuffix();

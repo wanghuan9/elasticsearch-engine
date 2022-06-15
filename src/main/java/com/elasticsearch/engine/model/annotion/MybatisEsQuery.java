@@ -1,32 +1,29 @@
 package com.elasticsearch.engine.model.annotion;
 
-import com.elasticsearch.engine.common.proxy.enums.EsQueryType;
-
 import java.lang.annotation.*;
-
 
 /**
  * @author wanghuan
- * @description: EsQuery
- * @date 2022-01-26 11:28
+ * @description MybatisEsQuery
+ * @mail 958721894@qq.com
+ * @date 2022-06-15 10:12
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Documented
-public @interface EsQuery {
+public @interface MybatisEsQuery {
 
     /**
-     * 查询语句
+     * 回表字段
      *
      * @return
      */
-    String value() default "";
+    String backColumn() default "";
 
     /**
-     * 查询类型
+     * 回表字段类型
      *
      * @return
      */
-    EsQueryType queryType() default EsQueryType.SQL;
-
+    Class<?> backColumnType() default Object.class;
 }

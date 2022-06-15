@@ -40,7 +40,7 @@ public class EsQueryEngine extends EsAnnQueryEngineCommon {
             queryHandle.execute(queryDes, helper);
         }
         //后置逻辑扩展
-        enginePostProcessor(helper);
+        enginePostProcessor(helper,method);
         return helper;
     }
    

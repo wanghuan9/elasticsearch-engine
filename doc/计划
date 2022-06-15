@@ -3,6 +3,8 @@
 2)回表查询数量限制
 3)全局开关
 
+4) size sort include exclude
+
 
 @include
 2)@EsQueryIndex  加在 entity或者mapper

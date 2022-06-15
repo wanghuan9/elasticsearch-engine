@@ -58,4 +58,9 @@ public class CommonConstant {
      */
     public static final String DEFAULT_ES_HOST = "127.0.0.1:9200";
 
+    /**
+     * 没有设置排序时 默认的 preference 参数防止分片时多次查询返回结果排序不一致的问题
+     */
+    public static final String DEFAULT_PREFERENCE = "elasticseach-engine";
+
 }

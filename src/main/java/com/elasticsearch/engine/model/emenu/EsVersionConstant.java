@@ -20,7 +20,7 @@ public enum EsVersionConstant {
      * 
      */
     ES_VERSION_6(6, "/_xpack/sql?format=", "/_xpack/sql/translate?format=", "yyyy-MM-dd'T'HH:mm:ss.SSS"),
-    ES_VERSION_7(7, "/_sql?format=", "/_sql/translate?format=", "yyyy - MM - dd'T'HH:mm:ss.SSS'Z'");
+    ES_VERSION_7(7, "/_sql?format=", "/_sql/translate?format=", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     private Integer version;
     private String sqlQueryPrefix;

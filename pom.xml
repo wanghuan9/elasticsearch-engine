@@ -15,7 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <plugin.maven.compiler.version>3.8.1</plugin.maven.compiler.version>
         <spring.boot.version>2.2.0.RELEASE</spring.boot.version>
-        <elasticsearch.client.version>7.15.2</elasticsearch.client.version>
+        <elasticsearch.client.version>6.7.0</elasticsearch.client.version>
         <jackson.core.version>2.10.1</jackson.core.version>
         <google.guava.version>23.0</google.guava.version>
         <apache.collections4.version>4.1</apache.collections4.version>

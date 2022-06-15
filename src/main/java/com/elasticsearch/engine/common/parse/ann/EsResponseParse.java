@@ -52,7 +52,7 @@ public class EsResponseParse {
     public static <T extends BaseHit> BaseResp<T> getListBaseHit(SearchResponse resp, Class<T> type) {
         BaseResp<T> res = new BaseResp<>();
         SearchHits hits = resp.getHits();
-        res.setTotalHit(hits.getTotalHits().value);
+        res.setTotalHit(hits.getTotalHits());
         SearchHit[] hitArr = hits.getHits();
         List<T> records = Arrays.stream(hitArr).map(item -> {
             String sourceAsString = item.getSourceAsString();
@@ -74,7 +74,7 @@ public class EsResponseParse {
     public static <T> BaseResp<T> getList(SearchResponse resp, Class<T> type) {
         BaseResp<T> res = new BaseResp<>();
         SearchHits hits = resp.getHits();
-        res.setTotalHit(hits.getTotalHits().value);
+        res.setTotalHit(hits.getTotalHits());
         SearchHit[] hitArr = hits.getHits();
         List<T> records = Arrays.stream(hitArr).map(item -> {
             String sourceAsString = item.getSourceAsString();

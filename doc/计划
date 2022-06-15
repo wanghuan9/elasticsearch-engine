@@ -2,12 +2,9 @@
 1)@size  (默认1000)   @sort( 没有sort,每次查询结果不一样)
 2)回表查询数量限制
 3)全局开关
+4)size sort include exclude
+5)不同es版本时间格式自动适配
 
-4) size sort include exclude
-
-
-@include
-2)@EsQueryIndex  加在 entity或者mapper
 
 3)@EsCondition 思考
 4)hook 外置话思考
@@ -17,9 +14,6 @@
 ****6)sql 参数校验 阻断
 ****数据初始化 time
 ****jooq查询结果只有一个id的问题处理
-
-包结构调整
-
 
 
 异常示例:
@@ -33,8 +27,5 @@
 
 固定值查询扩展  双层分组, 分组聚合
 
-参数值固定,@size  (默认1000)   @sort
-
-回表操作
 
 自定义注解sql查询 支持对象查询 (参考 mybatis和jpa实现参数解析)

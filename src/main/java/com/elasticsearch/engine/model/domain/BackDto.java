@@ -1,8 +1,8 @@
 package com.elasticsearch.engine.model.domain;
 
-import com.elasticsearch.engine.model.annotion.EsQuery;
 import com.elasticsearch.engine.model.annotion.JooqEsQuery;
 import com.elasticsearch.engine.model.annotion.JpaEsQuery;
+import com.elasticsearch.engine.model.annotion.MybatisEsQuery;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,7 +28,7 @@ public class BackDto {
     private Class<?> backColumnTyp;
 
     public static BackDto hasBack(Method method) {
-        EsQuery esQuery = method.getAnnotation(EsQuery.class);
+        MybatisEsQuery esQuery = method.getAnnotation(MybatisEsQuery.class);
         String backColumn = esQuery.backColumn();
         Class<?> backColumnTyp = esQuery.backColumnType();
         if (StringUtils.isNotEmpty(backColumn) && Objects.nonNull(backColumnTyp) && !backColumnTyp.equals(Objects.class)) {

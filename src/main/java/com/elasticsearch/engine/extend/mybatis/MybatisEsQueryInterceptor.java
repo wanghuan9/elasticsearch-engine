@@ -4,6 +4,7 @@ import com.elasticsearch.engine.common.parse.sql.SqlParamParseHelper;
 import com.elasticsearch.engine.common.parse.sql.SqlParserHelper;
 import com.elasticsearch.engine.common.proxy.handler.exannotation.AnnotationQueryCommon;
 import com.elasticsearch.engine.common.queryhandler.sql.EsSqlExecuteHandler;
+import com.elasticsearch.engine.config.EsEngineConfig;
 import com.elasticsearch.engine.model.annotion.MybatisEsQuery;
 import com.elasticsearch.engine.model.domain.BackDto;
 import lombok.extern.slf4j.Slf4j;
@@ -110,6 +111,10 @@ public class MybatisEsQueryInterceptor implements Interceptor {
         for (Method method : methods) {
             //判断当前方法上是否有注解
             if (method.isAnnotationPresent(MybatisEsQuery.class) && method.getName().equals(mName)) {
+                //不走es查询直接返回
+                if(!EsEngineConfig.isEsquery(method)){
+                    return null;
+                }
                 return method;
             }
         }

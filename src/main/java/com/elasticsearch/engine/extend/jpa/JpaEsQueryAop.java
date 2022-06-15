@@ -2,6 +2,7 @@ package com.elasticsearch.engine.extend.jpa;
 
 import com.elasticsearch.engine.common.parse.sql.EsSqlQueryHelper;
 import com.elasticsearch.engine.common.utils.ThreadLocalUtil;
+import com.elasticsearch.engine.config.EsEngineConfig;
 import com.elasticsearch.engine.model.constant.CommonConstant;
 import com.elasticsearch.engine.model.domain.BackDto;
 import com.elasticsearch.engine.model.exception.EsEngineExecuteException;
@@ -45,6 +46,10 @@ public class JpaEsQueryAop {
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Method method = signature.getMethod();
         Object[] args = pjp.getArgs();
+        //不走es查询直接返回
+        if(!EsEngineConfig.isEsquery(method)){
+            return pjp.proceed(args);
+        }
         BackDto backDto = BackDto.hasJpaBack(method);
         Object result = null;
         try {

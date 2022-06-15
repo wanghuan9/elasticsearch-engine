@@ -40,11 +40,27 @@ public class EsEngineConfigProperties {
      */
     private Integer queryTimeOut = 10;
 
-
     /**
      * 默认查询size,查询没有设置size时默认的size
      */
     private Integer defaultQuerySize = 1000;
+
+    /**
+     * es extend(mybatis,jpa,jooq)查询 全局开关, true表示查询es, false表示查询mysql
+     */
+    private boolean esQuery = Boolean.TRUE;
+
+    /**
+     * es extend(mybatis,jpa,jooq)查询降级 包含的接口,仅再esQuery=false时才生效
+     * item 为接口名
+     */
+    private Set<String> esQueryInclude = new HashSet<>();
+
+    /**
+     * es extend(mybatis,jpa,jooq)查询降级 排除的接口,仅再esQuery=true时才生效
+     * item 为接口名
+     */
+    private Set<String> esQueryExclude = new HashSet<>();
 
     /**
      * 查询字段前缀列表 解析字段名时会使用去除后缀后的值解析
@@ -75,7 +91,7 @@ public class EsEngineConfigProperties {
     };
 
     /**
-     * 默认查询需要忽略的字段
+     * 默认查询需要忽略的字段(注意 轻易不要修改该参数)
      */
     private Set<String> queryIgnoreParam = new HashSet<String>() {
         private static final long serialVersionUID = -5794700187017984887L;

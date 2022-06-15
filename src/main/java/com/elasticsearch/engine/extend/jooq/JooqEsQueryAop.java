@@ -2,6 +2,7 @@ package com.elasticsearch.engine.extend.jooq;
 
 import com.elasticsearch.engine.common.parse.sql.EsSqlQueryHelper;
 import com.elasticsearch.engine.common.utils.ThreadLocalUtil;
+import com.elasticsearch.engine.config.EsEngineConfig;
 import com.elasticsearch.engine.model.constant.CommonConstant;
 import com.elasticsearch.engine.model.domain.BackDto;
 import com.elasticsearch.engine.model.exception.EsEngineJpaExecuteException;
@@ -43,6 +44,10 @@ public class JooqEsQueryAop {
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Method method = signature.getMethod();
         Object[] args = pjp.getArgs();
+        //不走es查询直接返回
+        if(!EsEngineConfig.isEsquery(method)){
+            return pjp.proceed(args);
+        }
         BackDto backDto = BackDto.hasJooQBack(method);
         Object result = null;
         try {

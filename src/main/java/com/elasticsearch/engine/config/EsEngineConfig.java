@@ -138,12 +138,13 @@ public class EsEngineConfig {
      */
     public static boolean isEsquery(Method method) {
         String methodName = method.getDeclaringClass().getSimpleName() + "." + method.getName();
+        String trimMethodName = methodName.trim();
         //全局开关打开 并且exclude不包含
-        if (EsEngineConfig.getEsQuery() && !EsEngineConfig.getEsQueryExclude().contains(methodName)) {
+        if (EsEngineConfig.getEsQuery() && !EsEngineConfig.getEsQueryExclude().contains(trimMethodName)) {
             return true;
         }
         //全局开关关闭 并且include包含
-        if (!EsEngineConfig.getEsQuery() && EsEngineConfig.getEsQueryInclude().contains(methodName)) {
+        if (!EsEngineConfig.getEsQuery() && EsEngineConfig.getEsQueryInclude().contains(trimMethodName)) {
             return true;
         }
         return false;

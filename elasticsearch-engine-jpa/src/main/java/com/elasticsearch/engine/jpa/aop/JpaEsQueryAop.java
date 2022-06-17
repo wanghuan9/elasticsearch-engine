@@ -7,6 +7,7 @@ import com.elasticsearch.engine.base.model.constant.CommonConstant;
 import com.elasticsearch.engine.base.model.domain.BackDto;
 import com.elasticsearch.engine.base.model.exception.EsEngineExecuteException;
 import com.elasticsearch.engine.base.model.exception.EsEngineJpaExecuteException;
+import com.elasticsearch.engine.jpa.model.JpaBackDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +38,7 @@ public class JpaEsQueryAop {
     private EsSqlQueryHelper esSqlQueryHelper;
 
     // 自己定义切点 拦截重试模方法
-    @Pointcut("@annotation(com.elasticsearch.engine.model.annotion.JpaEsQuery)")
+    @Pointcut("@annotation(com.elasticsearch.engine.jpa.annotion.JpaEsQuery)")
     public void esQueryCut() {
     }
 
@@ -50,7 +51,7 @@ public class JpaEsQueryAop {
         if(!EsEngineConfig.isEsquery(method)){
             return pjp.proceed(args);
         }
-        BackDto backDto = BackDto.hasJpaBack(method);
+        BackDto backDto = JpaBackDto.hasJpaBack(method);
         Object result = null;
         try {
             ThreadLocalUtil.set(CommonConstant.IS_ES_QUERY, Boolean.TRUE);

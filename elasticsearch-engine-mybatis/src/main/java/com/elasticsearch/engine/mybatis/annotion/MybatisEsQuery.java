@@ -1,17 +1,17 @@
-package com.elasticsearch.engine.base.model.annotion;
+package com.elasticsearch.engine.mybatis.annotion;
 
 import java.lang.annotation.*;
 
-
 /**
  * @author wanghuan
- * @description: EsQuery
- * @date 2022-01-26 11:28
+ * @description MybatisEsQuery
+ * @mail 958721894@qq.com
+ * @date 2022-06-15 10:12
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Documented
-public @interface JooqEsQuery {
+public @interface MybatisEsQuery {
 
     /**
      * 回表字段
@@ -26,5 +26,4 @@ public @interface JooqEsQuery {
      * @return
      */
     Class<?> backColumnType() default Object.class;
-
 }

@@ -4,8 +4,9 @@ import com.elasticsearch.engine.base.common.parse.sql.SqlParserHelper;
 import com.elasticsearch.engine.base.common.proxy.handler.exannotation.AnnotationQueryCommon;
 import com.elasticsearch.engine.base.common.queryhandler.sql.EsSqlExecuteHandler;
 import com.elasticsearch.engine.base.config.EsEngineConfig;
-import com.elasticsearch.engine.base.model.annotion.MybatisEsQuery;
 import com.elasticsearch.engine.base.model.domain.BackDto;
+import com.elasticsearch.engine.mybatis.annotion.MybatisEsQuery;
+import com.elasticsearch.engine.mybatis.model.MybatisBackDto;
 import com.elasticsearch.engine.mybatis.parse.SqlParamParseMybatisHelper;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.statement.select.Select;
@@ -67,7 +68,7 @@ public class MybatisEsQueryInterceptor implements Interceptor {
                     // 几乎不可能走进这里面,除非使用Executor的代理对象调用query[args[6]]
                     boundSql = (BoundSql) args[5];
                 }
-                BackDto backDto = BackDto.hasBack(method);
+                BackDto backDto = MybatisBackDto.hasBack(method);
                 if (Objects.nonNull(backDto)) {
                     //处理ES逻辑
                     MappedStatement mappedStatement = doQueryEsBack(method, boundSql, ms, backDto);

@@ -1,4 +1,4 @@
-package com.elasticsearch.engine.base.model.annotion;
+package com.elasticsearch.engine.jpa.annotion;
 
 import java.lang.annotation.*;
 

@@ -1,6 +1,7 @@
 package com.elasticsearch.engine.mapping.model;
 
 import com.elasticsearch.engine.model.domain.AbstractQueryBean;
+import com.elasticsearch.engine.model.domain.EsQueryFieldBean;
 import org.elasticsearch.index.query.ExistsQueryBuilder;
 
 /**
@@ -16,7 +17,7 @@ public class ExistQueryBean extends AbstractQueryBean<ExistsQueryBuilder> {
      * @param queryBuilder (ex: MatchQueryBuilder, MultiMatchQuery ...)
      */
     @Override
-    public void configQueryBuilder(ExistsQueryBuilder queryBuilder) {
+    public void configQueryBuilder(EsQueryFieldBean queryDes, ExistsQueryBuilder queryBuilder) {
 
     }
 }

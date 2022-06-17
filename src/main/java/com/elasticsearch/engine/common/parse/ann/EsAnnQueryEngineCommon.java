@@ -64,6 +64,9 @@ public class EsAnnQueryEngineCommon {
      * @param method
      */
     public static void buildDefaultSize(AbstractEsRequestHolder helper, Method method){
+        if(Objects.isNull(method)){
+            return;
+        }
         //设置默认size
         int size = helper.getSource().size();
         if (size == -1) {
@@ -83,6 +86,9 @@ public class EsAnnQueryEngineCommon {
      * @param method
      */
     public static void buildDefaultSort(AbstractEsRequestHolder helper, Method method){
+        if(Objects.isNull(method)){
+            return;
+        }
         //设置默认sort
         List<SortBuilder<?>> sorts = helper.getSource().sorts();
         Order annSort = method.getAnnotation(Order.class);
@@ -101,6 +107,9 @@ public class EsAnnQueryEngineCommon {
      * @param method
      */
     public static void buildDefaultSourceFiled(AbstractEsRequestHolder helper, Method method){
+        if(Objects.isNull(method)){
+            return;
+        }
         //设置默认source filed
         String[] includeValue = {};
         String[] excludeValue = {};

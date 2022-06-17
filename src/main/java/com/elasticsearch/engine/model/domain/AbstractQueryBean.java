@@ -16,7 +16,7 @@ public abstract class AbstractQueryBean<T extends QueryBuilder> {
      *
      * @param queryBuilder (ex: MatchQueryBuilder, MultiMatchQuery ...)
      */
-    public abstract void configQueryBuilder(T queryBuilder);
+    public abstract void configQueryBuilder(EsQueryFieldBean queryDes,T queryBuilder);
 
 
 }

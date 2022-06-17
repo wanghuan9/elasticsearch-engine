@@ -1,8 +1,8 @@
 package com.elasticsearch.engine.common.queryhandler.sql;
 
-import com.elasticsearch.engine.config.EsEngineConfig;
 import com.elasticsearch.engine.common.utils.*;
 import com.elasticsearch.engine.config.ElasticSearchProperties;
+import com.elasticsearch.engine.config.EsEngineConfig;
 import com.elasticsearch.engine.model.constant.CommonConstant;
 import com.elasticsearch.engine.model.domain.SqlResponse;
 import com.elasticsearch.engine.model.emenu.DataType;

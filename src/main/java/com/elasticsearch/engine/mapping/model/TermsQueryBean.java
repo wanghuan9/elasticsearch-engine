@@ -1,6 +1,7 @@
 package com.elasticsearch.engine.mapping.model;
 
 import com.elasticsearch.engine.model.domain.AbstractQueryBean;
+import com.elasticsearch.engine.model.domain.EsQueryFieldBean;
 import org.elasticsearch.index.query.TermsQueryBuilder;
 
 /**
@@ -11,6 +12,6 @@ import org.elasticsearch.index.query.TermsQueryBuilder;
 public class TermsQueryBean extends AbstractQueryBean<TermsQueryBuilder> {
 
     @Override
-    public void configQueryBuilder(TermsQueryBuilder queryBuilder) {
+    public void configQueryBuilder(EsQueryFieldBean queryDes, TermsQueryBuilder queryBuilder) {
     }
 }

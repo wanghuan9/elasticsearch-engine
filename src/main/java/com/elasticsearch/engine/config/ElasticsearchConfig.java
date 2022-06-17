@@ -42,7 +42,6 @@ public class ElasticsearchConfig {
     }
 
     @Bean(destroyMethod = "close")
-//    @ConditionalOnBean(name = "enableEsEngineConfig")
     public RestHighLevelClient restHighLevelClient() {
         String hosts = elasticSearchProperties.getHosts();
         RestClientBuilder builder;

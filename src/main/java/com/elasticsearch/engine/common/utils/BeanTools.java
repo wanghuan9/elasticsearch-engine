@@ -14,11 +14,11 @@ import java.math.BigDecimal;
 import java.util.*;
 
 /**
- * program: esdemo
- * description: 类对象操作工具类
- * author: X-Pacific zhang
- * create: 2019-01-23 11:49
- **/
+* @author wanghuan
+* @description BeanTools
+* @mail 958721894@qq.com       
+* @date 2022/6/17 15:30 
+*/
 public class BeanTools {
     public static Object mapToObject(Map map, Class<?> beanClass) throws Exception {
         if (map == null) {

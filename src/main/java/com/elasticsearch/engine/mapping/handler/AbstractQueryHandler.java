@@ -41,7 +41,7 @@ public abstract class AbstractQueryHandler<T extends AbstractQueryBean> {
         //拼接查询语句
         QueryBuilder queryBuilder = handle(queryDes, searchHelper);
         if (Objects.nonNull(queryBuilder)) {
-            queryDes.getExtBean().configQueryBuilder(queryBuilder);
+            queryDes.getExtBean().configQueryBuilder(queryDes,queryBuilder);
             handleExtConfig(queryDes, queryBuilder);
         }
         return searchHelper;

@@ -1,6 +1,7 @@
 package com.elasticsearch.engine.mapping.model;
 
 import com.elasticsearch.engine.model.domain.AbstractQueryBean;
+import com.elasticsearch.engine.model.domain.EsQueryFieldBean;
 import org.elasticsearch.index.query.PrefixQueryBuilder;
 
 /**
@@ -11,6 +12,6 @@ import org.elasticsearch.index.query.PrefixQueryBuilder;
 public class PrefixQueryBean extends AbstractQueryBean<PrefixQueryBuilder> {
 
     @Override
-    public void configQueryBuilder(PrefixQueryBuilder queryBuilder) {
+    public void configQueryBuilder(EsQueryFieldBean queryDes, PrefixQueryBuilder queryBuilder) {
     }
 }

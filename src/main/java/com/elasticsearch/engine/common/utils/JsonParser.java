@@ -25,9 +25,11 @@ import java.util.TimeZone;
 import static com.fasterxml.jackson.core.JsonParser.Feature;
 
 /**
- * User：David Young
- * Date：2020/02/26
- */
+* @author wanghuan
+* @description JsonParser
+* @mail 958721894@qq.com       
+* @date 2022/6/17 15:30 
+*/
 public abstract class JsonParser {
 
   public static final ObjectMapper MAPPER = new ObjectMapper();
@@ -216,6 +218,15 @@ public abstract class JsonParser {
     }
   }
 
+  public static <T> String asJsonSnakeCase(T obj, String... ignoreProperties) {
+    try {
+      return filterSnakeCaseMapper(ignoreProperties).writeValueAsString(obj);
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+      throw new RuntimeException("json parse error", e);
+    }
+  }
+
   public static <T> String asJsonFormat(T obj) {
     try {
       return INDENT_MAPPER.writeValueAsString(obj);
@@ -251,6 +262,20 @@ public abstract class JsonParser {
       return INDENT_MAPPER.setFilterProvider(null);
     }
     return INDENT_MAPPER.setFilterProvider(ignorePropertiesFilter(ignoreProperties));
+  }
+
+  /**
+   * 忽略指定字段
+   * 配合@JsonFilter("ignore")
+   *
+   * @param ignoreProperties
+   * @return
+   */
+  public static ObjectMapper filterSnakeCaseMapper(String... ignoreProperties) {
+    if (ignoreProperties.length == 0) {
+      return SNAKE_CASE_MAPPER.setFilterProvider(null);
+    }
+    return SNAKE_CASE_MAPPER.setFilterProvider(ignorePropertiesFilter(ignoreProperties));
   }
 
   /**

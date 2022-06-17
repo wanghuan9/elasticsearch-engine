@@ -26,16 +26,9 @@ public @interface From {
      *
      * @return
      */
-    String format() default "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    String format() default "";
 
-    String timeZone() default "GMT+8";
-
-    /**
-     * es6 格式化
-     * @return
-     */
-//    String format() default "yyyy-MM-dd'T'HH:mm:ss.SSS";
-//    String timeZone() default "+08:00";
+    String timeZone() default "";
 
     /**
      * 多个range时, 使用 group标识一对匹配的 from和to

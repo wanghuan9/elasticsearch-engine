@@ -1,6 +1,7 @@
 package com.elasticsearch.engine.mapping.model;
 
 import com.elasticsearch.engine.model.domain.AbstractQueryBean;
+import com.elasticsearch.engine.model.domain.EsQueryFieldBean;
 import lombok.Data;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortOrder;
@@ -19,7 +20,7 @@ public class SortQueryBean extends AbstractQueryBean {
 
 
     @Override
-    public void configQueryBuilder(QueryBuilder queryBuilder) {
+    public void configQueryBuilder(EsQueryFieldBean queryDes, QueryBuilder queryBuilder) {
 
     }
 

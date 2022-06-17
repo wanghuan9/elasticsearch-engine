@@ -17,20 +17,18 @@ import java.util.Optional;
 public enum EsVersionConstant {
 
     /**
-     * 
+     * GMT+8
      */
-    ES_VERSION_6(6, "/_xpack/sql?format=", "/_xpack/sql/translate?format=", "yyyy-MM-dd'T'HH:mm:ss.SSS"),
-    ES_VERSION_7(7, "/_sql?format=", "/_sql/translate?format=", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    ES_VERSION_6(6, "/_xpack/sql?format=", "/_xpack/sql/translate?format="),
+    ES_VERSION_7(7, "/_sql?format=", "/_sql/translate?format=");
 
     private Integer version;
     private String sqlQueryPrefix;
     private String sqlTranslatePrefix;
-    private String dateformat;
 
-    EsVersionConstant(Integer version, String sqlQueryPrefix, String sqlTranslatePrefix, String dateformat) {
+    EsVersionConstant(Integer version, String sqlQueryPrefix, String sqlTranslatePrefix) {
         this.version = version;
         this.sqlQueryPrefix = sqlQueryPrefix;
-        this.dateformat = dateformat;
         this.sqlTranslatePrefix = sqlTranslatePrefix;
     }
 

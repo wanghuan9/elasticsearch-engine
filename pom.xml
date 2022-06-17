@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.elasticsearch.engine</groupId>
     <artifactId>elasticsearch-engine</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.22-SNAPSHOT</version>
     <name>elasticsearch-engine</name>
     <description>elasticsearch-engine</description>
 
@@ -90,11 +90,11 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
             <version>${spring.boot.version}</version>
         </dependency>
+        <!-- elasticsearch客户端 -->
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-high-level-client</artifactId>
             <version>${elasticsearch.client.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.mybatis</groupId>

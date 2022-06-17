@@ -1,6 +1,7 @@
 package com.elasticsearch.engine.mapping.model;
 
 import com.elasticsearch.engine.model.domain.AbstractQueryBean;
+import com.elasticsearch.engine.model.domain.EsQueryFieldBean;
 import lombok.Data;
 import org.elasticsearch.index.query.WildcardQueryBuilder;
 
@@ -20,6 +21,6 @@ public class WildCardQueryBean extends AbstractQueryBean<WildcardQueryBuilder> {
     private String tag;
 
     @Override
-    public void configQueryBuilder(WildcardQueryBuilder queryBuilder) {
+    public void configQueryBuilder(EsQueryFieldBean queryDes, WildcardQueryBuilder queryBuilder) {
     }
 }

@@ -5,6 +5,12 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+* @author wanghuan
+* @description ThreadLocalUtil
+* @mail 958721894@qq.com       
+* @date 2022/6/17 15:30 
+*/
 public class ThreadLocalUtil {
 
     private static final ThreadLocal<Map<String, Object>> THREAD_LOCAL = ThreadLocal.withInitial(() -> new HashMap(4));

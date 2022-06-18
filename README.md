@@ -16,11 +16,12 @@ elasticsearch-engine是基于 HighLevelRestClient 封装的 ElasticSearch 查询
 
 5.基于jooq dao实现类 自动生成elasticsearch查询,并支持数据库回表查询
 
-#### 安装教程
+#### 架构模块
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  elasticsearch-engine-base 提供注解查询,sql语句查询,ORM查询sql解析,sql改写等基础功能
+2.  elasticsearch-engine-mybatis 基于mybatis拦截器 实现拦截sql拦截,改写,执行elasticsearch查询
+3.  elasticsearch-engine-jpa 基于aop,hibernate sql拦截器以及重新jpa参数绑定模块 实现拦截sql拦截,改写,执行elasticsearch查询
+4.  elasticsearch-engine-jooq 基于aop,jooq执行监听器 实现拦截sql拦截,改写,执行elasticsearch查询
 
 #### 使用说明
 

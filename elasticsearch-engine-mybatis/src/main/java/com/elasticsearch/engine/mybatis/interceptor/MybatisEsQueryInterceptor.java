@@ -59,7 +59,9 @@ public class MybatisEsQueryInterceptor implements Interceptor {
             Object parameter = args[1];
             boolean isUpdate = args.length == 2;
             MappedStatement ms = (MappedStatement) args[0];
+            //判断是否包含es查询注解以及全局开关
             Method method = isEsQuery(ms);
+            //不包含,并且不是select查询语句直接返回
             if (Objects.nonNull(method) && !isUpdate && ms.getSqlCommandType() == SqlCommandType.SELECT) {
                 BoundSql boundSql;
                 if (args.length == 4) {
@@ -68,14 +70,16 @@ public class MybatisEsQueryInterceptor implements Interceptor {
                     // 几乎不可能走进这里面,除非使用Executor的代理对象调用query[args[6]]
                     boundSql = (BoundSql) args[5];
                 }
+                //获取回表查询参数
                 BackDto backDto = MybatisBackDto.hasBack(method);
-                if (Objects.nonNull(backDto)) {
-                    //处理ES逻辑
+                //判断是否需要回表查询
+                if (Objects.isNull(backDto)) {
+                    //无需回表直接执行es查询
+                    return doQueryEs(method, boundSql, ms.getConfiguration());
+                } else {
+                    //需要回表es查询 并将修改后的回表sql绑定到mybatis 
                     MappedStatement mappedStatement = doQueryEsBack(method, boundSql, ms, backDto);
                     args[0] = mappedStatement;
-                } else {
-                    //处理ES逻辑
-                    return doQueryEs(method, boundSql, ms.getConfiguration());
                 }
             }
         }

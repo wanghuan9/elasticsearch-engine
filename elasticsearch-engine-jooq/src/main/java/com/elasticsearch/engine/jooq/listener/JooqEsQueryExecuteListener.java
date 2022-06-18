@@ -9,6 +9,7 @@ import org.jooq.ExecuteContext;
 import org.jooq.ExecuteListener;
 import org.jooq.ExecuteListenerProvider;
 import org.jooq.impl.DefaultExecuteListener;
+import org.jooq.tools.LoggerListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +18,8 @@ import java.util.Objects;
 /**
  * @author wanghuan
  * @description jooq sql切es查询拦截器
+ * 参考:{@link LoggerListener}
+ * jooq执行生命周期: {@link DefaultExecuteListener}
  * @mail 958721894@qq.com
  * @date 2022/6/9 11:44
  */
@@ -32,6 +35,10 @@ public class JooqEsQueryExecuteListener extends DefaultExecuteListener implement
         return this;
     }
 
+    /**
+     * 解析完sql
+     * @param ctx
+     */
     @Override
     public void renderEnd(ExecuteContext ctx) {
         String backSql = ThreadLocalUtil.get(CommonConstant.BACK_QUERY_SQL);
@@ -43,6 +50,10 @@ public class JooqEsQueryExecuteListener extends DefaultExecuteListener implement
         }
     }
 
+    /**
+     * 执行结束
+     * @param ctx
+     */
     @Override
     public void executeEnd(ExecuteContext ctx) {
 //        log.info("jooq回表执行sql: " + ctx.sql());
@@ -62,6 +73,10 @@ public class JooqEsQueryExecuteListener extends DefaultExecuteListener implement
 //        }
     }
 
+    /**
+     * 绑定完sql参数
+     * @param ctx
+     */
     @Override
     public void bindEnd(ExecuteContext ctx) {
         String sql = ctx.query().toString();

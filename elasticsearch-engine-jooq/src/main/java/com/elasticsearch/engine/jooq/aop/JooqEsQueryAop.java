@@ -45,24 +45,29 @@ public class JooqEsQueryAop {
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Method method = signature.getMethod();
         Object[] args = pjp.getArgs();
-        //不走es查询直接返回
+        //不走es查询直接返回(全局开关)
         if(!EsEngineConfig.isEsquery(method)){
             return pjp.proceed(args);
         }
+        //获取回表查询参数
         BackDto backDto = JooqBackDto.hasJooQBack(method);
         Object result = null;
         try {
+            //设置标记,在sql拦截器中抛出异常->回到后面的异常处理逻辑中实现es查询
             ThreadLocalUtil.set(CommonConstant.IS_ES_QUERY, Boolean.TRUE);
             result = pjp.proceed(args);
         } catch (EsEngineJpaExecuteException e) {
-            if (Objects.nonNull(backDto)) {
+            //判断是否需要回表查询
+            if (Objects.isNull(backDto)) {
+                //无需回表直接执行es查询
+                result = esSqlQueryHelper.esQuery(method, e.getMessage(), args, backDto);
+            } else {
+                //需要回表es查询并回表查询
                 List<?> esResult = esSqlQueryHelper.esQueryBack(method, e.getMessage(), args, backDto);
                 if (CollectionUtils.isEmpty(esResult)) {
                     return result;
                 }
                 result = pjp.proceed(args);
-            } else {
-                result = esSqlQueryHelper.esQuery(method, e.getMessage(), args, backDto);
             }
         } finally {
             ThreadLocalUtil.remove(CommonConstant.IS_ES_QUERY);

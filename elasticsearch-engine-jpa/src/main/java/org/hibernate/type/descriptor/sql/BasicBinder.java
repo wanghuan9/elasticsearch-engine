@@ -16,7 +16,9 @@ import java.util.Objects;
 
 /**
  * @author wanghuan
- * @description BasicBinder
+ * @description 重写jpa参数绑定的代码, 实现添加自定义逻辑
+ * <p>
+ * 重新需要注意包名要和源码包名一致
  * @mail 958721894@qq.com
  * @date 2022/6/9 20:45
  */
@@ -76,6 +78,7 @@ public abstract class BasicBinder<J> implements ValueBinder<J> {
     /**
      * 处理jpa非回表查询
      * 获取带参数的sql 去es执行
+     *
      * @param statement
      */
     private void inspect(PreparedStatement statement) {

@@ -4,9 +4,17 @@
 elasticsearch-engine是基于 HighLevelRestClient 封装的 ElasticSearch 查询引擎框架. 支持ElasticSearch基于注解的结构化查询; 基于sql语句的方式查询; 并整合常见的ORM框架, 提供基于ORM框架的Mapper接口自动生成ElasticSearch Sql查询语句,并执行ElasticSearch查询;
 在需要查询 ElasticSearch 的Mapper接口标注一个注解即可实现 ElasticSearch 查询,无需额外的代码开发; 并可以通过配置中心配置动态切换ElasticSearch和Mysql之间的查询, 实现ElasticSearch查询降级.
 
-#### 软件架构
-软件架构说明
+#### 主要功能特性
 
+1.基于注解的方式实现elasticsearch的查询
+
+2.基于sql语句的方式实现elasticsearch的查询
+
+3.基于mybatis mapper接口 自动生成elasticsearch查询,并支持数据库回表查询
+
+4.基于jpa repository接口 自动生成elasticsearch查询,并支持数据库回表查询
+
+5.基于jooq dao实现类 自动生成elasticsearch查询,并支持数据库回表查询
 
 #### 安装教程
 

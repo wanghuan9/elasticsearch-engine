@@ -6,15 +6,15 @@ elasticsearch-engine是基于 HighLevelRestClient 封装的 ElasticSearch 查询
 
 #### 主要功能特性
 
-1.基于注解的方式实现elasticsearch的查询
+1.  基于注解的方式实现elasticsearch的查询
 
-2.基于sql语句的方式实现elasticsearch的查询
+2.  基于sql语句的方式实现elasticsearch的查询
 
-3.基于mybatis mapper接口 自动生成elasticsearch查询,并支持数据库回表查询
+3.  基于mybatis mapper接口 自动生成elasticsearch查询,并支持数据库回表查询
 
-4.基于jpa repository接口 自动生成elasticsearch查询,并支持数据库回表查询
+4.  基于jpa repository接口 自动生成elasticsearch查询,并支持数据库回表查询
 
-5.基于jooq dao实现类 自动生成elasticsearch查询,并支持数据库回表查询
+5.  基于jooq dao实现类 自动生成elasticsearch查询,并支持数据库回表查询
 
 #### 架构模块
 

@@ -31,7 +31,13 @@ public class EsAnnotationQuery implements EsQueryProxyExecuteHandler {
         return EsQueryType.ANNOTATION.equals(factory);
     }
 
-    //代理类的泛型, 或者自定义泛型获取的公共方法
+    /**
+     * 代理类的泛型, 或者自定义泛型获取的公共方法
+     * @param proxy
+     * @param method
+     * @param args
+     * @return
+     */
     @Override
     public Object handle(Object proxy, Method method, Object[] args) {
         String prefix = ThreadLocalUtil.get(CommonConstant.INTERFACE_METHOD_NAME);

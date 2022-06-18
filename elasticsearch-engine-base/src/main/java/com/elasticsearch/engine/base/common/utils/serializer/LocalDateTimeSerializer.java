@@ -9,9 +9,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * User：David Young
- * Date：2020/4/8
- */
+* @author wanghuan
+* @description LocalDateTimeSerializer
+* @mail 958721894@qq.com       
+* @date 2022/6/18 09:54 
+*/
 public class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime> {
   private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 

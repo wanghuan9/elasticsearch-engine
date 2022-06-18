@@ -3,11 +3,11 @@ package com.elasticsearch.engine.base.model.emenu;
 import java.util.Objects;
 
 /**
- * program: esdemo
- * description: es字段数据结构
- * author: X-Pacific zhang
- * create: 2019-01-25 16:58
- **/
+* @author wanghuan
+* @description DataType
+* @mail 958721894@qq.com       
+* @date 2022/6/18 09:53 
+*/
 public enum DataType {
     /**
      * 

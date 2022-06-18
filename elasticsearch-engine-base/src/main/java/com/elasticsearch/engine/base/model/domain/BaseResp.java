@@ -13,13 +13,19 @@ import java.util.List;
 @Data
 public class BaseResp<T> implements Serializable {
 
-    //查询结果的总记录数
+    /**
+     * 查询结果的总记录数
+     */
     private Long totalHit;
 
-    //默认返回List<T> 结果
+    /**
+     * 默认返回List<T> 结果
+     */
     private List<T> records;
 
-    //自定义的result,
-    //T可以定义为任意Object, List<Object> , Map<Object,Object> 等
+    /**
+     * 自定义的result
+     * T可以定义为任意Object, List<Object> , Map<Object,Object> 等
+     */
     private T result;
 }

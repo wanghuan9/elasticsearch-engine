@@ -60,13 +60,16 @@ public abstract class AbstractEsRequestHolder<T extends QueryBuilder> {
     private List<Object> requestHooks;
     /**
      * 初始化 queryBuilder和currentQueryBuilderList 再对应的 xxxEsRequestHolder 类中
+     * <p>
+     * 这里就是一个具体的BoolQueryBuilder,或者DisMaxQueryBuilder.  所以添加到 这个currentQueryBuilderList中 queryBuilder中自然就有值了
      */
-    //这里就是一个具体的BoolQueryBuilder,或者DisMaxQueryBuilder.  所以添加到 这个currentQueryBuilderList中 queryBuilder中自然就有值了
     private T queryBuilder;
+
     /**
+     * 这里的currentQueryBuilderList 是 调用 org.elasticsearch.index.query.BoolQueryBuilder.must() 空参方法返回的,
+     *
      * @see BoolEsRequestHolder#defineDefaultLogicConnector()
      */
-    //这里的currentQueryBuilderList 是 调用 org.elasticsearch.index.query.BoolQueryBuilder.must() 空参方法返回的,
     private List<QueryBuilder> currentQueryBuilderList;
 
     /**

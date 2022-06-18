@@ -5,6 +5,12 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+* @author wanghuan
+* @description SqlResponse
+* @mail 958721894@qq.com       
+* @date 2022/6/18 09:54 
+*/
 @Data
 public class SqlResponse extends SqlErrorResponse {
     @JsonProperty("columns")

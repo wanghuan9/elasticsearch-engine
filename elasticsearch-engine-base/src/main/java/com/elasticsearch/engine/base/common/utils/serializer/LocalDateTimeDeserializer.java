@@ -12,9 +12,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * User：David Young
- * Date：2020/4/8
- */
+* @author wanghuan
+* @description LocalDateTimeDeserializer
+* @mail 958721894@qq.com       
+* @date 2022/6/18 09:54 
+*/
 public class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final Pattern NUMERIC_PATTERN = Pattern.compile("[0-9]*");

@@ -130,7 +130,11 @@ public class HttpClientTool {
         return getHttpClient(credential(username, password));
     }
 
-    //设置头信息，e.g. content-type 等
+    /**
+     * 设置头信息，e.g. content-type 等
+     * @param req
+     * @param headers
+     */
     private static void setHeaders(HttpRequestBase req, Map<String, String> headers) {
         if (headers == null) {
             return;

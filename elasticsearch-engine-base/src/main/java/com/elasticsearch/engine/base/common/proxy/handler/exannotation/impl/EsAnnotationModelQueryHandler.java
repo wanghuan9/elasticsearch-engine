@@ -7,7 +7,7 @@ import com.elasticsearch.engine.base.common.queryhandler.ann.model.EsExecuteHand
 import com.elasticsearch.engine.base.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.base.hook.ResponseHook;
 import com.elasticsearch.engine.base.model.constant.CommonConstant;
-import com.elasticsearch.engine.base.model.domain.BaseESRepository;
+import com.elasticsearch.engine.base.model.domain.BaseEsRepository;
 import com.elasticsearch.engine.base.model.domain.BaseResp;
 import com.elasticsearch.engine.base.model.domain.DefaultResp;
 import com.elasticsearch.engine.base.model.exception.EsEngineExecuteException;
@@ -51,7 +51,7 @@ public class EsAnnotationModelQueryHandler implements EsAnnotationQueryHandler {
         //方法返回值的泛型
         Class<?> returnGenericType = AnnotationQueryCommon.getReturnGenericType(method);
         //获取到Repository泛型的Entity类
-        Class<?> retEntityClass = AnnotationQueryCommon.getClazzImplClassGeneric(method.getDeclaringClass(), BaseESRepository.class);
+        Class<?> retEntityClass = AnnotationQueryCommon.getClazzImplClassGeneric(method.getDeclaringClass(), BaseEsRepository.class);
         //获取到param参数 实现的ResponseHook中的泛型类
         Type responseHookResultType = null;
         if (ResponseHook.class.isAssignableFrom(param.getClass())) {

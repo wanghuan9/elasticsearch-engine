@@ -23,11 +23,17 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WildCard {
 
-    //表示 like %${param}
+    /**
+     * like %${param}
+     */
     String BEFORE_MATCH = "*%s";
-    //表示 like ${param}%
+    /**
+     * 表示 like ${param}%
+     */
     String AFTER_MATCH = "%s*";
-    //表示 like %${param}%
+    /**
+     * 表示 like %${param}%
+     */
     String INCLUDE_MATCH = "*%s*";
 
     Base value() default @Base;

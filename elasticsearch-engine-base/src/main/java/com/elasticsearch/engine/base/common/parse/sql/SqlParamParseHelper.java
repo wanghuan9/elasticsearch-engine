@@ -94,7 +94,7 @@ public class SqlParamParseHelper {
      * @return
      */
     public static Map<String, Object> getParamMapAnn(Method method, Object[] args, SqlParamParse sqlParamParse) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(36);
         Parameter[] parameters = method.getParameters();
         for (int i = 0; i < parameters.length; i++) {
             Parameter parameter = parameters[i];

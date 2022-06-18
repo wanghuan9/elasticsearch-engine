@@ -197,7 +197,7 @@ public class ReflectionUtils {
      * @throws IllegalAccessException
      */
     public static Map<String, Object> getNestedFieldsMap(String paramName,Object view)  {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(26);
         try {
             getFields(view,map, paramName);
         } catch (IllegalAccessException e) {

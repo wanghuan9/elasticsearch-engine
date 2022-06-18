@@ -37,6 +37,10 @@ public abstract class AbstractEsBaseExecuteHandle {
 
     /**
      * 后置处理扩展 嵌套扩展处理
+     * @param param
+     * @param resp
+     * @param result
+     * @param <T>
      */
     public abstract <T> void executePostProcessorAfter(Object param, SearchResponse resp, BaseResp<T> result);
 

@@ -6,6 +6,12 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
+/**
+* @author wanghuan
+* @description LocalDateTimeUtils
+* @mail 958721894@qq.com       
+* @date 2022/6/18 09:54 
+*/
 public class LocalDateTimeUtils {
     public static LocalDateTime fromDate(Date date) {
         if (date == null) {

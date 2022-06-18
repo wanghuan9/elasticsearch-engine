@@ -35,7 +35,9 @@ public class JooqEsQueryAop {
     @Resource
     private EsSqlQueryHelper esSqlQueryHelper;
 
-    // 自己定义切点 拦截重试模方法
+    /**
+     * 拦截添加了注解 @JpaEsQuery 的方法
+     */
     @Pointcut("@annotation(com.elasticsearch.engine.jooq.annotion.JooqEsQuery)")
     public void esQueryCut() {
     }
@@ -50,7 +52,7 @@ public class JooqEsQueryAop {
             return pjp.proceed(args);
         }
         //获取回表查询参数
-        BackDto backDto = JooqBackDto.hasJooQBack(method);
+        BackDto backDto = JooqBackDto.hasJooqBack(method);
         Object result = null;
         try {
             //设置标记,在sql拦截器中抛出异常->回到后面的异常处理逻辑中实现es查询

@@ -6,7 +6,7 @@ import com.elasticsearch.engine.base.common.proxy.handler.exannotation.EsAnnotat
 import com.elasticsearch.engine.base.common.queryhandler.ann.param.EsParamExecuteHandler;
 import com.elasticsearch.engine.base.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.base.model.constant.CommonConstant;
-import com.elasticsearch.engine.base.model.domain.BaseESRepository;
+import com.elasticsearch.engine.base.model.domain.BaseEsRepository;
 import com.elasticsearch.engine.base.model.domain.BaseResp;
 import com.elasticsearch.engine.base.model.exception.EsEngineExecuteException;
 import org.springframework.stereotype.Component;
@@ -40,7 +40,7 @@ public class EsAnnotationParamQueryHandler implements EsAnnotationQueryHandler {
         //方法返回值的泛型
         Class<?> returnGenericType = AnnotationQueryCommon.getReturnGenericType(method);
         //获取到Repository泛型的Entity类
-        Class<?> retEntityClass = AnnotationQueryCommon.getClazzImplClassGeneric(method.getDeclaringClass(), BaseESRepository.class);
+        Class<?> retEntityClass = AnnotationQueryCommon.getClazzImplClassGeneric(method.getDeclaringClass(), BaseEsRepository.class);
         //Repository泛型 单个返回值
         if (Objects.isNull(retEntityClass)) {
             throw new EsEngineExecuteException(prefix + "泛型声明异常:Repository 缺少泛型声明");

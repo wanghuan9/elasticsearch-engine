@@ -3,7 +3,7 @@ package com.elasticsearch.engine.base.common.proxy;
 import com.elasticsearch.engine.base.hook.EsHookReedits;
 import com.elasticsearch.engine.base.hook.UserHooks;
 import com.elasticsearch.engine.base.model.annotion.EsHelperProxy;
-import com.elasticsearch.engine.base.model.domain.BaseESRepository;
+import com.elasticsearch.engine.base.model.domain.BaseEsRepository;
 import com.elasticsearch.engine.base.model.exception.EsEngineConfigException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -192,6 +192,6 @@ public class EsEngineInterfaceScanner implements ApplicationContextAware, Resour
      * @return
      */
     private boolean isRepository(Class beanClazz) {
-        return BaseESRepository.class.isAssignableFrom(beanClazz);
+        return BaseEsRepository.class.isAssignableFrom(beanClazz);
     }
 }

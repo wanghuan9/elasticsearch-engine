@@ -151,7 +151,8 @@ public class EsSqlExecuteHandler {
             throw new Exception("sql column not match");
         }
         //单个结果: count,sum 结果转换
-        if (rows.size() == 1 && (ReflectionUtils.isBaseType(clazz) || clazz.equals(BigDecimal.class))) {
+        boolean check = rows.size() == 1 && (ReflectionUtils.isBaseType(clazz) || clazz.equals(BigDecimal.class));
+        if (check) {
             return (T) BeanTools.fieldTypeCovert(DataType.getDataTypeByStr(columns.get(0).getType()), rows.get(0), clazz);
         }
         //entity listEntity

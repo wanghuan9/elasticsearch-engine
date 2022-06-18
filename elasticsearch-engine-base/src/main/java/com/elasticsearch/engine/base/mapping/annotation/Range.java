@@ -18,15 +18,25 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Range {
 
-    //表示左右包含  >= L and <= G
+    /**
+     * 表示左右包含  >= L and <= G
+     */
     String LE_GE = "[L,G]";
-    //表示左右都不包含 >L and < G
+    /**
+     * 表示左右都不包含 >L and < G
+     */
     String L_G = "(L,G)";
-    //表示左右都不包含 >=L and < G
+    /**
+     * 表示左右都不包含 >=L and < G
+     */
     String LE_G = "[L,G)";
-    //表示左右都不包含 >L and <= G
+    /**
+     * 表示左右都不包含 >L and <= G
+     */
     String L_GE = "(L,G]";
-    //表示 from to
+    /**
+     * 表示 from to
+     */
     String F_T = "F_T";
 
     Base value() default @Base;

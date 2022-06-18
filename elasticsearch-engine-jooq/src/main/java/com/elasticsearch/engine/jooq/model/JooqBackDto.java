@@ -15,7 +15,7 @@ import java.util.Objects;
  */
 public class JooqBackDto extends BackDto {
 
-    public static BackDto hasJooQBack(Method method) {
+    public static BackDto hasJooqBack(Method method) {
         JooqEsQuery esQuery = method.getAnnotation(JooqEsQuery.class);
         String backColumn = esQuery.backColumn();
         Class<?> backColumnTyp = esQuery.backColumnType();

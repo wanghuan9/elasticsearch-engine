@@ -37,7 +37,9 @@ public class JpaEsQueryAop {
     @Resource
     private EsSqlQueryHelper esSqlQueryHelper;
 
-    // 自己定义切点 拦截重试模方法
+    /**
+     * 拦截添加了注解 @JpaEsQuery 的方法
+     */
     @Pointcut("@annotation(com.elasticsearch.engine.jpa.annotion.JpaEsQuery)")
     public void esQueryCut() {
     }

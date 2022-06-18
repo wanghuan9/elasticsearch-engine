@@ -1,3 +1,5 @@
+package com.elasticsearch.engine.base;
+
 import com.elasticsearch.engine.base.common.parse.ann.QueryHandlerFactory;
 import com.elasticsearch.engine.base.config.ElasticSearchProperties;
 import com.elasticsearch.engine.base.config.EsEngineConfigProperties;
@@ -12,7 +14,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author wanghuan
- * @description: ElasticsearchEngineConfiguration
+ * @description: com.elasticsearch.engine.base.ElasticsearchEngineConfiguration
  * @date 2022-01-26 11:28
  */
 @Slf4j

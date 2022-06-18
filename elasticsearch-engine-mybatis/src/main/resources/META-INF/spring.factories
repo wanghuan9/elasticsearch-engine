@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.elasticsearch.engine.mybatis.ElasticsearchEngineJpaConfiguration
+com.elasticsearch.engine.mybatis.ElasticsearchEngineMybatisConfiguration

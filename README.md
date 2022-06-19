@@ -18,10 +18,10 @@ elasticsearch-engine是基于 HighLevelRestClient 封装的 ElasticSearch 查询
 
 #### 架构模块
 
-1.  elasticsearch-engine-base 提供注解查询,sql语句查询,ORM查询sql解析,sql改写等基础功能
-2.  elasticsearch-engine-mybatis 基于mybatis拦截器 实现sql拦截,改写,执行elasticsearch查询
-3.  elasticsearch-engine-jpa 基于aop,hibernate sql拦截器以及重新jpa参数绑定模块 实现sql拦截,改写,执行elasticsearch查询
-4.  elasticsearch-engine-jooq 基于aop,jooq执行监听器 实现sql拦截,改写,执行elasticsearch查询
+1.  elasticsearch-engine-base     提供注解查询,sql语句查询,ORM查询sql解析,sql改写等基础功能
+2.  elasticsearch-engine-mybatis  基于mybatis拦截器 实现sql拦截,改写,执行elasticsearch查询
+3.  elasticsearch-engine-jpa      基于aop,hibernate sql拦截器以及重新jpa参数绑定模块 实现sql拦截,改写,执行elasticsearch查询
+4.  elasticsearch-engine-jooq     基于aop,jooq执行监听器 实现sql拦截,改写,执行elasticsearch查询
 
 #### 使用说明
 

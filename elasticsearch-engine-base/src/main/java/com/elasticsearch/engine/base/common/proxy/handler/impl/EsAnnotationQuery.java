@@ -47,7 +47,7 @@ public class EsAnnotationQuery implements EsQueryProxyExecuteHandler {
         EsAnnotationQueryEnum queryEnum;
         Class<?> clazz = args[0].getClass();
         //只有一个参数 && 并且参数不是基础类型 && 并且参数不是List
-        if (args.length == NumberUtils.INTEGER_ONE && !ReflectionUtils.isBaseTypeAndExtend(clazz) && (!clazz.isAssignableFrom(List.class))) {
+        if (args.length == NumberUtils.INTEGER_ONE && !ReflectionUtils.isBaseTypeAndExtend(clazz) && (!List.class.isAssignableFrom(clazz))) {
             queryEnum = EsAnnotationQueryEnum.ANNOTATION_MODEL_QUERY;
         } else if (args.length > NumberUtils.INTEGER_ZERO && ReflectionUtils.allParamIsBaseType(args)) {
             //有一个或多个参数 && 都是基础类型(包括List,LocalDateTime,LocalDate,BigDecimal)

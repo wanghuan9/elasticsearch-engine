@@ -104,7 +104,7 @@ public class SqlParamParseHelper {
             if (isBase) {
                 //基础类型解析
                 map.put(parameterName, getParameterValue(val));
-            } else if (parameter.getType().isAssignableFrom(List.class) && ReflectionUtils.checkCollectionValueType(parameter, val)) {
+            } else if (List.class.isAssignableFrom(parameter.getType()) && ReflectionUtils.checkCollectionValueType(parameter, val)) {
                 //List类型解析
                 if (val instanceof List) {
                     map.put(parameterName, getListParameterValue(val));
@@ -188,7 +188,7 @@ public class SqlParamParseHelper {
         for (int i = 0; i < parameters.length; i++) {
             Parameter parameter = parameters[i];
             Object val = args[i];
-            if (parameter.getType().isAssignableFrom(List.class) && ReflectionUtils.checkCollectionValueType(parameter, val)) {
+            if (List.class.isAssignableFrom(parameter.getType()) && ReflectionUtils.checkCollectionValueType(parameter, val)) {
                 if (val instanceof List) {
                     List listParam = (List) val;
                     if (!listParam.isEmpty()) {

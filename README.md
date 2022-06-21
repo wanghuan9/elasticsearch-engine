@@ -554,3 +554,13 @@ https://gitee.com/my-source-project/elasticsearch-engine-demo
 ## 相关文档
 
 待补全...
+
+## 兼容性
+
+elasticsearch 字段命名支持 驼峰和下划线
+
+elasticsearch 版本支持 v6 和 v7
+
+## 参考及引用
+
+本项目 注解查询参考了 开源项目 https://gitee.com/JohenTeng/elasticsearch-helper

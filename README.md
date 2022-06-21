@@ -28,6 +28,7 @@ elasticsearch-engine是基于 HighLevelRestClient 封装的 ElasticSearch 查询
 4. elasticsearch-engine-jooq 基于aop,jooq执行监听器 实现sql拦截,改写,执行elasticsearch查询
 
 ## 使用说明
+所有完整示例 请参考 [使用示例](https://gitee.com/my-source-project/elasticsearch-engine-demo)
 
 ### 1.注解查询
 
@@ -35,11 +36,12 @@ elasticsearch-engine是基于 HighLevelRestClient 封装的 ElasticSearch 查询
 
 1)添加maven依赖
 
-```java
+```xml
+
 <dependency>
-<groupId>com.elasticsearch.engine</groupId>
-<artifactId>elasticsearch-engine-base</artifactId>
-<version>0.0.1-SNAPSHOT</version>
+    <groupId>com.elasticsearch.engine</groupId>
+    <artifactId>elasticsearch-engine-base</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -145,21 +147,30 @@ public interface PersonEsModelRepository extends BaseESRepository<PersonEsEntity
 4)测试示例
 
 ```java
-/**
- * model查询测试
- */
-@Test
-public void queryByModelTest(){
-        PersonBaseQuery person=new PersonBaseQuery();
+
+@Slf4j
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class EsEngineProxyModelQueryTest {
+    @Resource
+    private PersonEsModelRepository personEsModelRepository;
+
+    /**
+     * model查询测试
+     */
+    @Test
+    public void queryByModelTest() {
+        PersonBaseQuery person = new PersonBaseQuery();
         person.setPageParam(PageParam.builderPage().currentPage(1).pageSize(100).build());
         person.setSalary(new BigDecimal("67700"));
         person.setPersonName("张");
         person.setAddress("天府");
         person.setCreateTimeStart(LocalDateTime.now().minusDays(300));
         person.setCreateTimeEnd(LocalDateTime.now());
-        List<PersonEsEntity> res=personEsModelRepository.queryByMode(person);
-        log.info("res:{}",JsonParser.asJson(res));
-        }
+        List<PersonEsEntity> res = personEsModelRepository.queryByMode(person);
+        log.info("res:{}", JsonParser.asJson(res));
+    }
+}
 ```
 
 5)查询效果
@@ -232,15 +243,23 @@ public interface PersonEsParamRepository extends BaseESRepository<PersonEsEntity
 
 ```java
 
-/**
- * List查询测试
- */
-@Test
-public void queryListResponse(){
-        List<String> personNoList=Lists.newArrayList("US2022060100001","US2022060100002");
-        List<PersonEsEntity> res=personEsParamRepository.queryList(personNoList);
-        log.info("res:{}",JsonParser.asJson(res));
-        }
+@Slf4j
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class EsEngineProxyModelQueryTest {
+    @Resource
+    private PersonEsParamRepository personEsParamRepository;
+
+    /**
+     * List查询测试
+     */
+    @Test
+    public void queryListResponse() {
+        List<String> personNoList = Lists.newArrayList("US2022060100001", "US2022060100002");
+        List<PersonEsEntity> res = personEsParamRepository.queryList(personNoList);
+        log.info("res:{}", JsonParser.asJson(res));
+    }
+}
 
 ```
 
@@ -270,13 +289,261 @@ public void queryListResponse(){
 
 ### 2.sql查询
 
+1)声明查询接口
+
+```java
+
+@EsQueryIndex("person_es_index")
+public interface PersonEsSqlRepository extends BaseEsRepository<PersonEsEntity, Long> {
+    /**
+     * 对象参数测试
+     * @param person
+     * @return
+     */
+    @EsQuery("SELECT * FROM person_es_index WHERE status = #{person.status}  AND sex = #{person.sex}")
+    List<PersonEntity> pageQuery(PersonEntity person);
+}
+```
+
+2)测试示例
+
+```java
+/**
+ * 对象参数查询 测试
+ */
+@Slf4j
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class EsEngineProxySqlQueryTest {
+    @Resource
+    private PersonEsSqlRepository personEsSqlRepository;
+
+    @Test
+    public void testSqlPageQuery() {
+        PersonEntity person = new PersonEntity();
+        person.setStatus(1);
+        person.setSex(1);
+        List<PersonEntity> results = personEsSqlRepository.pageQuery(person);
+        System.out.println(JsonParser.asJson(results));
+    }
+}
+```
+
+3)查询效果
+
+```
+2022-06-21 15:46:24.781INFO 52845---[main]c.e.e.b.c.q.sql.EsSqlExecuteHandler:http://localhost:9200/_sql?format=json
+2022-06-21 15:46:24.781INFO 52845---[main]c.e.e.b.c.q.sql.EsSqlExecuteHandler:{"query":"SELECT * FROM person_es_index WHERE status = 1  AND sex = 1"}
+```
+
 ### 3.扩展查询
 
 #### 3.1 mybatis
 
+1)添加maven依赖
+
+```xml
+
+<dependency>
+    <groupId>com.elasticsearch.engine</groupId>
+    <artifactId>elasticsearch-engine-mybatis</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+</dependency>
+
+```
+
+2)mapper接口添加对应的es查询注解
+
+```java
+
+@EsQueryIndex("person_es_index")
+@Mapper
+public interface PersonMapper {
+
+    @MybatisEsQuery
+    PersonEsEntity queryOne(@Param("personNo") String personNo, @Param("status") Integer status);
+}
+```
+
+3)测试示例
+
+```java
+
+@Slf4j
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class EsEngineExtendMybatisQueryTest {
+    @Resource
+    private PersonMapper personMapper;
+
+    /**
+     * 单个查询
+     */
+    @Test
+    public void testSqlOne() {
+        PersonEsEntity personEsEntity = personMapper.queryOne("US2022060100001", 1);
+        log.info("res:{}", JsonParser.asJson(personEsEntity));
+    }
+}
+```
+
+4)查询效果
+
+```
+2022-06-21 15:54:48.017  INFO 53454 --- [           main] c.e.e.m.i.MybatisEsQueryInterceptor      : 原始sql: SELECT * FROM person WHERE person_no = ? AND status = ?
+2022-06-21 15:54:48.075  INFO 53454 --- [           main] c.e.e.m.i.MybatisEsQueryInterceptor      : 改写后sql: SELECT * FROM person_es_index WHERE personNo = ? AND status = ?
+2022-06-21 15:54:48.076  INFO 53454 --- [           main] c.e.e.m.i.MybatisEsQueryInterceptor      : 替换参数后sql: SELECT * FROM person_es_index WHERE personNo = 'US2022060100001' AND status = 1
+2022-06-21 15:54:48.076  INFO 53454 --- [           main] c.e.e.b.c.q.sql.EsSqlExecuteHandler      : http://localhost:9200/_sql?format=json
+2022-06-21 15:54:48.076  INFO 53454 --- [           main] c.e.e.b.c.q.sql.EsSqlExecuteHandler      : {"query":"SELECT * FROM person_es_index WHERE personNo = 'US2022060100001' AND status = 1"}
+```
+
 #### 3.2 jpa
 
+1)添加maven依赖
+
+```xml
+
+<dependency>
+    <groupId>com.elasticsearch.engine</groupId>
+    <artifactId>elasticsearch-engine-jpa</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+</dependency>
+
+```
+
+2)repository接口添加对应的es查询注解
+
+```java
+
+@EsQueryIndex("person_es_index")
+public interface PersonRepository extends JpaRepository<PersonEntity, Long> {
+
+    @JpaEsQuery
+    PersonEntity getByPersonNoAndStatus(String personNo, Integer status);
+}
+```
+
+3)测试示例
+
+```java
+
+@Slf4j
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class EsEngineExtendJpaQueryTest {
+    @Resource
+    private PersonRepository personRepository;
+
+    /**
+     * 单个查询
+     */
+    @Test
+    public void testSqlOne() {
+        PersonEntity personEntity = personRepository.getByPersonNoAndStatus("US2022060100001", 1);
+        log.info("res:{}", JsonParser.asJson(personEntity));
+    }
+}
+```
+
+4)查询效果
+
+```
+2022-06-21 16:00:20.962  INFO 53773 --- [           main] c.e.e.b.c.parse.sql.EsSqlQueryHelper     : 原始sql:  select personenti0_.id as id1_1_, personenti0_.address as address2_1_, personenti0_.company as company3_1_, personenti0_.create_time as create_t4_1_, personenti0_.create_user as create_u5_1_, personenti0_.person_name as person_n6_1_, personenti0_.person_no as person_n7_1_, personenti0_.phone as phone8_1_, personenti0_.salary as salary9_1_, personenti0_.sex as sex10_1_, personenti0_.status as status11_1_ from person personenti0_ where personenti0_.person_no='US2022060100001' and personenti0_.status=1
+2022-06-21 16:00:21.008  INFO 53773 --- [           main] c.e.e.b.c.parse.sql.EsSqlQueryHelper     : 改写后sql: SELECT id, address, company, createTime, createUser, personName, personNo, phone, salary, sex, status FROM person_es_index WHERE personNo = 'US2022060100001' AND status = 1
+2022-06-21 16:00:21.009  INFO 53773 --- [           main] c.e.e.b.c.parse.sql.EsSqlQueryHelper     : 替换参数后sql: SELECT id, address, company, createTime, createUser, personName, personNo, phone, salary, sex, status FROM person_es_index WHERE personNo = 'US2022060100001' AND status = 1
+2022-06-21 16:00:21.010  INFO 53773 --- [           main] c.e.e.b.c.q.sql.EsSqlExecuteHandler      : http://localhost:9200/_sql?format=json
+2022-06-21 16:00:21.010  INFO 53773 --- [           main] c.e.e.b.c.q.sql.EsSqlExecuteHandler      : {"query":"SELECT id, address, company, createTime, createUser, personName, personNo, phone, salary, sex, status FROM person_es_index WHERE personNo = 'US2022060100001' AND status = 1"}
+```
+
 #### 3.3 jooq
+
+1)添加maven依赖
+
+```xml
+
+<dependency>
+    <groupId>com.elasticsearch.engine</groupId>
+    <artifactId>elasticsearch-engine-jooq</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+</dependency>
+
+```
+
+2)dao实现类添加对应的es查询注解
+
+```java
+
+@EsQueryIndex("person_es_index")
+@Component
+public class PersonJooqDaoImpl implements PersonJooqDao {
+
+    @Autowired
+    private DSLContext context;
+
+    private final Person PERSON = Tables.PERSON;
+
+    /**
+     * @param personNo
+     * @param status
+     * @return
+     */
+    @JooqEsQuery
+    @Override
+    public PersonEntity getByPersonNoAndStatus(String personNo, Integer status) {
+        return context.selectFrom(PERSON).where(
+                PERSON.PERSON_NO.eq(personNo).and(PERSON.STATUS.eq(status.byteValue()))
+        ).fetchOneInto(PersonEntity.class);
+    }
+}
+```
+
+3)测试示例
+
+```java
+
+@Slf4j
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class EsEngineExtendJooqQueryTest {
+    @Resource
+    private PersonJooqDao personJooqDao;
+
+    /**
+     * 单个查询
+     */
+    @Test
+    public void testSqlOne() {
+        PersonEntity personEntity = personJooqDao.getByPersonNoAndStatus("US2022060100001", 4);
+        log.info("res:{}", JsonParser.asJson(personEntity));
+    }
+}
+```
+
+4)查询效果
+
+```
+2022-06-21 16:03:05.629  INFO 53945 --- [           main] c.e.e.b.c.parse.sql.EsSqlQueryHelper     : 原始sql: select 
+  `user`.`person`.`id`, 
+  `user`.`person`.`person_no`, 
+  `user`.`person`.`person_name`, 
+  `user`.`person`.`phone`, 
+  `user`.`person`.`salary`, 
+  `user`.`person`.`company`, 
+  `user`.`person`.`status`, 
+  `user`.`person`.`sex`, 
+  `user`.`person`.`address`, 
+  `user`.`person`.`create_time`, 
+  `user`.`person`.`create_user`
+from `user`.`person`
+where (
+  `user`.`person`.`person_no` = 'US2022060100001'
+  and `user`.`person`.`status` = 4
+)
+2022-06-21 16:03:05.674  INFO 53945 --- [           main] c.e.e.b.c.parse.sql.EsSqlQueryHelper     : 改写后sql: SELECT `id`, `personNo`, `personName`, `phone`, `salary`, `company`, `status`, `sex`, `address`, `createTime`, `createUser` FROM person_es_index WHERE (`personNo` = 'US2022060100001' AND `status` = 4)
+2022-06-21 16:03:05.675  INFO 53945 --- [           main] c.e.e.b.c.parse.sql.EsSqlQueryHelper     : 替换参数后sql: SELECT id, personNo, personName, phone, salary, company, status, sex, address, createTime, createUser FROM person_es_index WHERE (personNo = 'US2022060100001' AND status = 4)
+2022-06-21 16:03:05.676  INFO 53945 --- [           main] c.e.e.b.c.q.sql.EsSqlExecuteHandler      : http://localhost:9200/_sql?format=json
+2022-06-21 16:03:05.676  INFO 53945 --- [           main] c.e.e.b.c.q.sql.EsSqlExecuteHandler      : {"query":"SELECT id, personNo, personName, phone, salary, company, status, sex, address, createTime, createUser FROM person_es_index WHERE (personNo = 'US2022060100001' AND status = 4)"}
+```
 
 ## 使用示例
 

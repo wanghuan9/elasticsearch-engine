@@ -546,6 +546,54 @@ where (
 2022-06-21 16:03:05.676  INFO 53945 --- [           main] c.e.e.b.c.q.sql.EsSqlExecuteHandler      : http://localhost:9200/_sql?format=json
 2022-06-21 16:03:05.676  INFO 53945 --- [           main] c.e.e.b.c.q.sql.EsSqlExecuteHandler      : {"query":"SELECT id, personNo, personName, phone, salary, company, status, sex, address, createTime, createUser FROM person_es_index WHERE (personNo = 'US2022060100001' AND status = 4)"}
 ```
+#### 3.4 回表查询(以mybatis为例)
+
+1)mapper接口添加对应的es查询注解
+
+```java
+
+@EsQueryIndex("person_es_index")
+@Mapper
+public interface PersonMapper {
+
+    @MybatisEsQuery(backColumn = "id",backColumnType = Long.class)
+    List<PersonEsEntity> findBySex(@Param("sex") Integer sex);
+
+}
+```
+
+3)测试示例
+
+```java
+
+@Slf4j
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class EsEngineExtendMybatisQueryTest {
+    @Resource
+    private PersonMapper personMapper;
+
+    /**
+     * 回表查询测试 id
+     */
+    @Test
+    public void testSqlBackById() {
+        List<PersonEsEntity> results = personMapper.findBySex(1);
+        System.out.println(JsonParser.asJson(results));
+    }
+}
+```
+
+4)查询效果
+
+```
+2022-06-22 00:46:23.302  INFO 7723 --- [           main] c.e.e.m.i.MybatisEsQueryInterceptor      : 原始sql: SELECT * FROM person WHERE  sex = ?
+2022-06-22 00:46:23.347  INFO 7723 --- [           main] c.e.e.m.i.MybatisEsQueryInterceptor      : 改写后sql: SELECT id FROM person_es_index WHERE sex = ?
+2022-06-22 00:46:23.348  INFO 7723 --- [           main] c.e.e.m.i.MybatisEsQueryInterceptor      : 替换参数后sql: SELECT id FROM person_es_index WHERE sex = 1
+2022-06-22 00:46:23.349  INFO 7723 --- [           main] c.e.e.b.c.q.sql.EsSqlExecuteHandler      : http://localhost:9200/_sql?format=json
+2022-06-22 00:46:23.349  INFO 7723 --- [           main] c.e.e.b.c.q.sql.EsSqlExecuteHandler      : {"query":"SELECT id FROM person_es_index WHERE sex = 1"}
+2022-06-22 00:46:24.480  INFO 7723 --- [           main] c.e.e.m.i.MybatisEsQueryInterceptor      : 回表sql :  SELECT * FROM person WHERE sex = ? AND id IN (7, 13, 17, 6, 9, 14, 16, 23, 24)
+```
 
 ## 使用示例
 

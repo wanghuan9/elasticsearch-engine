@@ -573,7 +573,54 @@ where (
 elasticsearch 存储的字段为mysql多张表聚合的字段,mysql 原本的查询为关联多表查询
 
 ###### 3.2.4.2 关联查询示例
+1)mapper接口添加对应的es查询注解
 
+```java
+
+@EsQueryIndex("person_es_index")
+@Mapper
+public interface PersonExtendMapper {
+    int insertList(List<PersonExtendEntity> persons);
+
+    @MybatisEsQuery
+    List<PersonEsEntity> queryList(@Param("status") Integer status, @Param("hobby")String hobby);
+}
+
+```
+
+3)测试示例
+
+```java
+
+@Slf4j
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class EsEngineExtendMybatisQueryTest {
+    @Resource
+    private PersonExtendMapper personExtendMapper;
+
+    /**
+     * 关联查询测试
+     */
+    @Test
+    public void testJoinQueryList() {
+        List<PersonEsEntity> results = personExtendMapper.queryList(4,"踢足球");
+        System.out.println(JsonParser.asJson(results));
+    }
+}
+```
+
+4)查询效果
+
+```
+2022-06-23 00:23:00.012  INFO 37281 --- [           main] c.e.e.m.i.MybatisEsQueryInterceptor      : 原始sql: SELECT * FROM person p INNER JOIN person_extend pe
+        ON p.person_no = pe.person_no
+        WHERE p.status = ? AND pe.hobby=?
+2022-06-23 00:23:00.052  INFO 37281 --- [           main] c.e.e.m.i.MybatisEsQueryInterceptor      : 改写后sql: SELECT * FROM person_es_index WHERE status = ? AND hobby = ?
+2022-06-23 00:23:00.053  INFO 37281 --- [           main] c.e.e.m.i.MybatisEsQueryInterceptor      : 替换参数后sql: SELECT * FROM person_es_index WHERE status = 4 AND hobby = '踢足球'
+2022-06-23 00:23:00.054  INFO 37281 --- [           main] c.e.e.b.c.q.sql.EsSqlExecuteHandler      : http://localhost:9200/_sql?format=json
+2022-06-23 00:23:00.054  INFO 37281 --- [           main] c.e.e.b.c.q.sql.EsSqlExecuteHandler      : {"query":"SELECT * FROM person_es_index WHERE status = 4 AND hobby = '踢足球'"}
+```
 
 ##### 3.2.5 回表查询(以mybatis为例)
 ###### 3.2.5.1 回表查询说明

@@ -340,7 +340,27 @@ public class EsEngineProxySqlQueryTest {
 
 ### 3.扩展查询
 
-#### 3.1 mybatis
+#### 3.1 扩展查询说明
+
+##### 3.1.1扩展查询原理
+
+###### 1)普通查询
+拦截orm框架执行过程中生成的sql, 对sql进行改写后, 查询es返回结果
+
+###### 2)回表查询
+拦截orm框架执行过程中生成的sql, 对sql进行改写后, 查询es返回唯一索引,通过唯一索引查询 mysql返回明细
+
+##### 3.1.1 sql改写规则
+
+①替换表名为es索引名
+
+②清除关联查询
+
+③清除from,where,group by,having,order by 中的表别名(t.xx,d.xx)
+
+#### 3.2 扩展查询示例
+
+##### 3.2.1 mybatis
 
 1)添加maven依赖
 
@@ -399,7 +419,7 @@ public class EsEngineExtendMybatisQueryTest {
 2022-06-21 15:54:48.076  INFO 53454 --- [           main] c.e.e.b.c.q.sql.EsSqlExecuteHandler      : {"query":"SELECT * FROM person_es_index WHERE personNo = 'US2022060100001' AND status = 1"}
 ```
 
-#### 3.2 jpa
+##### 3.2.2 jpa
 
 1)添加maven依赖
 
@@ -457,7 +477,7 @@ public class EsEngineExtendJpaQueryTest {
 2022-06-21 16:00:21.010  INFO 53773 --- [           main] c.e.e.b.c.q.sql.EsSqlExecuteHandler      : {"query":"SELECT id, address, company, createTime, createUser, personName, personNo, phone, salary, sex, status FROM person_es_index WHERE personNo = 'US2022060100001' AND status = 1"}
 ```
 
-#### 3.3 jooq
+##### 3.2.3 jooq
 
 1)添加maven依赖
 
@@ -546,8 +566,30 @@ where (
 2022-06-21 16:03:05.676  INFO 53945 --- [           main] c.e.e.b.c.q.sql.EsSqlExecuteHandler      : http://localhost:9200/_sql?format=json
 2022-06-21 16:03:05.676  INFO 53945 --- [           main] c.e.e.b.c.q.sql.EsSqlExecuteHandler      : {"query":"SELECT id, personNo, personName, phone, salary, company, status, sex, address, createTime, createUser FROM person_es_index WHERE (personNo = 'US2022060100001' AND status = 4)"}
 ```
-#### 3.4 回表查询(以mybatis为例)
+##### 3.2.4 关联查询(以mybatis为例)
+###### 3.2.4.1 关联查询说明
+1)应用场景
 
+elasticsearch 存储的字段为mysql多张表聚合的字段,mysql 原本的查询为关联多表查询
+
+###### 3.2.4.2 关联查询示例
+
+
+##### 3.2.5 回表查询(以mybatis为例)
+###### 3.2.5.1 回表查询说明
+1)应用场景
+
+ ① elasticsearch 存储的非全量字段,而只有搜索字段, 通过es搜索唯一索引后,再用唯一索引回表查询mysql
+
+ ② elasticsearch 存在延迟,通过es搜索出es搜索唯一索引后,再用唯一索引回表查询mysql
+
+2)sql改写规则
+
+ ① es执行的sql,再原改写的基础上 改写查询字段仅查询回表字段
+
+ ② 回表sql, 再原orm框架sql基础上拼接 es执行结果的回表查询条件
+
+###### 3.2.5.2 回表查询示例
 1)mapper接口添加对应的es查询注解
 
 ```java

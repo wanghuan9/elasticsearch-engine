@@ -18,9 +18,10 @@ public class MybatisBackDto extends BackDto {
     public static BackDto hasBack(Method method) {
         MybatisEsQuery esQuery = method.getAnnotation(MybatisEsQuery.class);
         String backColumn = esQuery.backColumn();
+        String tableName = esQuery.tableName();
         Class<?> backColumnTyp = esQuery.backColumnType();
         if (StringUtils.isNotEmpty(backColumn) && Objects.nonNull(backColumnTyp) && !backColumnTyp.equals(Objects.class)) {
-            return BackDto.builder().backColumn(backColumn).backColumnTyp(backColumnTyp).build();
+            return BackDto.builder().tableName(tableName).backColumn(backColumn).backColumnTyp(backColumnTyp).build();
         }
         return null;
     }

@@ -13,6 +13,14 @@ import java.lang.annotation.*;
 @Documented
 public @interface MybatisEsQuery {
 
+    
+    /**
+     * 回表字段所属的表名或别名
+     *
+     * @return
+     */
+    String tableName() default "";
+    
     /**
      * 回表字段
      *

@@ -545,6 +545,54 @@ where (
 2022-06-21 16:03:05.676 INFO 53945 --- [main] c.e.e.b.c.q.sql.EsSqlExecuteHandler: http://localhost:9200/_sql?format=json
 2022-06-21 16:03:05.676 INFO 53945 --- [ main] c.e.e.b.c.q.sql.EsSqlExecuteHandler : {"query":"SELECT id, personNo, personName, phone, salary, company, status, sex, address, createTime, createUser FROM person_es_index WHERE (personNo = 'US2022060100001' AND status = 4)"}
 ````
+#### 3.4 Return table query (take mybatis as an example)
+
+1) Add the corresponding es query annotation to the mapper interface
+
+````java
+
+@EsQueryIndex("person_es_index")
+@Mapper
+public interface PersonMapper {
+
+    @MybatisEsQuery(backColumn = "id",backColumnType = Long.class)
+    List<PersonEsEntity> findBySex(@Param("sex") Integer sex);
+
+}
+````
+
+3) Test example
+
+````java
+
+@Slf4j
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class EsEngineExtendMybatisQueryTest {
+    @Resource
+    private PersonMapper personMapper;
+
+    /**
+     * Return form query test id
+     */
+    @Test
+    public void testSqlBackById() {
+        List<PersonEsEntity> results = personMapper.findBySex(1);
+        System.out.println(JsonParser.asJson(results));
+    }
+}
+````
+
+4) Query effect
+
+````
+2022-06-22 00:46:23.302 INFO 7723 --- [main] c.e.e.m.i.MybatisEsQueryInterceptor: raw sql: SELECT * FROM person WHERE sex = ?
+2022-06-22 00:46:23.347 INFO 7723 --- [main] c.e.e.m.i.MybatisEsQueryInterceptor : After rewriting sql: SELECT id FROM person_es_index WHERE sex = ?
+2022-06-22 00:46:23.348 INFO 7723 --- [main] c.e.e.m.i.MybatisEsQueryInterceptor : After replacing parameters sql: SELECT id FROM person_es_index WHERE sex = 1
+2022-06-22 00:46:23.349 INFO 7723 --- [main] c.e.e.b.c.q.sql.EsSqlExecuteHandler: http://localhost:9200/_sql?format=json
+2022-06-22 00:46:23.349 INFO 7723 --- [main] c.e.e.b.c.q.sql.EsSqlExecuteHandler : {"query":"SELECT id FROM person_es_index WHERE sex = 1"}
+2022-06-22 00:46:24.480 INFO 7723 --- [main] c.e.e.m.i.MybatisEsQueryInterceptor : return table sql : SELECT * FROM person WHERE sex = ? AND id IN (7, 13, 17, 6, 9, 14, 16 , 23, 24)
+````
 
 ## Usage example
 

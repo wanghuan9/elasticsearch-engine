@@ -14,6 +14,13 @@ import java.lang.annotation.*;
 public @interface JpaEsQuery {
 
     /**
+     * 回表字段所属的表名或别名
+     *
+     * @return
+     */
+    String tableName() default "";
+
+    /**
      * 回表字段
      *
      * @return

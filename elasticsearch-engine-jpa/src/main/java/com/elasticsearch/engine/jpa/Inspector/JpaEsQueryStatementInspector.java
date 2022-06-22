@@ -6,6 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.resource.jdbc.spi.StatementInspector;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 /**
  * @author wanghuan
  * @description jpa sql切es查询拦截器
@@ -50,6 +52,10 @@ public class JpaEsQueryStatementInspector implements StatementInspector {
     
     @Override
     public String inspect(String sql) {
+        //非es查询
+        if (Objects.isNull(ThreadLocalUtil.get(CommonConstant.IS_ES_QUERY))) {
+            return sql;
+        }
         //非select语句直接返回
         if (!sql.startsWith(CommonConstant.SELECT_SQL_PREFIX_LOWER) && !sql.startsWith(CommonConstant.SELECT_SQL_PREFIX_UPPER)) {
             return sql;

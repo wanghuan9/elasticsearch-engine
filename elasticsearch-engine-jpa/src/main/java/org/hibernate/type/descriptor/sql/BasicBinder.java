@@ -82,6 +82,10 @@ public abstract class BasicBinder<J> implements ValueBinder<J> {
      * @param statement
      */
     private void inspect(PreparedStatement statement) {
+        //非es查询
+        if (Objects.isNull(ThreadLocalUtil.get(CommonConstant.IS_ES_QUERY))) {
+            return;
+        }
         String st = statement.toString();
         //bind方法会被多次调用,解析一个参数调用一次
         //包含 NOT SPECIFIED 说明jpa参数解析还未完成, 直接返回让继续解析. 等全部解析完成再处理后续逻辑
@@ -93,9 +97,8 @@ public abstract class BasicBinder<J> implements ValueBinder<J> {
         if (!sql.trim().startsWith(CommonConstant.SELECT_SQL_PREFIX_LOWER) && !sql.trim().startsWith(CommonConstant.SELECT_SQL_PREFIX_UPPER)) {
             return;
         }
-        Boolean isEsQuery = ThreadLocalUtil.get(CommonConstant.IS_ES_QUERY);
-        if (Objects.nonNull(isEsQuery) && isEsQuery) {
-            ThreadLocalUtil.remove(CommonConstant.IS_ES_QUERY);
+        Boolean isEsQuery = ThreadLocalUtil.remove(CommonConstant.IS_ES_QUERY);
+        if (Objects.nonNull(isEsQuery)) {
             throw new EsEngineJpaExecuteException(sql);
         }
     }

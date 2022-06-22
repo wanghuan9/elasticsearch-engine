@@ -96,12 +96,13 @@ public class SqlParserHelper {
      * @throws Exception
      */
     private static void setBackWhereItem(PlainSelect plain, BackDto backDto, List<?> esResult) throws Exception {
+        String tableName = StringUtils.isEmpty(backDto.getTableName()) ? getTableName(plain) : backDto.getTableName();
         //ColumnName es驼峰 转 mysql下划线 
         String backColumn = backDto.getBackColumn();
         if (!EsEngineConfig.isNamingStrategy()) {
             backColumn = CaseFormatUtils.camelToUnderscore(backColumn);
         }
-        String backSql = " " + backColumn + " in (" + SqlParamParseHelper.getListParameterValue(esResult) + ")";
+        String backSql = " " + tableName + "." + backColumn + " in (" + SqlParamParseHelper.getListParameterValue(esResult) + ")";
         if (StringUtils.isNotEmpty(backSql)) {
             if (plain.getWhere() == null) {
                 plain.setWhere(CCJSqlParserUtil.parseCondExpression(backSql));
@@ -109,6 +110,21 @@ public class SqlParserHelper {
                 plain.setWhere(new AndExpression(plain.getWhere(), CCJSqlParserUtil.parseCondExpression(backSql)));
             }
         }
+    }
+
+    /**
+     * 获取表名(关联查询时 表名为主表表名)
+     *
+     * @param plain
+     * @return
+     */
+    public static String getTableName(PlainSelect plain) {
+        FromItem fromItem = plain.getFromItem();
+        String fromItemName = "";
+        if (fromItem instanceof Table) {
+            fromItemName = ((Table) fromItem).getName();
+        }
+        return fromItem.getAlias() == null ? fromItemName : fromItem.getAlias().getName();
     }
 
     /**

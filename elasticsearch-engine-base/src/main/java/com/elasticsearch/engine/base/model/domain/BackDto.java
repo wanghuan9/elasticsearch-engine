@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BackDto {
 
+    private String tableName;
     private String backColumn;
     private Class<?> backColumnTyp;
    

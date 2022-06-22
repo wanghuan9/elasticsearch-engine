@@ -37,21 +37,35 @@ public class JooqEsQueryExecuteListener extends DefaultExecuteListener implement
 
     /**
      * 解析完sql
+     *
      * @param ctx
      */
     @Override
     public void renderEnd(ExecuteContext ctx) {
+        //非es查询
+        if (Objects.isNull(ThreadLocalUtil.get(CommonConstant.IS_ES_QUERY))) {
+            return;
+        }
+        if (StringUtils.isEmpty(ctx.sql())) {
+            return;
+        }
+        //非select语句直接返回
+        if (!Objects.requireNonNull(ctx.sql()).startsWith(CommonConstant.SELECT_SQL_PREFIX_LOWER) && !Objects.requireNonNull(ctx.sql()).startsWith(CommonConstant.SELECT_SQL_PREFIX_UPPER)) {
+            return;
+        }
         String backSql = ThreadLocalUtil.get(CommonConstant.BACK_QUERY_SQL);
         if (StringUtils.isNotEmpty(backSql)) {
             //test
 //            ctx.sql("SELECT `user`.`person`.`id`, `user`.`person`.`person_no`, `user`.`person`.`person_name`, `user`.`person`.`phone`, `user`.`person`.`salary`, `user`.`person`.`company`, `user`.`person`.`status`, `user`.`person`.`sex`, `user`.`person`.`address`, `user`.`person`.`create_time`, `user`.`person`.`create_user` FROM `user`.`person` WHERE `user`.`person`.`status` = ? AND person_no IN ('US2022060100001', 'US2022060100023')");
             ctx.sql(backSql);
-            ThreadLocalUtil.remove(CommonConstant.IS_ES_QUERY);
+        } else {
+            ThreadLocalUtil.set(CommonConstant.JPA_NATIVE_SQL, ctx.sql());
         }
     }
 
     /**
      * 执行结束
+     *
      * @param ctx
      */
     @Override
@@ -75,17 +89,23 @@ public class JooqEsQueryExecuteListener extends DefaultExecuteListener implement
 
     /**
      * 绑定完sql参数
+     *
      * @param ctx
      */
     @Override
     public void bindEnd(ExecuteContext ctx) {
+        Boolean isEsQuery = ThreadLocalUtil.get(CommonConstant.IS_ES_QUERY);
+        if (Objects.isNull(isEsQuery)) {
+            return;
+        }
         String sql = ctx.query().toString();
         //非select语句直接返回
         if (!sql.trim().startsWith(CommonConstant.SELECT_SQL_PREFIX_LOWER) && !sql.trim().startsWith(CommonConstant.SELECT_SQL_PREFIX_UPPER)) {
             return;
         }
-        Boolean isEsQuery = ThreadLocalUtil.remove(CommonConstant.IS_ES_QUERY);
-        if (Objects.nonNull(isEsQuery) && isEsQuery) {
+        String backSql = ThreadLocalUtil.get(CommonConstant.BACK_QUERY_SQL);
+       
+        if (StringUtils.isEmpty(backSql)) {
             throw new EsEngineJpaExecuteException(sql);
         }
     }

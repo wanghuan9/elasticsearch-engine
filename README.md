@@ -705,3 +705,18 @@ elasticsearch 版本支持 v6 和 v7
 ## 参考及引用
 
 本项目 注解查询参考了 开源项目 https://gitee.com/JohenTeng/elasticsearch-helper (感谢大佬)
+
+## 标签
+
+elasticsearchsql, elasticsearchjdbc,elasticsearchmybatis,elasticsearchjpa,elasticsearchjooq,
+elasticsearchquery,elasticsearch查询,elasticsearch查询引擎,elasticsearch查询工具, Elasticsearchapi,Elasticsearchclient,Use SQL to
+query Elasticsearch,
+
+sql拦截,sql拦截器, jpasql拦截,mybatissql拦截,Mybatis拦截器,jpa拦截器,jooq拦截器,
+jooqsql拦截,sql拦截参数填充,Interceptor,StatementInspector,DefaultExecuteListener
+
+hibernate 拦截sql ,输出sql语句, 获取sql语句,JPA 打印原生sql
+
+jsqlparser,sql解析器,向sql语句中插入where条件,mybatis拦截器，修改sql,JSqlParser,JsqlParser插件用来对于SQL语句进行解析和组装,完整的SQL语句打印,打印完整SQL语句(无问号)
+,Hibernate拦截器
+,PlainSelect.setFromItem

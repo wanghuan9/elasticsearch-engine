@@ -715,7 +715,7 @@ query Elasticsearch,
 sql拦截,sql拦截器, jpasql拦截,mybatissql拦截,Mybatis拦截器,jpa拦截器,jooq拦截器,
 jooqsql拦截,sql拦截参数填充,Interceptor,StatementInspector,DefaultExecuteListener
 
-hibernate 拦截sql ,输出sql语句, 获取sql语句,JPA 打印原生sql,输出真实的sql语句,输出mybatis完整SQL语句
+hibernate 拦截sql ,输出sql语句, 获取sql语句,JPA 打印原生sql,输出真实的sql语句,输出mybatis完整SQL语句,输出jpa完整SQL语句,输出jooq完整SQL语句
 
 jsqlparser,sql解析器,向sql语句中插入where条件,mybatis拦截器，修改sql,JSqlParser,JsqlParser插件用来对于SQL语句进行解析和组装,完整的SQL语句打印,打印完整SQL语句(无问号)
 ,Hibernate拦截器

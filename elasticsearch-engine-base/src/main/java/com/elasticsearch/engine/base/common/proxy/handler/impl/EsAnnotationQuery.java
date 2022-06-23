@@ -53,7 +53,7 @@ public class EsAnnotationQuery implements EsQueryProxyExecuteHandler {
             //有一个或多个参数 && 都是基础类型(包括List,LocalDateTime,LocalDate,BigDecimal)
             queryEnum = EsAnnotationQueryEnum.ANNOTATION_PARAM_QUERY;
         } else {
-            throw new EsEngineQueryException(prefix + "方法参数异常: 查询参数不被支持,仅支持单个引用类型的参数 or 一个或多个基本类型参数(包括List)");
+            throw new EsEngineQueryException(prefix + "方法参数异常: 查询参数不被支持,仅支持单个引用类型的参数 or 一个或多个基本类型参数(额外包括 List,LocalDateTime,LocalDate,BigDecimal)");
         }
         return esAnnotationQueryFactory.getBean(queryEnum).handle(proxy, method, args);
     }

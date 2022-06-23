@@ -1,11 +1,12 @@
 package com.elasticsearch.engine.base.common.parse.sql;
 
 import com.elasticsearch.engine.base.common.utils.CaseFormatUtils;
-import com.elasticsearch.engine.base.model.exception.EsEngineQueryException;
 import com.elasticsearch.engine.base.config.EsEngineConfig;
 import com.elasticsearch.engine.base.model.annotion.EsQueryIndex;
 import com.elasticsearch.engine.base.model.domain.BackDto;
+import com.elasticsearch.engine.base.model.exception.EsEngineQueryException;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
@@ -22,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -79,7 +81,7 @@ public class SqlParserHelper {
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         Select select = (Select) parserManager.parse(new StringReader(oldSql));
         PlainSelect plain = (PlainSelect) select.getSelectBody();
-        //where 别名清除
+        //where 添加回表条件
         setBackWhereItem(plain, backDto, esResult);
 //        plain.setGroupByElement(null);
 //        plain.setHaving(null);
@@ -96,7 +98,7 @@ public class SqlParserHelper {
      * @throws Exception
      */
     private static void setBackWhereItem(PlainSelect plain, BackDto backDto, List<?> esResult) throws Exception {
-        String tableName = StringUtils.isEmpty(backDto.getTableName()) ? getTableName(plain) : backDto.getTableName();
+        String tableName = getBackTableName(plain, backDto);
         //ColumnName es驼峰 转 mysql下划线 
         String backColumn = backDto.getBackColumn();
         if (!EsEngineConfig.isNamingStrategy()) {
@@ -113,18 +115,61 @@ public class SqlParserHelper {
     }
 
     /**
-     * 获取表名(关联查询时 表名为主表表名)
+     * 回去回表查询表名
+     * @param plain
+     * @param backDto
+     * @return
+     */
+    private static String getBackTableName(PlainSelect plain, BackDto backDto) {
+        String tableName;
+        if (StringUtils.isNotEmpty(backDto.getTableName())) {
+            tableName = getJoinTableName(plain).get(backDto.getTableName());
+        } else {
+            tableName = getDefaultFromTableName(plain);
+        }
+        if (StringUtils.isEmpty(tableName)) {
+            throw new EsEngineQueryException("回表查询指定的表名不存在: " + backDto.getTableName());
+        }
+        return tableName;
+    }
+
+    /**
+     * 获取表名(关联查询时 默认表名为主表表名)
      *
      * @param plain
      * @return
      */
-    public static String getTableName(PlainSelect plain) {
+    private static String getDefaultFromTableName(PlainSelect plain) {
         FromItem fromItem = plain.getFromItem();
         String fromItemName = "";
         if (fromItem instanceof Table) {
             fromItemName = ((Table) fromItem).getName();
         }
         return fromItem.getAlias() == null ? fromItemName : fromItem.getAlias().getName();
+    }
+
+    /**
+     * 获取表名(主表表名,及关联表表名, key为原始表名, value为原始表名或别名)
+     *
+     * @param plain
+     * @return
+     */
+    private static Map<String, String> getJoinTableName(PlainSelect plain) {
+        List<FromItem> fromItems = Lists.newArrayList();
+        Map<String, String> tableNames = Maps.newHashMap();
+        fromItems.add(plain.getFromItem());
+        if (CollectionUtils.isNotEmpty(plain.getJoins())) {
+            plain.getJoins().forEach(item -> fromItems.add(item.getRightItem()));
+        }
+
+        fromItems.forEach(fromItem -> {
+            String fromItemName = "";
+            if (fromItem instanceof Table) {
+                fromItemName = ((Table) fromItem).getName().replaceAll("`", "");
+            }
+            tableNames.put(fromItemName, fromItem.getAlias() == null ? fromItemName : fromItem.getAlias().getName());
+        });
+        return tableNames;
     }
 
     /**

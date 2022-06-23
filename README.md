@@ -10,6 +10,8 @@ elasticsearch-engine是基于 HighLevelRestClient 封装的 ElasticSearch 查询
 并可以通过配置中心配置动态切换ElasticSearch和Mysql之间的查询,
 实现ElasticSearch查询降级.**
 
+github地址: https://github.com/wanghuan9/elasticsearch-engine
+
 ## 主要功能特性
 
 1. 基于注解的方式实现elasticsearch的查询

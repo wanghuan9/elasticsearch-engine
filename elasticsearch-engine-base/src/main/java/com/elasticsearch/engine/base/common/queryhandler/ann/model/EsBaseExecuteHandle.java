@@ -4,11 +4,13 @@ import com.elasticsearch.engine.base.common.parse.ann.EsResponseParse;
 import com.elasticsearch.engine.base.common.parse.ann.model.EsQueryEngine;
 import com.elasticsearch.engine.base.common.parse.ann.model.QueryAnnParser;
 import com.elasticsearch.engine.base.common.utils.JsonParser;
+import com.elasticsearch.engine.base.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.base.config.EsEngineConfig;
 import com.elasticsearch.engine.base.holder.AbstractEsRequestHolder;
 import com.elasticsearch.engine.base.hook.RequestHook;
 import com.elasticsearch.engine.base.hook.ResponseHook;
 import com.elasticsearch.engine.base.mapping.annotation.Aggs;
+import com.elasticsearch.engine.base.model.constant.CommonConstant;
 import com.elasticsearch.engine.base.model.constant.EsConstant;
 import com.elasticsearch.engine.base.model.domain.BaseResp;
 import com.elasticsearch.engine.base.model.domain.DefaultAggResp;
@@ -54,6 +56,7 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
      */
     @Override
     public void executePostProcessorBefore(Object param, AbstractEsRequestHolder esHolder) {
+        String methodName = ThreadLocalUtil.get(CommonConstant.INTERFACE_METHOD_NAME);
         //前置处理扩展 嵌套扩展处理
         List<Object> hooks = esHolder.getRequestHooks();
         if (!hooks.isEmpty()) {
@@ -71,16 +74,22 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
         }
         //前置处理es索引名动态配置
         resetIndexName(esHolder);
-        log.info("execute-es-query-json is\n{}", esHolder.getSource().toString());
+        if (EsEngineConfig.getQueryJsonLog()) {
+            log.info("{} execute-es-query-json is\n{}", methodName, esHolder.getSource().toString());
+        }
+
     }
 
     @Override
     public <T> void executePostProcessorAfter(Object param, SearchResponse resp, BaseResp<T> result) {
+        String methodName = ThreadLocalUtil.get(CommonConstant.INTERFACE_METHOD_NAME);
         ResponseHook<T> responseHook;
         if ((responseHook = checkResponseHook(param)) != null) {
             result.setResult(responseHook.handleResponse(resp));
         }
-        log.info("execute-es-result-json is\n{}", JsonParser.asJson(result));
+        if (EsEngineConfig.getQueryJsonLog()) {
+            log.info("{} execute-es-result-json is\n{}", methodName, JsonParser.asJson(result));
+        }
     }
 
 
@@ -97,14 +106,15 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
         sourceBuilder.timeout(new TimeValue(EsEngineConfig.getQueryTimeOut(), TimeUnit.SECONDS));
         //ES的查询请求对象
         SearchRequest searchRequest = new SearchRequest().indices(indexName).source(sourceBuilder);
-        log.info("execute-es-query-json is\n{}", searchRequest);
+        if (EsEngineConfig.getQueryJsonLog()) {
+            log.info("execute-es-query-json is\n{}", searchRequest);
+        }
         try {
             searchResponse = restClient.search(searchRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
             throw new EsEngineQueryException("Execute Query Error, Method-invokeNative ,cause:", e);
         }
         SearchHits hitsResult = searchResponse.getHits();
-        log.info("命中总记录数 ={}", hitsResult.getTotalHits());
         return searchResponse;
     }
 
@@ -123,14 +133,15 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
         sourceBuilder.timeout(new TimeValue(EsEngineConfig.getQueryTimeOut(), TimeUnit.SECONDS));
         //ES的查询请求对象
         SearchRequest searchRequest = new SearchRequest().indices(indexName).source(sourceBuilder);
-        log.info("execute-es-query-json is\n{}", searchRequest);
+        if (EsEngineConfig.getQueryJsonLog()) {
+            log.info("execute-es-query-json is\n{}", searchRequest);
+        }
         try {
             searchResponse = restClient.search(searchRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
             throw new EsEngineQueryException("Execute Query Error, Method-invokeNativeBuildRes ,cause:", e);
         }
         SearchHits hitsResult = searchResponse.getHits();
-        log.info("命中总记录数 ={}", hitsResult.getTotalHits());
         return EsResponseParse.returnDefaultResult(searchResponse, responseClazz);
     }
 
@@ -204,6 +215,7 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
      * @return
      */
     public BaseResp<DefaultAggResp> executeAggs(Method method, Object param) {
+        String methodName = ThreadLocalUtil.get(CommonConstant.INTERFACE_METHOD_NAME);
         if (!checkExistsAggAnnotation(param)) {
             throw new EsEngineQueryException("param field Missing @Aggs annotation");
         }
@@ -219,11 +231,15 @@ public class EsBaseExecuteHandle extends AbstractEsBaseExecuteHandle {
             defaultAgg.setCount(bucketOneAgg.getDocCount());
             records.add(defaultAgg);
         }
-        log.info("execute-es-response-json is\n{}", JsonParser.asJson(searchResponse));
+        if (EsEngineConfig.getQueryJsonLog()) {
+            log.info("{} execute-es-response-json is\n{}", methodName, JsonParser.asJson(searchResponse));
+        }
         BaseResp<DefaultAggResp> resp = new BaseResp<>();
         resp.setRecords(records);
         resp.setTotalHit((long) records.size());
-        log.info("execute-es-result-json is\n{}", JsonParser.asJson(resp));
+        if (EsEngineConfig.getQueryJsonLog()) {
+            log.info("{} execute-es-result-json is\n{}", methodName, JsonParser.asJson(resp));
+        }
         return resp;
     }
 

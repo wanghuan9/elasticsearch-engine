@@ -70,7 +70,7 @@ public class JooqEsQueryExecuteListener extends DefaultExecuteListener implement
      */
     @Override
     public void executeEnd(ExecuteContext ctx) {
-        log.info("jooq回表执行sql: " + ctx.sql());
+//        log.info("jooq回表执行sql: " + ctx.sql());
     }
 
     @Override

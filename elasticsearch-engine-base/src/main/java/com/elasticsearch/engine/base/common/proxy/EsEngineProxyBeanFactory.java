@@ -43,6 +43,12 @@ public class EsEngineProxyBeanFactory<T> implements ApplicationContextAware, Ini
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * 返回FactoryBean创建的bean
+     * 调用 getBean("EsEngineProxyBeanFactory"),会调用EsEngineProxyBeanFactory.getObject() 返回对象
+     *
+     * @return
+     */
     @Override
     public T getObject() {
         return (T) Proxy.newProxyInstance(

@@ -113,6 +113,24 @@ public class EsEngineConfig {
     }
 
     /**
+     * es extend(mybatis,jpa,jooq) sql转换日志开关
+     *
+     * @return
+     */
+    public static boolean getSqlTraceLog() {
+        return globalConfig.esEngineConfigProperties.isSqlTraceLog();
+    }
+
+    /**
+     * es query json log 日志开关
+     *
+     * @return
+     */
+    public static boolean getQueryJsonLog() {
+        return globalConfig.esEngineConfigProperties.isQueryJsonLog();
+    }
+
+    /**
      * es extend(mybatis,jpa,jooq)查询降级 包含的接口,仅再esQuery=false时才生效
      *
      * @return

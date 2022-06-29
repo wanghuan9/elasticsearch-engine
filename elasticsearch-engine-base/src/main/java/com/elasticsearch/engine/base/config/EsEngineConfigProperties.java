@@ -51,6 +51,16 @@ public class EsEngineConfigProperties {
     private boolean esQuery = Boolean.TRUE;
 
     /**
+     * es extend(mybatis,jpa,jooq) sql转换日志开关
+     */
+    private boolean sqlTraceLog = Boolean.FALSE;
+
+    /**
+     * es query json log 日志开关
+     */
+    private boolean queryJsonLog = Boolean.FALSE;
+
+    /**
      * es extend(mybatis,jpa,jooq)查询降级 包含的接口,仅再esQuery=false时才生效
      * item 为接口名
      */

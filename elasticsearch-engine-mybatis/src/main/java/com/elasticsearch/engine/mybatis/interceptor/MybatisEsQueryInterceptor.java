@@ -142,17 +142,23 @@ public class MybatisEsQueryInterceptor implements Interceptor {
         Class<?> returnType = method.getReturnType();
         //方法返回值的泛型
         Class<?> returnGenericType = AnnotationQueryCommon.getReturnGenericType(method);
-        log.info("原始sql: {}", boundSql.getSql());
+        if (EsEngineConfig.getSqlTraceLog()) {
+            log.info("原始sql: {}", boundSql.getSql());
+        }
         //改写sql
         Select select = SqlParserHelper.rewriteSql(method, boundSql.getSql(), Boolean.FALSE, null);
         //通过反射修改sql语句
         Field field = boundSql.getClass().getDeclaredField("sql");
         field.setAccessible(true);
         field.set(boundSql, select.toString());
-        log.info("改写后sql: {}", boundSql.getSql());
+        if (EsEngineConfig.getSqlTraceLog()) {
+            log.info("改写后sql: {}", boundSql.getSql());
+        }
         //参数替换
         String sql = SqlParamParseMybatisHelper.paramParse(configuration, boundSql);
-        log.info("替换参数后sql: {}", sql);
+        if (EsEngineConfig.getSqlTraceLog()) {
+            log.info("替换参数后sql: {}", sql);
+        }
         //执行ES查询
         if (List.class.isAssignableFrom(returnType) && Objects.nonNull(returnGenericType)) {
             result = esSqlExecuteHandler.queryBySql(sql, returnGenericType, Boolean.TRUE);
@@ -167,25 +173,31 @@ public class MybatisEsQueryInterceptor implements Interceptor {
     private MappedStatement doQueryEsBack(Method method, BoundSql boundSql, MappedStatement ms, BackDto backDto) throws Exception {
         Configuration configuration = ms.getConfiguration();
         String originalSql = boundSql.getSql();
-        log.info("原始sql: {}", originalSql);
+        if (EsEngineConfig.getSqlTraceLog()) {
+            log.info("原始sql: {}", originalSql);
+        }
         //改写sql
         Select select = SqlParserHelper.rewriteSql(method, boundSql.getSql(), Boolean.FALSE, backDto);
         //通过反射修改sql语句
         Field field = boundSql.getClass().getDeclaredField("sql");
         field.setAccessible(true);
         field.set(boundSql, select.toString());
-
-        log.info("改写后sql: {}", boundSql.getSql());
+        if (EsEngineConfig.getSqlTraceLog()) {
+            log.info("改写后sql: {}", boundSql.getSql());
+        }
         //参数替换
         String sql = SqlParamParseMybatisHelper.paramParse(configuration, boundSql);
-        log.info("替换参数后sql: {}", sql);
+        if (EsEngineConfig.getSqlTraceLog()) {
+            log.info("替换参数后sql: {}", sql);
+        }
         //执行ES查询
         List<?> esResult = esSqlExecuteHandler.queryBySql(sql, backDto.getBackColumnTyp(), Boolean.TRUE);
 
         //将原sql改写成回表sql
         String backSql = SqlParserHelper.rewriteBackSql(originalSql, backDto, esResult);
-        log.info("回表sql :  {}", backSql);
-
+        if (EsEngineConfig.getSqlTraceLog()) {
+            log.info("回表sql :  {}", backSql);
+        }
         //替换mybatis执行的sql
         MappedStatement qs = newMappedStatement(ms, new BoundSqlSqlSource(boundSql));
         MetaObject msObject = SystemMetaObject.forObject(qs);

@@ -24,18 +24,18 @@ public class EsQueryProxy<T> implements InvocationHandler {
 
     private EsProxyExecuteHandler esProxyExecuteHandler;
 
-    private boolean enableLogOutEsQueryJson = false;
+    private boolean enableLogOut = false;
 
     public EsQueryProxy(Class<T> targetInterface, boolean visitQueryBeanParent) {
         this.targetInterface = targetInterface;
         this.visitQueryBeanParent = visitQueryBeanParent;
     }
 
-    public EsQueryProxy(Class<T> targetInterface, boolean visitQueryBeanParent, EsProxyExecuteHandler esProxyExecuteHandler, boolean enableLogOutEsQueryJson) {
+    public EsQueryProxy(Class<T> targetInterface, boolean visitQueryBeanParent, EsProxyExecuteHandler esProxyExecuteHandler, boolean enableLogOut) {
         this.targetInterface = targetInterface;
         this.visitQueryBeanParent = visitQueryBeanParent;
         this.esProxyExecuteHandler = esProxyExecuteHandler;
-        this.enableLogOutEsQueryJson = enableLogOutEsQueryJson;
+        this.enableLogOut = enableLogOut;
     }
 
     @Override

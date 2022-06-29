@@ -53,8 +53,10 @@ public class EsSqlExecuteHandler {
             ipport = hosts[randomindex];
         }
         ipport = "http://" + ipport;
-        log.info(ipport + constant.getSqlQueryPrefix() + sqlFormat.getFormat());
-        log.info("{\"query\":\"" + sql + "\"}");
+        if (EsEngineConfig.getQueryJsonLog()) {
+            log.info(ipport + constant.getSqlQueryPrefix() + sqlFormat.getFormat());
+            log.info("{\"query\":\"" + sql + "\"}");
+        }
 
         String username = elasticSearchProperties.getUsername();
         String password = elasticSearchProperties.getPassword();

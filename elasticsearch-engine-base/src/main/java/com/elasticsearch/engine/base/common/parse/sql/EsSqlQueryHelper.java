@@ -3,6 +3,7 @@ package com.elasticsearch.engine.base.common.parse.sql;
 import com.elasticsearch.engine.base.common.proxy.handler.exannotation.AnnotationQueryCommon;
 import com.elasticsearch.engine.base.common.queryhandler.sql.EsSqlExecuteHandler;
 import com.elasticsearch.engine.base.common.utils.ThreadLocalUtil;
+import com.elasticsearch.engine.base.config.EsEngineConfig;
 import com.elasticsearch.engine.base.model.constant.CommonConstant;
 import com.elasticsearch.engine.base.model.domain.BackDto;
 import com.elasticsearch.engine.base.model.emenu.SqlParamParse;
@@ -29,6 +30,8 @@ import java.util.Objects;
 @Slf4j
 @Component
 public class EsSqlQueryHelper {
+
+    private static final String ENABLE_LOG_OUT_PROPERTIES = "es.engine.config.sql-trace-log";
 
     @Resource
     private EsSqlExecuteHandler esSqlExecuteHandler;
@@ -96,12 +99,14 @@ public class EsSqlQueryHelper {
         String paramSql = fillParamSql(method, sql, args, backDto);
         //执行ES查询
         List<?> esResult = esSqlExecuteHandler.queryBySql(paramSql, backDto.getBackColumnTyp(), Boolean.TRUE);
-        if (CollectionUtils.isEmpty(esResult)){
+        if (CollectionUtils.isEmpty(esResult)) {
             return null;
         }
         //将原sql改写成回表sql
         String backSql = SqlParserHelper.rewriteBackSql(sql, backDto, esResult);
-        log.info("回表sql :  {}", backSql);
+        if (EsEngineConfig.getSqlTraceLog()) {
+            log.info("回表sql :  {}", backSql);
+        }
         //将回表sql添加到threadLocal
         ThreadLocalUtil.set(CommonConstant.BACK_QUERY_SQL, backSql);
         return esResult;
@@ -120,7 +125,9 @@ public class EsSqlQueryHelper {
     private String fillParamSql(Method method, String sql, Object[] args, BackDto backDto) throws JSQLParserException {
         //jpa判断是否清除as别名
         Boolean isCleanAs = Boolean.TRUE;
-        log.info("原始sql: {}", sql);
+        if (EsEngineConfig.getSqlTraceLog()) {
+            log.info("原始sql: {}", sql);
+        }
         //jpa原生查询 则不清楚 as别名
 //        Query query = method.getAnnotation(Query.class);
 //        if (Objects.nonNull(query) && query.nativeQuery()) {
@@ -128,13 +135,17 @@ public class EsSqlQueryHelper {
 //        }
         //改写sql
         Select select = SqlParserHelper.rewriteSql(method, sql, isCleanAs, backDto);
-        log.info("改写后sql: {}", select);
+        if (EsEngineConfig.getSqlTraceLog()) {
+            log.info("改写后sql: {}", select);
+        }
         //参数替换
         // 解析sql参数
         //jooq 需要替换"`"
         String selectSql = select.toString().replaceAll("`", "");
         String paramSql = SqlParamParseHelper.getMethodArgsSqlJpa(selectSql, method, args, SqlParamParse.JAP_SQL_PARAM);
-        log.info("替换参数后sql: {}", paramSql);
+        if (EsEngineConfig.getSqlTraceLog()) {
+            log.info("替换参数后sql: {}", paramSql);
+        }
         return paramSql;
     }
 

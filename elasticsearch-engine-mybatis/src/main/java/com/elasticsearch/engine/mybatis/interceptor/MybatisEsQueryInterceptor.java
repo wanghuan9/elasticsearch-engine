@@ -170,6 +170,16 @@ public class MybatisEsQueryInterceptor implements Interceptor {
     }
 
 
+    /**
+     * 执行es回表查询
+     *
+     * @param method
+     * @param boundSql
+     * @param ms
+     * @param backDto
+     * @return
+     * @throws Exception
+     */
     private MappedStatement doQueryEsBack(Method method, BoundSql boundSql, MappedStatement ms, BackDto backDto) throws Exception {
         Configuration configuration = ms.getConfiguration();
         String originalSql = boundSql.getSql();

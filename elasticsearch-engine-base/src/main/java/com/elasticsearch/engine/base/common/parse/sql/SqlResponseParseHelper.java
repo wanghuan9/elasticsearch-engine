@@ -1,47 +1,75 @@
-package com.elasticsearch.engine.base.common.utils;
+package com.elasticsearch.engine.base.common.parse.sql;
 
+import com.elasticsearch.engine.base.common.utils.CaseFormatUtils;
+import com.elasticsearch.engine.base.common.utils.DateUtils;
+import com.elasticsearch.engine.base.common.utils.ReflectionUtils;
+import com.elasticsearch.engine.base.config.EsEngineConfig;
+import com.elasticsearch.engine.base.model.domain.SqlResponse;
 import com.elasticsearch.engine.base.model.emenu.DataType;
 import com.elasticsearch.engine.base.model.exception.EsEngineExecuteException;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
-* @author wanghuan
-* @description BeanTools
-* @mail 958721894@qq.com       
-* @date 2022/6/17 15:30 
-*/
-public class BeanTools {
-    public static Object mapToObject(Map map, Class<?> beanClass) throws Exception {
-        if (map == null) {
-            return null;
-        }
+ * @author wanghuan
+ * @description BeanTools
+ * @mail 958721894@qq.com
+ * @date 2022/6/17 15:30
+ */
+public class SqlResponseParseHelper {
 
-        Object obj = beanClass.newInstance();
-
-        Field[] fields = obj.getClass().getDeclaredFields();
-        for (Field field : fields) {
-            if (map.get(field.getName()) == null || StringUtils.isEmpty(map.get(field.getName()))) {
-                continue;
-            }
-            int mod = field.getModifiers();
-            if (Modifier.isStatic(mod) || Modifier.isFinal(mod)) {
-                continue;
-            }
-            field.setAccessible(true);
-            field.set(obj, map.get(field.getName()));
+    /**
+     * 将sql查询结果转换为指定类
+     *
+     * @param columns
+     * @param rows
+     * @param clazz
+     * @param <T>
+     * @return
+     * @throws Exception
+     */
+    public static <T> T generateObjBySqlReps(List<SqlResponse.ColumnsDTO> columns, List<String> rows, Class<T> clazz, Boolean isExtendQuery) throws Exception {
+        if (rows.size() != columns.size()) {
+            throw new Exception("sql column not match");
         }
-        return obj;
+        //单个结果: count,sum 结果转换
+        boolean check = rows.size() == 1 && (ReflectionUtils.isBaseType(clazz) || clazz.equals(BigDecimal.class));
+        if (check) {
+            return (T) SqlResponseParseHelper.fieldTypeCovert(DataType.getDataTypeByStr(columns.get(0).getType()), rows.get(0), clazz);
+        }
+        //entity listEntity
+        Map<String, SqlResponseParseHelper.NameTypeValueMap> valueMap = new HashMap(32);
+        for (int i = 0; i < rows.size(); i++) {
+            SqlResponseParseHelper.NameTypeValueMap m = new SqlResponseParseHelper.NameTypeValueMap();
+            m.setDataType(DataType.getDataTypeByStr(columns.get(i).getType()));
+            String paramName = columns.get(i).getName();
+            //是否下划线转驼峰转 
+            if (EsEngineConfig.isNamingStrategy()) {
+                paramName = CaseFormatUtils.underscoreToCamel(paramName);
+            }
+            m.setFieldName(paramName);
+            m.setValue(rows.get(i));
+            valueMap.put(paramName, m);
+        }
+        T t = (T) SqlResponseParseHelper.typeMapToObject(valueMap, clazz);
+        return t;
     }
 
+    /**
+     * map to object
+     *
+     * @param map
+     * @param beanClass
+     * @param <T>
+     * @return
+     * @throws Exception
+     */
     public static <T> T typeMapToObject(Map<String, NameTypeValueMap> map, Class<T> beanClass) throws Exception {
         if (map == null) {
             return null;
@@ -65,35 +93,6 @@ public class BeanTools {
         return t;
     }
 
-    public static String[] getNoValuePropertyNames(Object source) {
-        Assert.notNull(source, "传递的参数对象不能为空");
-        final BeanWrapper beanWrapper = new BeanWrapperImpl(source);
-        PropertyDescriptor[] pds = beanWrapper.getPropertyDescriptors();
-
-        Set<String> noValuePropertySet = new HashSet<>();
-        Arrays.stream(pds).forEach(pd -> {
-            Object propertyValue = beanWrapper.getPropertyValue(pd.getName());
-            if (StringUtils.isEmpty(propertyValue)) {
-                noValuePropertySet.add(pd.getName());
-            } else {
-                if (Iterable.class.isAssignableFrom(propertyValue.getClass())) {
-                    Iterable iterable = (Iterable) propertyValue;
-                    Iterator iterator = iterable.iterator();
-                    if (!iterator.hasNext()) {
-                        noValuePropertySet.add(pd.getName());
-                    }
-                }
-                if (Map.class.isAssignableFrom(propertyValue.getClass())) {
-                    Map map = (Map) propertyValue;
-                    if (map.isEmpty()) {
-                        noValuePropertySet.add(pd.getName());
-                    }
-                }
-            }
-        });
-        String[] result = new String[noValuePropertySet.size()];
-        return noValuePropertySet.toArray(result);
-    }
 
     /**
      * es参数类型转化

@@ -1,6 +1,5 @@
 package com.elasticsearch.engine.base.common.proxy;
 
-import com.elasticsearch.engine.base.common.queryhandler.EsProxyExecuteHandler;
 import com.elasticsearch.engine.base.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.base.model.constant.CommonConstant;
 import org.slf4j.Logger;

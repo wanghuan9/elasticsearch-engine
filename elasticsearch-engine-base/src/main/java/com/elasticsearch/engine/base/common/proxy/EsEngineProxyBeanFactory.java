@@ -1,6 +1,5 @@
 package com.elasticsearch.engine.base.common.proxy;
 
-import com.elasticsearch.engine.base.common.queryhandler.EsProxyExecuteHandler;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;

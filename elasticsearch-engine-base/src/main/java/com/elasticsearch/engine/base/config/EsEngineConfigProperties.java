@@ -26,7 +26,7 @@ public class EsEngineConfigProperties {
     private boolean isBuildDefault = Boolean.TRUE;
 
     /**
-     * 查询参及响应参数数解析是否是下划线  true解析成下划线  false按照参数名驼峰
+     * 查询参及响应参数数解析是否是下划线  true解析成下划线  false按照参数名驼峰 默认值false
      */
     private boolean namingStrategy = Boolean.FALSE;
 

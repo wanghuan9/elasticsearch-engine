@@ -6,6 +6,7 @@
 5)自定义注解sql查询 对象参数 (参考 mybatis和jpa实现参数解析)
 6)工具类整理, http工具类优化
 7)sql日志打印支持配置
+8)es 和 mysql字段映射关系支持自定义
 
 其他:
 1)@EsCondition 思考

@@ -22,7 +22,7 @@ import java.util.Objects;
  * @mail 958721894@qq.com
  * @date 2022/6/17 15:30
  */
-public class SqlResponseParseHelper {
+public class SqlResponseParse {
 
     /**
      * 将sql查询结果转换为指定类
@@ -41,12 +41,12 @@ public class SqlResponseParseHelper {
         //单个结果: count,sum 结果转换
         boolean check = rows.size() == 1 && (ReflectionUtils.isBaseType(clazz) || clazz.equals(BigDecimal.class));
         if (check) {
-            return (T) SqlResponseParseHelper.fieldTypeCovert(DataType.getDataTypeByStr(columns.get(0).getType()), rows.get(0), clazz);
+            return (T) SqlResponseParse.fieldTypeCovert(DataType.getDataTypeByStr(columns.get(0).getType()), rows.get(0), clazz);
         }
         //entity listEntity
-        Map<String, SqlResponseParseHelper.NameTypeValueMap> valueMap = new HashMap(32);
+        Map<String, SqlResponseParse.NameTypeValueMap> valueMap = new HashMap(32);
         for (int i = 0; i < rows.size(); i++) {
-            SqlResponseParseHelper.NameTypeValueMap m = new SqlResponseParseHelper.NameTypeValueMap();
+            SqlResponseParse.NameTypeValueMap m = new SqlResponseParse.NameTypeValueMap();
             m.setDataType(DataType.getDataTypeByStr(columns.get(i).getType()));
             String paramName = columns.get(i).getName();
             //是否下划线转驼峰转 
@@ -57,7 +57,7 @@ public class SqlResponseParseHelper {
             m.setValue(rows.get(i));
             valueMap.put(paramName, m);
         }
-        T t = (T) SqlResponseParseHelper.typeMapToObject(valueMap, clazz);
+        T t = (T) SqlResponseParse.typeMapToObject(valueMap, clazz);
         return t;
     }
 

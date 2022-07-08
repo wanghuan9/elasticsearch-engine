@@ -1,6 +1,6 @@
 package com.elasticsearch.engine.base.common.queryhandler.sql;
 
-import com.elasticsearch.engine.base.common.parse.sql.SqlResponseParseHelper;
+import com.elasticsearch.engine.base.common.parse.sql.SqlResponseParse;
 import com.elasticsearch.engine.base.common.utils.HttpClientTool;
 import com.elasticsearch.engine.base.common.utils.JsonParser;
 import com.elasticsearch.engine.base.config.ElasticSearchProperties;
@@ -131,7 +131,7 @@ public class EsSqlExecuteHandler {
         if (!CollectionUtils.isEmpty(sqlResponse.getRows())) {
             for (List<String> row : sqlResponse.getRows()) {
                 try {
-                    result.add(SqlResponseParseHelper.generateObjBySqlReps(sqlResponse.getColumns(), row, clazz, isExtendQuery));
+                    result.add(SqlResponseParse.generateObjBySqlReps(sqlResponse.getColumns(), row, clazz, isExtendQuery));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

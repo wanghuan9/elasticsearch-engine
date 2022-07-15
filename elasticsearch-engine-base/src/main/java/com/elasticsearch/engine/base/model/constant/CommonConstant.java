@@ -71,8 +71,13 @@ public class CommonConstant {
 
     /**
      * es客户端版本为7, es版本为6的格式为 GMT+8
-     * 日期查询默认的时间时区 
+     * 日期查询默认的时间时区
      */
     public static final String DEFAULT_TIME_ZONE = "+08:00";
+
+    /**
+     * jooq COLUMN 前缀
+     */
+    public static final String JOOQ_SQL_COLUMN_PREFIX = "user.";
 
 }

@@ -18,7 +18,7 @@ public class EsEngineConfigProperties {
     /**
      * elasticSearch version
      */
-    private Integer elasticVersion = 7;
+    private Integer elasticVersion = 6;
 
     /**
      * 对没有添加注解的字段 默然按照trem/trems查询

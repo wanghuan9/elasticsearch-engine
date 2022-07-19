@@ -76,8 +76,18 @@ public class CommonConstant {
     public static final String DEFAULT_TIME_ZONE = "+08:00";
 
     /**
-     * jooq COLUMN 前缀
+     * jooq BETWEEN 格式
      */
-    public static final String JOOQ_SQL_COLUMN_PREFIX = "user.";
+    public static final String JOOQ_SQL_BETWEEN = "between {ts";
+
+    /**
+     * jooq BETWEEN 前缀
+     */
+    public static final String JOOQ_SQL_BETWEEN_PREFIX = "\\{ts";
+
+    /**
+     * jooq BETWEEN 后缀
+     */
+    public static final String JOOQ_SQL_BETWEEN_SUFFIX = "\\}";
 
 }

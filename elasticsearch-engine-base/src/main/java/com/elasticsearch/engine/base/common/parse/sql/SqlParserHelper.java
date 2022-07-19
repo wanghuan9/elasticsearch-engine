@@ -5,7 +5,6 @@ import com.elasticsearch.engine.base.common.utils.LocalStringUtils;
 import com.elasticsearch.engine.base.common.utils.ReflectionUtils;
 import com.elasticsearch.engine.base.config.EsEngineConfig;
 import com.elasticsearch.engine.base.model.annotion.EsQueryIndex;
-import com.elasticsearch.engine.base.model.constant.CommonConstant;
 import com.elasticsearch.engine.base.model.domain.BackDto;
 import com.elasticsearch.engine.base.model.exception.EsEngineQueryException;
 import com.google.common.collect.Lists;
@@ -172,7 +171,7 @@ public class SqlParserHelper {
         fromItems.forEach(fromItem -> {
             String fromItemName = "";
             if (fromItem instanceof Table) {
-                fromItemName = LocalStringUtils.replaceSlightPauseMark(((Table) fromItem).getName());
+                fromItemName = ((Table) fromItem).getName();
             }
             tableNames.put(fromItemName, fromItem.getAlias() == null ? fromItemName : fromItem.getAlias().getName());
         });
@@ -375,8 +374,8 @@ public class SqlParserHelper {
         }
         List<WhenClause> list = caseExpression.getWhenClauses();
         list.forEach(data -> {
-            if (data instanceof WhenClause) {
-                setWhereItem(((WhenClause) data).getWhenExpression(), tableAlias);
+            if (data != null) {
+                setWhereItem(data.getWhenExpression(), tableAlias);
             }
         });
     }
@@ -389,12 +388,11 @@ public class SqlParserHelper {
     private static void reNameColumnName(Column column, Map<String, String> tableAlias) {
         //替换mysql和es的别名映射
         if (!tableAlias.isEmpty()) {
-            //替换掉'`'主要针对jooq
-            String columnName = LocalStringUtils.replaceSlightPauseMark(column.toString());
-            //判断是否包含两个'.' 替换掉jooq的 `user`.(jooq生成的字段格式为 `user`.`person`.`person_no`)
+            String columnName = column.toString();
+            //判断是否包含两个'.' 替换掉jooq的库名(jooq生成的字段格式为 `user`.`person`.`person_no`)
             int n = columnName.length() - LocalStringUtils.replaceSpot(columnName).length();
-            if (n > NumberUtils.INTEGER_ONE && columnName.contains(CommonConstant.JOOQ_SQL_COLUMN_PREFIX)) {
-                columnName = columnName.replaceAll(CommonConstant.JOOQ_SQL_COLUMN_PREFIX, "");
+            if (n > NumberUtils.INTEGER_ONE) {
+                columnName = columnName.substring(columnName.indexOf(".") + 1);
             }
             if (tableAlias.containsKey(columnName)) {
                 column.setColumnName(tableAlias.get(columnName));

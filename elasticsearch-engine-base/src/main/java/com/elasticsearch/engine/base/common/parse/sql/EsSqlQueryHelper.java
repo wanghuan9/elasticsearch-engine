@@ -2,7 +2,6 @@ package com.elasticsearch.engine.base.common.parse.sql;
 
 import com.elasticsearch.engine.base.common.proxy.handler.exannotation.AnnotationQueryCommon;
 import com.elasticsearch.engine.base.common.queryhandler.sql.EsSqlExecuteHandler;
-import com.elasticsearch.engine.base.common.utils.LocalStringUtils;
 import com.elasticsearch.engine.base.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.base.config.EsEngineConfig;
 import com.elasticsearch.engine.base.model.constant.CommonConstant;
@@ -141,9 +140,7 @@ public class EsSqlQueryHelper {
         }
         //参数替换
         // 解析sql参数
-        //jooq 需要替换"`"
-        String selectSql = LocalStringUtils.replaceSlightPauseMark(select.toString());
-        String paramSql = SqlParamParseHelper.getMethodArgsSqlJpa(selectSql, method, args, SqlParamParse.JAP_SQL_PARAM);
+        String paramSql = SqlParamParseHelper.getMethodArgsSqlJpa(select.toString(), method, args, SqlParamParse.JAP_SQL_PARAM);
         if (EsEngineConfig.getSqlTraceLog()) {
             log.info("替换参数后sql: {}", paramSql);
         }

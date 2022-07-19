@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
+import net.sf.jsqlparser.expression.operators.relational.Between;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
@@ -266,6 +267,11 @@ public class SqlParserHelper {
             InExpression inExpression = (InExpression) where;
             rightExpression = inExpression.getRightExpression() instanceof Parenthesis ? ((Parenthesis) inExpression.getRightExpression()).getExpression() : inExpression.getRightExpression();
             leftExpression = inExpression.getLeftExpression() instanceof Parenthesis ? ((Parenthesis) inExpression.getLeftExpression()).getExpression() : inExpression.getLeftExpression();
+        }
+
+        if (where instanceof Between) {
+            Between between = (Between) where;
+            leftExpression = between.getLeftExpression() instanceof Parenthesis ? ((Parenthesis) between.getLeftExpression()).getExpression() : between.getLeftExpression();
         }
         if (rightExpression instanceof Column) {
             Column rightColumn = (Column) rightExpression;

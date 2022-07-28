@@ -237,12 +237,11 @@ public class SqlParamParseHelper {
      */
     public static String getListParameterValue(Object val) {
         List listParam = (List) val;
-        StringBuffer sb = new StringBuffer();
+        StringJoiner sj = new StringJoiner(",");
         if (!listParam.isEmpty()) {
-            listParam.forEach(item -> sb.append(getParameterValue(item)).append(","));
+            listParam.forEach(item -> sj.add(getParameterValue(item)));
         }
-        String param = sb.toString();
-        return param.substring(0, param.length() - 1);
+        return sj.toString();
     }
 
     /**

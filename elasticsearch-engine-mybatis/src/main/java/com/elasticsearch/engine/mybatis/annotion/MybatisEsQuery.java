@@ -19,7 +19,7 @@ public @interface MybatisEsQuery {
      *
      * @return
      */
-    String tableName() default "";
+    String backTable() default "";
     
     /**
      * 回表字段

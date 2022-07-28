@@ -18,7 +18,7 @@ public class JooqBackDto extends BackDto {
     public static BackDto hasJooqBack(Method method) {
         JooqEsQuery esQuery = method.getAnnotation(JooqEsQuery.class);
         String backColumn = esQuery.backColumn();
-        String tableName = esQuery.tableName();
+        String tableName = esQuery.backTable();
         Class<?> backColumnTyp = esQuery.backColumnType();
         if (StringUtils.isNotEmpty(backColumn) && Objects.nonNull(backColumnTyp) && !backColumnTyp.equals(Objects.class)) {
             return BackDto.builder().tableName(tableName).backColumn(backColumn).backColumnTyp(backColumnTyp).build();

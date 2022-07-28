@@ -66,7 +66,7 @@ public class EsEngineInterfaceScanner implements ApplicationContextAware, Resour
     }
 
     /**
-     * 对应添加了@EsHelperProxy的类生成代理
+     * 对继承了BaseEsRepository的类生成代理
      * 修改 BeanDefinition 并重新注册到 beanDefinitionMap
      *
      * @param registry

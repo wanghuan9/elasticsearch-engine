@@ -1,6 +1,5 @@
 package com.elasticsearch.engine.base.common.proxy;
 
-import com.elasticsearch.engine.base.common.queryhandler.EsProxyExecuteHandler;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
@@ -43,6 +42,12 @@ public class EsEngineProxyBeanFactory<T> implements ApplicationContextAware, Ini
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * 返回FactoryBean创建的bean
+     * 调用 getBean("EsEngineProxyBeanFactory"),会调用EsEngineProxyBeanFactory.getObject() 返回对象
+     *
+     * @return
+     */
     @Override
     public T getObject() {
         return (T) Proxy.newProxyInstance(

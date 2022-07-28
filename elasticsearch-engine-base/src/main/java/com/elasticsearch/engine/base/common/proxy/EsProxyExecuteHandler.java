@@ -1,4 +1,4 @@
-package com.elasticsearch.engine.base.common.queryhandler;
+package com.elasticsearch.engine.base.common.proxy;
 
 import com.elasticsearch.engine.base.common.proxy.enums.EsQueryType;
 import com.elasticsearch.engine.base.common.proxy.handler.EsQueryProxyExecuteFactory;

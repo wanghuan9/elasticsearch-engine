@@ -1,7 +1,7 @@
 # elasticsearch-engine
 
 ## 介绍
-![img.png](img.png)
+![img.png](流程图%20.jpg)
 
 elasticsearch-engine是基于 HighLevelRestClient 封装的 ElasticSearch 查询引擎框架. 支持ElasticSearch基于注解的结构化查询;
 基于sql语句的方式查询;

@@ -711,7 +711,7 @@ elasticsearch 版本支持 v6 和 v7
 ## 标签
 
 elasticsearchsql, elasticsearchjdbc,elasticsearchmybatis,elasticsearchjpa,elasticsearchjooq,
-elasticsearchquery,elasticsearch查询,elasticsearch查询引擎,elasticsearch查询工具, Elasticsearchapi,Elasticsearchclient,Use SQL to
+elasticsearchquery,elasticsearch查询,ES查询, elasticsearch查询引擎,ES查询引擎,elasticsearch查询工具,ES查询工具, Elasticsearchapi,Elasticsearchclient,Use SQL to
 query Elasticsearch,
 
 sql拦截,sql拦截器, jpasql拦截,mybatissql拦截,Mybatis拦截器,jpa拦截器,jooq拦截器,

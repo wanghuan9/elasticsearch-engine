@@ -18,7 +18,7 @@ public class EsEngineConfigProperties {
     /**
      * elasticSearch version
      */
-    private Integer elasticVersion = 7;
+    private Integer elasticVersion = 6;
 
     /**
      * 对没有添加注解的字段 默然按照trem/trems查询
@@ -26,7 +26,7 @@ public class EsEngineConfigProperties {
     private boolean isBuildDefault = Boolean.TRUE;
 
     /**
-     * 查询参及响应参数数解析是否是下划线  true解析成下划线  false按照参数名驼峰
+     * 查询参及响应参数数解析是否是下划线  true解析成下划线  false按照参数名驼峰 默认值false
      */
     private boolean namingStrategy = Boolean.FALSE;
 
@@ -49,6 +49,16 @@ public class EsEngineConfigProperties {
      * es extend(mybatis,jpa,jooq)查询 全局开关, true表示查询es, false表示查询mysql
      */
     private boolean esQuery = Boolean.TRUE;
+
+    /**
+     * es extend(mybatis,jpa,jooq) sql转换日志开关
+     */
+    private boolean sqlTraceLog = Boolean.FALSE;
+
+    /**
+     * es query json log 日志开关
+     */
+    private boolean queryJsonLog = Boolean.FALSE;
 
     /**
      * es extend(mybatis,jpa,jooq)查询降级 包含的接口,仅再esQuery=false时才生效

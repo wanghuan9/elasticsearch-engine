@@ -1,5 +1,6 @@
 package com.elasticsearch.engine.jooq.listener;
 
+import com.elasticsearch.engine.base.common.utils.LocalStringUtils;
 import com.elasticsearch.engine.base.common.utils.ThreadLocalUtil;
 import com.elasticsearch.engine.base.model.constant.CommonConstant;
 import com.elasticsearch.engine.base.model.exception.EsEngineJpaExecuteException;
@@ -59,7 +60,7 @@ public class JooqEsQueryExecuteListener extends DefaultExecuteListener implement
 //            ctx.sql("SELECT `user`.`person`.`id`, `user`.`person`.`person_no`, `user`.`person`.`person_name`, `user`.`person`.`phone`, `user`.`person`.`salary`, `user`.`person`.`company`, `user`.`person`.`status`, `user`.`person`.`sex`, `user`.`person`.`address`, `user`.`person`.`create_time`, `user`.`person`.`create_user` FROM `user`.`person` WHERE `user`.`person`.`status` = ? AND person_no IN ('US2022060100001', 'US2022060100023')");
             ctx.sql(backSql);
         } else {
-            ThreadLocalUtil.set(CommonConstant.JPA_NATIVE_SQL, ctx.sql());
+            ThreadLocalUtil.set(CommonConstant.JPA_NATIVE_SQL, sqlTransform(Objects.requireNonNull(ctx.sql())));
         }
     }
 
@@ -70,7 +71,7 @@ public class JooqEsQueryExecuteListener extends DefaultExecuteListener implement
      */
     @Override
     public void executeEnd(ExecuteContext ctx) {
-        log.info("jooq回表执行sql: " + ctx.sql());
+//        log.info("jooq回表执行sql: " + ctx.sql());
     }
 
     @Override
@@ -98,7 +99,7 @@ public class JooqEsQueryExecuteListener extends DefaultExecuteListener implement
         if (Objects.isNull(isEsQuery)) {
             return;
         }
-        String sql = ctx.query().toString();
+        String sql = Objects.requireNonNull(ctx.query()).toString();
         //非select语句直接返回
         if (!sql.trim().startsWith(CommonConstant.SELECT_SQL_PREFIX_LOWER) && !sql.trim().startsWith(CommonConstant.SELECT_SQL_PREFIX_UPPER)) {
             return;
@@ -106,7 +107,7 @@ public class JooqEsQueryExecuteListener extends DefaultExecuteListener implement
         String backSql = ThreadLocalUtil.get(CommonConstant.BACK_QUERY_SQL);
        
         if (StringUtils.isEmpty(backSql)) {
-            throw new EsEngineJpaExecuteException(sql);
+            throw new EsEngineJpaExecuteException(sqlTransform(sql));
         }
     }
 
@@ -130,5 +131,15 @@ public class JooqEsQueryExecuteListener extends DefaultExecuteListener implement
 //            throw new EsHelperJpaExecuteException(sql);
 //        } 
 //    }
+
+    private String sqlTransform(String sql) {
+        //jooq 需要替换"`"
+        sql = LocalStringUtils.replaceSlightPauseMark(sql);
+        //处理jooq生成的between
+        if (sql.contains(CommonConstant.JOOQ_SQL_BETWEEN)) {
+            return sql.replaceAll(CommonConstant.JOOQ_SQL_BETWEEN_PREFIX, "").replaceAll(CommonConstant.JOOQ_SQL_BETWEEN_SUFFIX, "");
+        }
+        return sql;
+    }
 
 }

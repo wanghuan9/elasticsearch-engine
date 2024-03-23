@@ -1,6 +1,8 @@
 package com.elasticsearch.engine.base.common.parse.sql;
 
 import com.elasticsearch.engine.base.common.utils.CaseFormatUtils;
+import com.elasticsearch.engine.base.common.utils.LocalStringUtils;
+import com.elasticsearch.engine.base.common.utils.ReflectionUtils;
 import com.elasticsearch.engine.base.config.EsEngineConfig;
 import com.elasticsearch.engine.base.model.annotion.EsQueryIndex;
 import com.elasticsearch.engine.base.model.domain.BackDto;
@@ -10,6 +12,7 @@ import com.google.common.collect.Maps;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
+import net.sf.jsqlparser.expression.operators.relational.Between;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
@@ -19,6 +22,7 @@ import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.util.SelectUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.StringReader;
 import java.lang.reflect.Method;
@@ -47,24 +51,26 @@ public class SqlParserHelper {
         CCJSqlParserManager parserManager = new CCJSqlParserManager();
         Select select = (Select) parserManager.parse(new StringReader(oldSql));
         PlainSelect plain = (PlainSelect) select.getSelectBody();
+        Map<String, String> tableNames = getJoinTableName(plain);
+        Map<String, String> tableAlias = ReflectionUtils.getEsAlias(method, tableNames);
         //替换表名
         setTableItem(method, plain);
         //清除关联
         plain.setJoins(Lists.newArrayList());
         //from 别名清除
         if (Objects.isNull(backDto)) {
-            setSelectItem(plain, isCleanAs);
+            setSelectItem(plain, isCleanAs, tableAlias);
         } else {
             setSelectItem(select, backDto);
         }
         //where 别名清除
-        setWhereItem(plain.getWhere());
+        setWhereItem(plain.getWhere(), tableAlias);
         //group by 别名清除
-        setGroupItem(plain.getGroupBy());
+        setGroupItem(plain.getGroupBy(), tableAlias);
         //having
-        setHavingItem(plain.getHaving());
+        setHavingItem(plain.getHaving(), tableAlias);
         //order by 别名清除
-        setOrderItem(plain.getOrderByElements());
+        setOrderItem(plain.getOrderByElements(), tableAlias);
         return select;
     }
 
@@ -116,6 +122,7 @@ public class SqlParserHelper {
 
     /**
      * 回去回表查询表名
+     *
      * @param plain
      * @param backDto
      * @return
@@ -165,7 +172,7 @@ public class SqlParserHelper {
         fromItems.forEach(fromItem -> {
             String fromItemName = "";
             if (fromItem instanceof Table) {
-                fromItemName = ((Table) fromItem).getName().replaceAll("`", "");
+                fromItemName = ((Table) fromItem).getName();
             }
             tableNames.put(fromItemName, fromItem.getAlias() == null ? fromItemName : fromItem.getAlias().getName());
         });
@@ -194,19 +201,19 @@ public class SqlParserHelper {
      * @param plainSelect
      * @return
      */
-    public static void setSelectItem(PlainSelect plainSelect, Boolean isCleanAs) {
+    public static void setSelectItem(PlainSelect plainSelect, Boolean isCleanAs, Map<String, String> tableAlias) {
         for (SelectItem selectItem : plainSelect.getSelectItems()) {
             selectItem.accept(new SelectItemVisitorAdapter() {
                 @Override
                 public void visit(SelectExpressionItem item) {
                     if (item.getExpression() instanceof Function) {
-                        setFunction((Function) item.getExpression());
+                        setFunction((Function) item.getExpression(), tableAlias);
                     } else if (item.getExpression() instanceof CaseExpression) {
-                        setCaseExpression((CaseExpression) item.getExpression());
+                        setCaseExpression((CaseExpression) item.getExpression(), tableAlias);
                     } else if (item.getExpression() instanceof Column) {
                         Column column = (Column) item.getExpression();
                         //清除t.
-                        reNameColumnName(column);
+                        reNameColumnName(column, tableAlias);
                         column.setTable(new Table());
                     }
                     //清除as
@@ -240,7 +247,7 @@ public class SqlParserHelper {
      * @param
      * @return
      */
-    public static void setWhereItem(Expression where) {
+    public static void setWhereItem(Expression where, Map<String, String> tableAlias) {
         if (where == null) {
             return;
         }
@@ -261,25 +268,30 @@ public class SqlParserHelper {
             rightExpression = inExpression.getRightExpression() instanceof Parenthesis ? ((Parenthesis) inExpression.getRightExpression()).getExpression() : inExpression.getRightExpression();
             leftExpression = inExpression.getLeftExpression() instanceof Parenthesis ? ((Parenthesis) inExpression.getLeftExpression()).getExpression() : inExpression.getLeftExpression();
         }
+
+        if (where instanceof Between) {
+            Between between = (Between) where;
+            leftExpression = between.getLeftExpression() instanceof Parenthesis ? ((Parenthesis) between.getLeftExpression()).getExpression() : between.getLeftExpression();
+        }
         if (rightExpression instanceof Column) {
             Column rightColumn = (Column) rightExpression;
-            reNameColumnName(rightColumn);
+            reNameColumnName(rightColumn, tableAlias);
             //清除表别名
             rightColumn.setTable(new Table());
         } else if (rightExpression instanceof Function) {
-            setFunction((Function) rightExpression);
+            setFunction((Function) rightExpression, tableAlias);
         } else {
-            setWhereItem(rightExpression);
+            setWhereItem(rightExpression, tableAlias);
         }
         if (leftExpression instanceof Column) {
             Column leftColumn = (Column) leftExpression;
-            reNameColumnName(leftColumn);
+            reNameColumnName(leftColumn, tableAlias);
             //清除表别名
             leftColumn.setTable(new Table());
         } else if (leftExpression instanceof Function) {
-            setFunction((Function) leftExpression);
+            setFunction((Function) leftExpression, tableAlias);
         } else {
-            setWhereItem(leftExpression);
+            setWhereItem(leftExpression, tableAlias);
         }
     }
 
@@ -288,7 +300,7 @@ public class SqlParserHelper {
      *
      * @param groupBy
      */
-    private static void setGroupItem(GroupByElement groupBy) {
+    private static void setGroupItem(GroupByElement groupBy, Map<String, String> tableAlias) {
         if (groupBy == null) {
             return;
         }
@@ -296,7 +308,7 @@ public class SqlParserHelper {
         groupByExpressions.forEach(item -> {
             if (item instanceof Column) {
                 Column groupColumn = (Column) item;
-                reNameColumnName(groupColumn);
+                reNameColumnName(groupColumn, tableAlias);
                 groupColumn.setTable(new Table());
             }
         });
@@ -307,11 +319,11 @@ public class SqlParserHelper {
      *
      * @param having
      */
-    private static void setHavingItem(Expression having) {
+    private static void setHavingItem(Expression having, Map<String, String> tableAlias) {
         if (having == null) {
             return;
         }
-        setWhereItem(having);
+        setWhereItem(having, tableAlias);
     }
 
     /**
@@ -319,7 +331,7 @@ public class SqlParserHelper {
      *
      * @param orderByElements
      */
-    private static void setOrderItem(List<OrderByElement> orderByElements) {
+    private static void setOrderItem(List<OrderByElement> orderByElements, Map<String, String> tableAlias) {
         if (CollectionUtils.isEmpty(orderByElements)) {
             return;
         }
@@ -327,7 +339,7 @@ public class SqlParserHelper {
             Expression expression = item.getExpression();
             if (expression instanceof Column) {
                 Column groupColumn = (Column) expression;
-                reNameColumnName(groupColumn);
+                reNameColumnName(groupColumn, tableAlias);
                 groupColumn.setTable(new Table());
             }
         });
@@ -339,17 +351,17 @@ public class SqlParserHelper {
      *
      * @param function
      */
-    private static void setFunction(Function function) {
+    private static void setFunction(Function function, Map<String, String> tableAlias) {
         if (function.getParameters() == null || function.getParameters().getExpressions() == null) {
             return;
         }
         List<Expression> list = function.getParameters().getExpressions();
         list.forEach(data -> {
             if (data instanceof Function) {
-                setFunction((Function) data);
+                setFunction((Function) data, tableAlias);
             } else if (data instanceof Column) {
                 Column column = (Column) data;
-                reNameColumnName(column);
+                reNameColumnName(column, tableAlias);
                 //清除表别名
                 column.setTable(new Table());
             }
@@ -362,14 +374,14 @@ public class SqlParserHelper {
      * @param caseExpression
      * @return
      */
-    public static void setCaseExpression(CaseExpression caseExpression) {
+    public static void setCaseExpression(CaseExpression caseExpression, Map<String, String> tableAlias) {
         if (caseExpression.getWhenClauses() == null) {
             return;
         }
         List<WhenClause> list = caseExpression.getWhenClauses();
         list.forEach(data -> {
-            if (data instanceof WhenClause) {
-                setWhereItem(((WhenClause) data).getWhenExpression());
+            if (data != null) {
+                setWhereItem(data.getWhenExpression(), tableAlias);
             }
         });
     }
@@ -379,7 +391,20 @@ public class SqlParserHelper {
      *
      * @param column
      */
-    private static void reNameColumnName(Column column) {
+    private static void reNameColumnName(Column column, Map<String, String> tableAlias) {
+        //替换mysql和es的别名映射
+        if (!tableAlias.isEmpty()) {
+            String columnName = column.toString();
+            //判断是否包含两个'.' 替换掉jooq的库名(jooq生成的字段格式为 `user`.`person`.`person_no`)
+            int n = columnName.length() - LocalStringUtils.replaceSpot(columnName).length();
+            if (n > NumberUtils.INTEGER_ONE) {
+                columnName = columnName.substring(columnName.indexOf(".") + 1);
+            }
+            if (tableAlias.containsKey(columnName)) {
+                column.setColumnName(tableAlias.get(columnName));
+            }
+        }
+        //清除t.
         if (!EsEngineConfig.isNamingStrategy()) {
             String columnName = column.getColumnName();
             columnName = CaseFormatUtils.underscoreToCamel(columnName);

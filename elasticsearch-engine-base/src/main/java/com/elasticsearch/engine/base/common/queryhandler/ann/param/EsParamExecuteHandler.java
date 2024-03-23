@@ -39,13 +39,20 @@ public class EsParamExecuteHandler extends AbstractEsBaseExecuteHandle {
 
     @Override
     public void executePostProcessorBefore(Object param, AbstractEsRequestHolder esHolder) {
+        String methodName = ThreadLocalUtil.get(CommonConstant.INTERFACE_METHOD_NAME);
         //前置处理es索引名动态配置
         resetIndexName(esHolder);
+        if (EsEngineConfig.getQueryJsonLog()) {
+            log.info("{} execute-es-query-json is\n{}", methodName, esHolder.getSource().toString());
+        }
     }
 
     @Override
     public <T> void executePostProcessorAfter(Object param, SearchResponse resp, BaseResp<T> result) {
-
+        String methodName = ThreadLocalUtil.get(CommonConstant.INTERFACE_METHOD_NAME);
+        if (EsEngineConfig.getQueryJsonLog()) {
+            log.info("{} execute-es-result-json is\n{}", methodName, JsonParser.asJson(result));
+        }
     }
 
 
@@ -108,7 +115,6 @@ public class EsParamExecuteHandler extends AbstractEsBaseExecuteHandle {
             source.timeout(new TimeValue(EsEngineConfig.getQueryTimeOut(), TimeUnit.SECONDS));
             //前置扩展
             executePostProcessorBefore(null, esHolder);
-            log.info("{} execute-es-query-json is\n{}", methodName, esHolder.getSource().toString());
             try {
                 resp = restClient.search(esHolder.getRequest(), RequestOptions.DEFAULT);
             } catch (IOException e) {
@@ -117,7 +123,6 @@ public class EsParamExecuteHandler extends AbstractEsBaseExecuteHandle {
             //后置处理扩展 加入自定义结果解析
             BaseResp<T> result = EsResponseParse.returnDefaultResult(resp, responseClazz);
             executePostProcessorAfter(null, resp, result);
-            log.info("{} execute-es-result-json is\n{}", methodName, JsonParser.asJson(result));
             ThreadLocalUtil.remove();
             return result;
         } finally {

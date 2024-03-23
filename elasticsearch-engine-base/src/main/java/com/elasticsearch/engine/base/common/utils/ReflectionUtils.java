@@ -2,7 +2,12 @@ package com.elasticsearch.engine.base.common.utils;
 
 
 import com.elasticsearch.engine.base.common.parse.sql.SqlParamParseHelper;
+import com.elasticsearch.engine.base.common.proxy.handler.exannotation.AnnotationQueryCommon;
+import com.elasticsearch.engine.base.model.annotion.ESColumn;
+import com.elasticsearch.engine.base.model.annotion.EsQueryIndex;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.*;
 import java.math.BigDecimal;
@@ -190,16 +195,16 @@ public class ReflectionUtils {
     /**
      * 获取对象的filed name 和 value,支持嵌套
      * file 的name 格式为 为 objectName.filedName的形式
-     * 
+     *
      * @param view
      * @param paramName
      * @return
      * @throws IllegalAccessException
      */
-    public static Map<String, Object> getNestedFieldsMap(String paramName,Object view)  {
+    public static Map<String, Object> getNestedFieldsMap(String paramName, Object view) {
         Map<String, Object> map = new HashMap<>(26);
         try {
-            getFields(view,map, paramName);
+            getFields(view, map, paramName);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -208,6 +213,7 @@ public class ReflectionUtils {
 
     /**
      * 递归获取对象的 filed name 和 value
+     *
      * @param view
      * @param map
      * @param parentName
@@ -220,13 +226,61 @@ public class ReflectionUtils {
             field.setAccessible(true);
             String name = parentName + "." + field.getName();
             Object val = field.get(view);
-            if(isBaseTypeAndExtend(field.getType())){
+            if (isBaseTypeAndExtend(field.getType())) {
                 String parameterVal = SqlParamParseHelper.getParameterValue(val);
                 map.put(name, parameterVal);
-            }else{
-                getFields(val,map,name);
+            } else {
+                getFields(val, map, name);
             }
         }
+    }
+
+    /**
+     * 获取mybatis映射es的字段别名
+     *
+     * @param method
+     * @return
+     */
+    public static Map<String, String> getEsAlias(Method method, Map<String, String> tableNames) {
+        //方法返回值
+        Class<?> queryIndex = null;
+        Class<?> returnType = method.getReturnType();
+        if (Objects.nonNull(returnType.getAnnotation(EsQueryIndex.class))) {
+            queryIndex = returnType;
+        }
+        //方法返回值的泛型
+        Class<?> returnGenericType = AnnotationQueryCommon.getReturnGenericType(method);
+        if (Objects.isNull(queryIndex) && Objects.nonNull(returnGenericType) && Objects.nonNull(returnGenericType.getAnnotation(EsQueryIndex.class))) {
+            queryIndex = returnGenericType;
+        }
+
+        Map<String, String> table = Maps.newHashMap();
+        if (Objects.nonNull(queryIndex)) {
+            Field[] fieldArr = queryIndex.getDeclaredFields();
+            for (Field field : fieldArr) {
+                field.setAccessible(true);
+                ESColumn esColumn = field.getAnnotation(ESColumn.class);
+                if (Objects.nonNull(esColumn)) {
+                    table.put(getSqlColumn(esColumn, tableNames), esColumn.esColumn());
+                }
+            }
+        }
+        return table;
+    }
+
+    /**
+     * getSqlColumn
+     *
+     * @param esColumn
+     * @param tableNames
+     * @return
+     */
+    private static String getSqlColumn(ESColumn esColumn, Map<String, String> tableNames) {
+        String tableName = tableNames.get(esColumn.table());
+        if (StringUtils.isNotEmpty(tableName)) {
+            return tableName + "." + esColumn.sqlColumn();
+        }
+        return esColumn.sqlColumn();
     }
 
 }
